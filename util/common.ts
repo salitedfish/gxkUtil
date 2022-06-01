@@ -99,13 +99,8 @@ export const usePromiseQueue: UsePromiseQueue<{
 // };
 // test();
 
-export const useGetLStorage = (
-  key: string,
-  defaultValue: string = undefined
-) => {
-  let value = localStorage.getItem(key)
-    ? localStorage.getItem(key)
-    : defaultValue;
+export const useGetLStorage = (key: string, defaultValue: string = undefined) => {
+  let value = localStorage.getItem(key) ? localStorage.getItem(key) : defaultValue;
   return value;
 };
 
