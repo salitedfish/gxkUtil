@@ -4,12 +4,17 @@ export type ObjectType<T = any> = {
   [key: string]: T;
 };
 
+export type ObjectReadonlyType<T = any> = {
+  readonly [key: string]: T;
+};
+
 export type PromiseWithVoid<T> = Promise<void | T>;
 
 export type ResponseType<T = any> = {
-  status: number;
-  code: number;
-  data: T;
+  readonly code: number;
+  readonly data: T;
+  readonly status?: number;
+  readonly message?: string;
 };
 
 export type Method = "GET" | "DELETE" | "POST" | "PUT";

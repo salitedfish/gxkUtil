@@ -1,7 +1,7 @@
-import { ObjectType, Method, PromiseWithVoid, ResponseType } from "../type";
+import { Method, PromiseWithVoid, ResponseType, ObjectReadonlyType } from "../type";
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";
 
-export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerConfig: ObjectType<string | number> = {}) => {
+export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerConfig: ObjectReadonlyType<string | number> = {}) => {
   const baseAxios: AxiosInstance = axios.create({
     baseURL,
     timeout,
@@ -26,21 +26,24 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
   );
   const CancelToken = axios.CancelToken;
 
-  const service = async (method: Method, url: string, params?: ObjectType<string | number>, data?: ObjectType, config?: ObjectType<string | number>, cancelSourceArray?: any[]): PromiseWithVoid<ResponseType> => {
+  const service = async (method: Method, url: string, params?: ObjectReadonlyType<string | number>, data?: ObjectReadonlyType, config?: ObjectReadonlyType<string | number>, cancelSourceArray?: any[]): PromiseWithVoid<ResponseType> => {
     /**如果有传递过来收集取消器的数组，那就收集取消器，一般用不到 */
+    let resConfig: ObjectReadonlyType<string | number>;
     if (cancelSourceArray && config) {
       const source: {
         token: any;
         cancel: (message: any) => void;
       } = CancelToken.source();
       cancelSourceArray.push(source);
-      config.CancelToken = source.token;
+      resConfig = Object.assign(config, {
+        CancelToken: source.token,
+      });
     }
 
     /**根据项目需求不同再写 */
     if (method === "GET") {
       return baseAxios
-        .get(url, Object.assign({}, { params }, config))
+        .get(url, Object.assign({}, { params }, resConfig))
         .then((res: unknown) => {
           return res as ResponseType;
         })
@@ -49,7 +52,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         });
     } else if (method === "POST") {
       return baseAxios
-        .post(url, data, Object.assign({}, { params }, config))
+        .post(url, data, Object.assign({}, { params }, resConfig))
         .then((res: unknown) => {
           return res as ResponseType;
         })
@@ -58,7 +61,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         });
     } else if (method === "DELETE") {
       return baseAxios
-        .delete(url, Object.assign({}, { params }, config))
+        .delete(url, Object.assign({}, { params }, resConfig))
         .then((res: unknown) => {
           return res as ResponseType;
         })
@@ -67,7 +70,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         });
     } else if (method === "PUT") {
       return baseAxios
-        .put(url, data, Object.assign({}, { params }, config))
+        .put(url, data, Object.assign({}, { params }, resConfig))
         .then((res: unknown) => {
           return res as ResponseType;
         })
