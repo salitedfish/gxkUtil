@@ -39,7 +39,7 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
 };
 
 /**
- * 多次点击Hook
+ * 多次点击Hook,支持节流
  * @param callBack
  * @param times
  * @param countDown
@@ -47,7 +47,7 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
  */
 export const useTimesClick: UseTimesClick = (callBack, times = 2, countDown = 500, interval = 0) => {
   let t = 0;
-  let lock: boolean = false;
+  let lock = false;
   let timer: number | undefined = undefined;
   return (...params) => {
     if (!lock) {
