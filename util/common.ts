@@ -45,23 +45,26 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
  * @param countDown
  * @returns
  */
-export const useTimesClick: UseTimesClick = (callBack, times = 2, countDown = 500, interval = 500) => {
+export const useTimesClick: UseTimesClick = (callBack, times = 2, countDown = 500, interval = 0) => {
   let t = 0;
+  let lock: boolean = false;
   let timer: number | undefined = undefined;
   return (...params) => {
-    if (!timer) {
-      timer = setTimeout(() => {
-        t = 0;
-        clearTimeout(timer);
-      }, countDown);
-    }
-    t = t + 1;
-    if (t == times) {
-      callBack(...params);
-      setTimeout(() => {
-        t = 0;
-        clearTimeout(timer);
-      }, interval);
+    if (!lock) {
+      if (!timer) {
+        timer = setTimeout(() => {
+          t = 0;
+          clearTimeout(timer);
+        }, countDown);
+      }
+      t = t + 1;
+      if (t === times) {
+        callBack(...params);
+        lock = true;
+        setTimeout(() => {
+          lock = false;
+        }, interval);
+      }
     }
   };
 };
