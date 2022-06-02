@@ -1,8 +1,10 @@
 export * from "./common";
-export { useWebSocket } from "./websocket";
-export { useAxios } from "./service";
+export * from "./storage";
+export * from "./websocket";
+export * from "./service";
 
-import { useDebounce, usePromiseQueue, useThrottling, useGetLStorage, useSetLStorage, useRmLStorage } from "./common";
+import { useDebounce, usePromiseQueue, useThrottling, useFileNameFromURL, useDeepCopy, useDownloadByURL, useIsMobile, useTimesClick } from "./common";
+import { useGetLStorage, useSetLStorage, useRmLStorage } from "./storage";
 import { useWebSocket } from "./websocket";
 import { useAxios } from "./service";
 
@@ -13,6 +15,11 @@ export default {
   useSetLStorage,
   useGetLStorage,
   useRmLStorage,
+  useFileNameFromURL,
+  useDeepCopy,
+  useDownloadByURL,
+  useIsMobile,
+  useTimesClick,
   useWebSocket,
   useAxios,
 };

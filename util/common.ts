@@ -1,7 +1,13 @@
-import { UseDebounce, UseThrottling, UsePromiseQueue } from "../type";
-/**防抖Hook */
+import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue } from "../type";
+
+/**
+ * 防抖Hook
+ * @param callBack
+ * @param countDown
+ * @returns
+ */
 export const useDebounce: UseDebounce = (callBack, countDown = 1000) => {
-  let timer: number;
+  let timer: number | undefined = undefined;
   return (...params) => {
     if (timer) {
       clearTimeout(timer);
@@ -13,16 +19,12 @@ export const useDebounce: UseDebounce = (callBack, countDown = 1000) => {
   };
 };
 
-/**usage */
-// const handler = async (info: { page: number; pageSize: number }) => {
-//   let list = Promise.resolve(info);
-//   console.log(list);
-//   return true;
-// };
-// const test = useDebounce(handler, 500);
-// test({ page: 1, pageSize: 1 });
-
-/**节流Hook */
+/**
+ * 节流Hook
+ * @param callBack
+ * @param countDown
+ * @returns
+ */
 export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
   let lock = false;
   return (...params) => {
@@ -36,17 +38,42 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
   };
 };
 
-/**usage */
-// const handler = async (info: { page: number; pageSize: number }) => {
-//   let list = Promise.resolve(info);
-//   console.log(list);
-//   return true;
-// };
-// const test = useThrottling(handler, 500);
-// test({ page: 1, pageSize: 1 });
+/**
+ * 多次点击Hook
+ * @param callBack
+ * @param times
+ * @param countDown
+ * @returns
+ */
+export const useTimesClick: UseTimesClick = (callBack, times = 2, countDown = 500, interval = 500) => {
+  let t = 0;
+  let timer: number | undefined = undefined;
+  return (...params) => {
+    if (!timer) {
+      timer = setTimeout(() => {
+        t = 0;
+        clearTimeout(timer);
+      }, countDown);
+    }
+    t = t + 1;
+    if (t == times) {
+      callBack(...params);
+      setTimeout(() => {
+        t = 0;
+        clearTimeout(timer);
+      }, interval);
+    }
+  };
+};
 
-/**异步队列Hook */
-/**promise返回结果后，如果成功则返回，否则继续请求,直到最终满足条件 */
+/**
+ * promise返回结果后，如果成功则返回，否则继续请求,直到最终满足条件
+ * @param asyncCallBack
+ * @param params
+ * @param isCondition
+ * @param countDown
+ * @returns
+ */
 export const usePromiseQueue: UsePromiseQueue<{
   code: number;
   data: unknown;
@@ -69,54 +96,68 @@ export const usePromiseQueue: UsePromiseQueue<{
   });
 };
 
-/**usage */
-// const request = (info: {
-//   page: number;
-//   pageSize: number;
-// }): Promise<{ code: number; data: { list: string[] }; message: string }> => {
-//   /**
-//    * page
-//    * pageSize
-//    */
-//   return Promise.resolve({
-//     code: 200,
-//     data: {
-//       list: ["2", "2"]
-//     },
-//     message: "f"
-//   });
-// };
-
-// const test = async () => {
-//   const res = await usePromiseQueue(
-//     request,
-//     { page: 1, pageSize: 1 },
-//     res => {
-//       return res.code == 200;
-//     },
-//     1000
-//   );
-// };
-// test();
-
-/**localStorage */
-export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
-  let value = localStorage.getItem(key);
-  if (!value) {
-    return defaultValue;
-  }
-  try {
-    value = JSON.parse(value);
-    return value;
-  } catch (err) {
-    return value;
+/**
+ * 从URL中获取文件名、文件名.扩展名
+ * @param URL
+ * @param withExt
+ * @returns
+ */
+export const useFileNameFromURL = (URL: string, withExt = false) => {
+  const firstIndex = URL.lastIndexOf("/") + 1;
+  const lastIndex = URL.lastIndexOf(".");
+  if (withExt) {
+    return URL.slice(firstIndex);
+  } else {
+    return URL.slice(firstIndex, lastIndex);
   }
 };
 
-export const useSetLStorage = (key: string, value: string) => {
-  localStorage.setItem(key, value);
+/**
+ * 深拷贝,这里函数不考虑，map、set等没考虑到
+ * @param oldData
+ * @returns
+ */
+export const useDeepCopy = <T extends any>(oldData: T): T => {
+  if (Array.isArray(oldData)) {
+    const newData: any = [];
+    for (const item of oldData) {
+      newData.push(useDeepCopy(item));
+    }
+    return newData;
+  } else if (typeof oldData === "object") {
+    const newData: any = {};
+    for (const key in oldData) {
+      newData[key] = useDeepCopy(oldData[key]);
+    }
+    return newData;
+  } else {
+    const newData = oldData;
+    return newData;
+  }
 };
 
-export const useRmLStorage = (key: string) => {
-  localStorage.removeItem(key);
+/**
+ * 通过文件地址点击下载
+ * @param url
+ * @param name
+ */
+export const useDownloadByURL = (url: string, name = "file") => {
+  const link = document.createElement("a");
+  link.download = name;
+  link.style.display = "none";
+  link.href = url;
+  document.body.appendChild(link);
+  link.click();
+  URL.revokeObjectURL(link.href);
+  document.body.removeChild(link);
+};
+
+/**
+ * 判断是否是移动端或移动端的界面大小
+ * @returns
+ */
+export const useIsMobile = () => {
+  let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+  let width = document.documentElement.clientWidth;
+  return !!(flag || width <= 500);
 };
