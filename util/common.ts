@@ -40,30 +40,34 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
 
 /**
  * 多次点击Hook,支持节流
- * @param callBack
- * @param times
- * @param countDown
- * @returns
+ * @param callBack 
+ * @param option 可选参数times默认两次，持续500ms,间隔0秒
+ * @returns 
  */
-export const useTimesClick: UseTimesClick = (callBack, times = 2, countDown = 500, interval = 0) => {
-  let t = 0;
+export const useTimesClick: UseTimesClick = (callBack, option) => {
+  let times = 0;
   let lock = false;
   let timer: number | undefined = undefined;
+  let op = {...{
+    times: 2,
+    countDown: 500,
+    interval: 0,
+  }, ...option} 
   return (...params) => {
     if (!lock) {
       if (!timer) {
         timer = setTimeout(() => {
-          t = 0;
+          times = 0;
           clearTimeout(timer);
-        }, countDown);
+        }, op.countDown);
       }
-      t = t + 1;
-      if (t === times) {
+      times = times + 1;
+      if (times === op.times) {
         callBack(...params);
         lock = true;
         setTimeout(() => {
           lock = false;
-        }, interval);
+        }, op.interval);
       }
     }
   };
@@ -73,8 +77,8 @@ export const useTimesClick: UseTimesClick = (callBack, times = 2, countDown = 50
  * promise返回结果后，如果成功则返回，否则继续请求,直到最终满足条件
  * @param asyncCallBack
  * @param params
- * @param isCondition
- * @param countDown
+ * @param isCondition 判断是否满足条件的函数，返回true表示满足
+ * @param countDown 请求返回后间隔多少时间请求一次
  * @returns
  */
 export const usePromiseQueue: UsePromiseQueue<{
@@ -102,7 +106,7 @@ export const usePromiseQueue: UsePromiseQueue<{
 /**
  * 从URL中获取文件名、文件名.扩展名
  * @param URL
- * @param withExt
+ * @param withExt true表示携带扩展名
  * @returns
  */
 export const useFileNameFromURL = (URL: string, withExt = false) => {

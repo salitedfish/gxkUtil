@@ -1,3 +1,12 @@
-import { useDebounce, useAxios, useDownloadByURL } from "./index";
+import { useTimesClick } from "./index";
 
-const download = useDebounce(useDownloadByURL, 1000);
+const resFun = useTimesClick((a: number, b: string) => {
+    console.log('点击了三次')
+}, {
+    times: 3
+})
+
+resFun(1,'3')
+
+
+

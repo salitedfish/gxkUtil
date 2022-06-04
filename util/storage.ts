@@ -1,7 +1,7 @@
 /**
  * 简化localStorage的使用
  * @param key
- * @param defaultValue
+ * @param defaultValue 默认值
  * @returns
  */
 export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
