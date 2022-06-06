@@ -74,27 +74,3 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
       });
   };
 };
-
-/**usage */
-const apiFetch = useFetch("/api", {
-  headers: {
-    token: "sdfsfdsfef",
-  },
-  handler: (res) => {
-    return res;
-  },
-  errHandler: (err) => {},
-});
-
-const test = async (): PromiseWithVoid<ResponseType<{ a: number; b: number }>> => {
-  return await apiFetch("/home", "GET", {
-    params: { name: "gxk" },
-  });
-};
-
-(async () => {
-  const res = await test();
-  if (res) {
-    res.data.a;
-  }
-})();
