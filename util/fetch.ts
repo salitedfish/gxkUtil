@@ -5,6 +5,8 @@ type FetchConfig = {
   headers?: ObjectType<string | number>;
   handler?: ((params: ResponseType) => ResponseType) | "false";
   errHandler?: ((params: any) => any) | "false";
+  abortController?: AbortController[];
+  timeOut?: number;
 };
 /**
  * @param baseURL 要以'/'开头，例：'/api'
@@ -27,8 +29,10 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
       }
     }
     url = url.slice(0, url.length - 1);
+
     /**处理config */
     let resConfig: any;
+
     /**处理headers */
     const resHeaders = {
       "Content-Type": "application/json",
@@ -38,8 +42,10 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
     resConfig.headers = resHeaders;
     /**处理body */
     resConfig.body = JSON.stringify(cusConfig.body);
+
     /**处理method */
     resConfig.method = method;
+
     /**处理中间件 */
     let handler: any;
     if (cusConfig.handler !== "false") {
@@ -50,9 +56,40 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
       errHandler = cusConfig.errHandler || comConfig.errHandler;
     }
 
+    /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
+    const timeOut = cusConfig.timeOut || comConfig.timeOut;
+    let abortControllerId: any;
+    if (timeOut || cusConfig.abortController) {
+      const abortController = new AbortController();
+      resConfig.signal = abortController.signal;
+      /**设置过期时间，以便自动调用 */
+      if (timeOut) {
+        abortControllerId = setTimeout(() => {
+          abortController.abort();
+        }, timeOut);
+      }
+      /**收集终止控制器，以便手动调用 */
+      if (Array.isArray(cusConfig.abortController)) {
+        cusConfig.abortController.push(abortController);
+      }
+    }
+
+    /**构造清空终止控制器函数，以便请求完成后清空终止控制器 */
+    const clearAbortController = (comConfig: FetchConfig, cusConfig: FetchConfig, abortControllerId: number) => {
+      /**清空终止控制器延时器 */
+      if (cusConfig.timeOut || comConfig.timeOut) {
+        clearTimeout(abortControllerId);
+      }
+      /**清空收集终止控制器数组*/
+      if (Array.isArray(cusConfig.abortController)) {
+        cusConfig.abortController.shift();
+      }
+    };
+
     /**返回请求结果 */
     return fetch(url, resConfig)
       .then((res: any) => {
+        clearAbortController(comConfig, cusConfig, abortControllerId);
         /**如果有中间件，则先处理中间件 */
         if (handler) {
           if (handler(res)) {
@@ -63,6 +100,7 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
         }
       })
       .catch((err) => {
+        clearAbortController(comConfig, cusConfig, abortControllerId);
         /**如果有中间件，则先处理中间件 */
         if (errHandler) {
           if (errHandler(err)) {

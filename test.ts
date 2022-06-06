@@ -30,6 +30,7 @@ const apiFetch = util.useFetch("/api", {
 const test = async (): PromiseWithVoid<ResponseType<{ a: number; b: number }>> => {
   return await apiFetch("/home", "GET", {
     params: { name: "gxk" },
+    abortController: [],
   });
 };
 
