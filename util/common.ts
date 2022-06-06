@@ -40,19 +40,22 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
 
 /**
  * 多次点击Hook,支持节流
- * @param callBack 
+ * @param callBack
  * @param option 可选参数times默认两次，持续500ms,间隔0秒
- * @returns 
+ * @returns
  */
 export const useTimesClick: UseTimesClick = (callBack, option) => {
   let times = 0;
   let lock = false;
   let timer: number | undefined = undefined;
-  let op = {...{
-    times: 2,
-    countDown: 500,
-    interval: 0,
-  }, ...option} 
+  let op = {
+    ...{
+      times: 2,
+      countDown: 500,
+      interval: 0,
+    },
+    ...option,
+  };
   return (...params) => {
     if (!lock) {
       if (!timer) {
@@ -124,7 +127,7 @@ export const useFileNameFromURL = (URL: string, withExt = false) => {
  * @param oldData
  * @returns
  */
-export const useDeepCopy = <T extends any>(oldData: T): T => {
+export const useDeepCopy = <T>(oldData: T): T => {
   if (Array.isArray(oldData)) {
     const newData: any = [];
     for (const item of oldData) {
@@ -160,11 +163,10 @@ export const useDownloadByURL = (url: string, name = "file") => {
 };
 
 /**
- * 判断是否是移动端或移动端的界面大小
+ * 简单数组去重
+ * @param array number | string
  * @returns
  */
-export const useIsMobile = () => {
-  let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
-  let width = document.documentElement.clientWidth;
-  return !!(flag || width <= 500);
+export const useRemoveDuplication = <V extends number | string>(array: V[]): V[] => {
+  return Array.from(new Set(array));
 };

@@ -1,25 +1,24 @@
+/**按需导出全部工具 */
 export * from "./common";
 export * from "./storage";
 export * from "./websocket";
-export * from "./service";
+export * from "./fetch";
+export * from "./axios";
+export * from "./environment";
 
-import { useDebounce, usePromiseQueue, useThrottling, useFileNameFromURL, useDeepCopy, useDownloadByURL, useIsMobile, useTimesClick } from "./common";
-import { useGetLStorage, useSetLStorage, useRmLStorage } from "./storage";
-import { useWebSocket } from "./websocket";
-import { useAxios } from "./service";
+/**统一导出全部工具 */
+import * as useCommon from "./common";
+import * as useEnvironment from "./environment";
+import * as useStorage from "./storage";
+import * as useWebsocket from "./websocket";
+import * as useFetch from "./fetch";
+import * as useAxios from "./axios";
 
 export default {
-  useDebounce,
-  usePromiseQueue,
-  useThrottling,
-  useSetLStorage,
-  useGetLStorage,
-  useRmLStorage,
-  useFileNameFromURL,
-  useDeepCopy,
-  useDownloadByURL,
-  useIsMobile,
-  useTimesClick,
-  useWebSocket,
-  useAxios,
+  ...useCommon,
+  ...useEnvironment,
+  ...useStorage,
+  ...useWebsocket,
+  ...useFetch,
+  ...useAxios,
 };
