@@ -17,13 +17,12 @@
     "removeComments": false, //删除注释
     "declaration": true, //生成定义文件
     "declarationMap": false,
-    "declarationDir": "./lib/types",
+    // "declarationDir": "./lib/types",
     "types": ["node"] //导入类型包
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "type/**/*.ts",
-    "type/**/*.d.ts",
-  ]
+  ],
+  "exclude": ["node_modules", "lib"]
 }

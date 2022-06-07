@@ -1,4 +1,4 @@
-type CommonFu<Params extends any[] = any[], Result = void> = (...params: Params) => Result;
+export type CommonFu<V extends any[], T = void> = (...params: V) => T;
 
 export type ObjectType<T = any> = {
   [key: string]: T;
@@ -25,9 +25,4 @@ export type UseThrottling = <V extends any[]>(callBack: (...params: V) => unknow
 
 export type UseTimesClick = <V extends any[]>(callBack: (...params: V) => unknown, option?: { times?: number; countDown?: number; interval?: number }) => (...params: V) => void;
 
-export type UsePromiseQueue<U = any> = <V extends { [key: string]: any }, T extends U>(
-  asyncCallBack: (params: V) => Promise<T>,
-  params: V,
-  isCondition: (params: T) => boolean,
-  countDown: number
-) => Promise<T>;
+export type UsePromiseQueue = <V, T>(asyncCallBack: (params: V) => Promise<T>, isCondition: (params: T) => boolean, params: V, countDown?: number) => Promise<T>;

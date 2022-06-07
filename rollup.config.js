@@ -21,28 +21,8 @@ const esPlugin = eslint({
   exclude: ["node_modules/**"],
 });
 
-const commonConf = {
-  input: getPath("./index.ts"),
+export default {
+  input: getPath("./src/index.ts"),
   plugins: [resolve(extensions), commonjs(), esPlugin, tsPlugin, rollupJSON()],
+  output: { name: packageJSON.name, file: packageJSON.module, format: "es" },
 };
-
-const outputMap = [
-  {
-    file: packageJSON.main,
-    format: "umd",
-  },
-  {
-    file: packageJSON.module,
-    format: "es",
-  },
-];
-
-const buildConf = (options) => {
-  return Object.assign({}, commonConf, options);
-};
-
-export default outputMap.map((output) => {
-  return buildConf({
-    output: { name: packageJSON.name, ...output },
-  });
-});

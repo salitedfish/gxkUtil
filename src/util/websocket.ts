@@ -1,4 +1,4 @@
-//  const useWebSocket = (socketUrl: string) => {
+// const useWebSocket = (socketUrl: string) => {
 export class UseWebSocket {
   socket: WebSocket | undefined;
   socketUrl: string;
