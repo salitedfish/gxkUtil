@@ -1,0 +1,10 @@
+{
+    "presets": [
+      ["@babel/env", {
+        "es2020": {
+          "modules": false
+        }
+      }]
+    ],
+    "plugins": ["external-helpers"]
+  }
