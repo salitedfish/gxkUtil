@@ -18,7 +18,6 @@ export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
 };
 
 /**
- *
  * @param key
  * @param value
  */
@@ -27,7 +26,6 @@ export const useSetLStorage = (key: string, value: string) => {
 };
 
 /**
- *
  * @param key
  */
 export const useRmLStorage = (key: string) => {

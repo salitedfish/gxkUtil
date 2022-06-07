@@ -1,10 +1,6 @@
 {
     "presets": [
-      ["@babel/env", {
-        "es2020": {
-          "modules": false
-        }
-      }]
-    ],
-    "plugins": ["external-helpers"]
+      "@babel/preset-env",
+      "@babel/preset-typescript"
+    ]
   }
