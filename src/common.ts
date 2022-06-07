@@ -7,7 +7,7 @@ import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue } from "../t
  * @returns
  */
 export const useDebounce: UseDebounce = (callBack, countDown = 1000) => {
-  let timer: number | undefined = undefined;
+  let timer: NodeJS.Timeout;
   return (...params) => {
     if (timer) {
       clearTimeout(timer);
@@ -47,7 +47,7 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
 export const useTimesClick: UseTimesClick = (callBack, option) => {
   let times = 0;
   let lock = false;
-  let timer: number | undefined = undefined;
+  let timer: NodeJS.Timeout;
   let op = {
     ...{
       times: 2,

@@ -1,6 +1,7 @@
 import { PromiseWithVoid, ResponseType } from "./type";
 import { useTimesClick } from "./index";
 import util from "./index";
+import lib from "./lib";
 
 const resFun = useTimesClick(
   (a: number, b: string) => {

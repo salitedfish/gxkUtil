@@ -20,13 +20,20 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         return Promise.reject(ret.msg);
       }
     },
-    (err) => {
+    (err: any) => {
       return Promise.reject(err.response ? (err.response.data ? err.response.data.msg : err.response.statusText) : "网络异常~");
     }
   );
   const CancelToken = axios.CancelToken;
 
-  const service = async (method: Method, url: string, params: ObjectReadonlyType<string | number> = {}, data: ObjectReadonlyType = {}, config: ObjectReadonlyType<string | number> = {}, cancelSourceArray?: any[]): PromiseWithVoid<ResponseType> => {
+  const service = async (
+    method: Method,
+    url: string,
+    params: ObjectReadonlyType<string | number> = {},
+    data: ObjectReadonlyType = {},
+    config: ObjectReadonlyType<string | number> = {},
+    cancelSourceArray?: any[]
+  ): PromiseWithVoid<ResponseType> => {
     /**如果有传递过来收集取消器的数组，那就收集取消器，一般用不到 */
     let resConfig: ObjectType = { ...config, params };
     if (cancelSourceArray) {
@@ -35,7 +42,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         cancel: (message: any) => void;
       } = CancelToken.source();
       cancelSourceArray.push(source);
-      resConfig.CancelToken = source.token
+      resConfig.CancelToken = source.token;
     }
 
     /**根据项目需求不同再写 */
@@ -45,7 +52,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         .then((res: unknown) => {
           return res as ResponseType;
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.log(err || "网络异常~");
         });
     } else if (method === "POST") {
@@ -54,7 +61,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         .then((res: unknown) => {
           return res as ResponseType;
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.log(err || "网络异常~");
         });
     } else if (method === "DELETE") {
@@ -63,7 +70,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         .then((res: unknown) => {
           return res as ResponseType;
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.log(err || "网络异常~");
         });
     } else if (method === "PUT") {
@@ -72,7 +79,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
         .then((res: unknown) => {
           return res as ResponseType;
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.log(err || "网络异常~");
         });
     } else {

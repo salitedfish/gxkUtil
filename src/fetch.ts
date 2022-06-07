@@ -8,6 +8,7 @@ type FetchConfig = {
   abortController?: AbortController[];
   timeOut?: number;
 };
+
 /**
  * @param baseURL 要以'/'开头，例：'/api'
  * @param comConfig params body headers handler errHandler
@@ -58,7 +59,7 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusConfig.timeOut || comConfig.timeOut;
-    let abortControllerId: any;
+    let abortControllerId: NodeJS.Timeout;
     if (timeOut || cusConfig.abortController) {
       const abortController = new AbortController();
       resConfig.signal = abortController.signal;
@@ -75,7 +76,7 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
     }
 
     /**构造清空终止控制器函数，以便请求完成后清空终止控制器 */
-    const clearAbortController = (comConfig: FetchConfig, cusConfig: FetchConfig, abortControllerId: number) => {
+    const clearAbortController = (comConfig: FetchConfig, cusConfig: FetchConfig, abortControllerId: NodeJS.Timeout) => {
       /**清空终止控制器延时器 */
       if (cusConfig.timeOut || comConfig.timeOut) {
         clearTimeout(abortControllerId);
