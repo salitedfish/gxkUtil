@@ -48,14 +48,8 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
     resConfig.method = method;
 
     /**处理中间件 */
-    let handler: ((params: ResponseType) => ResponseType) | false;
-    if (cusConfig.handler) {
-      handler = cusConfig.handler || comConfig.handler;
-    }
-    let errHandler: ((params: any) => any) | false;
-    if (cusConfig.errHandler) {
-      errHandler = cusConfig.errHandler || comConfig.errHandler;
-    }
+    const handler = cusConfig.handler || comConfig.handler;
+    const errHandler = cusConfig.errHandler || comConfig.errHandler;
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusConfig.timeOut || comConfig.timeOut;

@@ -1,4 +1,5 @@
 import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue } from "../type";
+
 /**
  * 防抖Hook
  * @param callBack
@@ -17,6 +18,7 @@ export const useDebounce: UseDebounce = (callBack, countDown = 1000) => {
     }, countDown);
   };
 };
+
 /**
  * 节流Hook
  * @param callBack
@@ -35,6 +37,7 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
     }
   };
 };
+
 /**
  * 多次点击Hook,支持节流
  * @param callBack
@@ -72,6 +75,7 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
     }
   };
 };
+
 /**
  * promise返回结果后，如果成功则返回，否则继续请求,直到最终满足条件
  * @param asyncCallBack
@@ -105,6 +109,7 @@ export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, par
     setTimeout(handler, resOptions.countDown);
   });
 };
+
 /**
  * 从URL中获取文件名、文件名.扩展名
  * @param URL
@@ -120,6 +125,7 @@ export const useFileNameFromURL = (URL: string, withExt = false) => {
     return URL.slice(firstIndex, lastIndex);
   }
 };
+
 /**
  * 深拷贝,这里函数不考虑，map、set等没考虑到
  * @param oldData
@@ -143,6 +149,7 @@ export const useDeepCopy = <T>(oldData: T): T => {
     return newData;
   }
 };
+
 /**
  * 通过文件地址点击下载
  * @param url
@@ -158,6 +165,7 @@ export const useDownloadByURL = (url: string, name = "file") => {
   URL.revokeObjectURL(link.href);
   document.body.removeChild(link);
 };
+
 /**
  * 简单数组去重
  * @param array number | string
