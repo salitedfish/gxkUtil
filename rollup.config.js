@@ -3,20 +3,21 @@ import resolve from "@rollup/plugin-node-resolve";
 import rollupJSON from "@rollup/plugin-json";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import packageJSON from "./package.json";
 import { eslint } from "rollup-plugin-eslint";
 import babel from "@rollup/plugin-babel";
-import replace from "@rollup/plugin-replace";
+// import replace from "@rollup/plugin-replace";
 import genPackageJson from "rollup-plugin-generate-package-json";
+import packageJSON from "./package.json";
 
 const getPath = (_path) => path.resolve(__dirname, _path);
 
 const tsPlugin = typescript({
-  include: [".js", ".ts"],
-  check: true,
+  tsconfig: "tsconfig.json",
+  extensions: [".ts", ".js"],
 });
 
 const esPlugin = eslint({
+  typescript: require("ttypescript"),
   throwOnError: true,
   include: ["src/**/*.ts", "type/**/*.d.ts"],
   exclude: ["node_modules/**"],
@@ -40,13 +41,13 @@ const packageJsonPlugin = genPackageJson({
   }),
 });
 
-const replacePlugin = replace({
-  "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-  preventAssignment: true,
-});
+// const replacePlugin = replace({
+//   "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+//   preventAssignment: true,
+// });
 
 export default {
   input: getPath("./src/index.ts"),
-  plugins: [resolve([".js", ".ts"]), commonjs(), replacePlugin, esPlugin, rollupJSON(), tsPlugin, babelPlugin, packageJsonPlugin],
-  output: { file: packageJSON.module, format: "es" },
+  plugins: [resolve([".js", ".ts"]), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
+  output: { file: packageJSON.module, format: "es", name: packageJSON.name },
 };

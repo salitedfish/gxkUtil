@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "noUnusedLocals": true, //未使用变量报错
-    "removeComments": false, //删除注释
+    "removeComments": true, //删除注释
     "declaration": true, //生成定义文件
     "declarationMap": false,
     // "declarationDir": "./lib/types",
