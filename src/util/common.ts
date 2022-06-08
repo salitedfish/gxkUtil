@@ -174,3 +174,24 @@ export const useDownloadByURL = (url: string, name = "file") => {
 export const useRemoveDuplication = <V extends number | string>(array: V[]): V[] => {
   return Array.from(new Set(array));
 };
+
+/**
+ * 组装url参数
+ * @param url
+ * @param params
+ * @returns
+ */
+export const useGenUrlParams = (url: string, params: { [key: string]: string | number } = {}): string => {
+  let resUrl: string;
+  if (url[url.length - 1] === "?") {
+    resUrl = url;
+  } else {
+    resUrl = url + "?";
+  }
+  if (params) {
+    for (const key in params) {
+      url = `${url}${key}=${params[key]}&`;
+    }
+  }
+  return resUrl.slice(0, url.length - 1);
+};
