@@ -25,4 +25,4 @@ export type UseThrottling = <V extends any[]>(callBack: (...params: V) => unknow
 
 export type UseTimesClick = <V extends any[]>(callBack: (...params: V) => unknown, option?: { times?: number; countDown?: number; interval?: number }) => (...params: V) => void;
 
-export type UsePromiseQueue = <V, T>(asyncCallBack: (params: V) => Promise<T>, isCondition: (params: T) => boolean, params: V, countDown?: number) => Promise<T>;
+export type UsePromiseQueue = <V, T>(asyncCallBack: (params: V) => Promise<T>, isCondition: (params: T) => boolean, params: V, options?: { count?: number; countDown?: number }) => Promise<T>;

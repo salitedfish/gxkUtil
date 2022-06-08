@@ -77,24 +77,32 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
  * @param asyncCallBack
  * @param params
  * @param isCondition 判断是否满足条件的函数，返回true表示满足
- * @param countDown 请求返回后间隔多少时间请求一次
+ * @param options count countDown 最大请求次数 请求返回后间隔多少时间请求一次
  * @returns
  */
-export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, params, countDown = 500) => {
-  return new Promise((resolve) => {
+export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, params, options = {}) => {
+  const resOptions = { count: 3, countDown: 500, ...options };
+  let count = 0;
+  return new Promise((resolve, reject) => {
     const handler = async () => {
+      count = count + 1;
       try {
         const result = await asyncCallBack(params);
         if (isCondition(result)) {
+          /**满足条件返回 */
           resolve(result);
+        } else if (count > resOptions.count) {
+          /**超出最大次数返回reject */
+          reject("Exceeded times");
         } else {
-          setTimeout(handler, countDown);
+          /**否则继续请求 */
+          setTimeout(handler, resOptions.countDown);
         }
       } catch (error) {
-        throw Error(error as any);
+        reject(error);
       }
     };
-    setTimeout(handler, countDown);
+    setTimeout(handler, resOptions.countDown);
   });
 };
 /**
