@@ -10,11 +10,13 @@ import packageJSON from "./package.json";
 
 const getPath = (_path) => path.resolve(__dirname, _path);
 
+/**ts解析插件 */
 const tsPlugin = typescript({
   tsconfig: "tsconfig.json",
   extensions: [".ts", ".js"],
 });
 
+/**eslint插件 */
 const esPlugin = eslint({
   typescript: require("ttypescript"),
   throwOnError: true,
@@ -22,12 +24,14 @@ const esPlugin = eslint({
   exclude: ["node_modules/**"],
 });
 
+/**babel插件 */
 const babelPlugin = babel({
   exclude: "node_modules/**",
   babelHelpers: "bundled",
   extensions: [".ts", ".js"],
 });
 
+/**生成package.json插件 */
 const packageJsonPlugin = genPackageJson({
   outputFolder: "lib",
   baseContents: () => ({

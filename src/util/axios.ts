@@ -8,8 +8,9 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
   });
   baseAxios.interceptors.request.use((config: AxiosRequestConfig) => {
     if (config.headers) {
-      return { ...config.headers, ...headerConfig };
+      return { ...config, headers: { ...config.headers, ...headerConfig } };
     }
+    return config;
   });
   baseAxios.interceptors.response.use(
     (res: AxiosResponse) => {

@@ -3,8 +3,8 @@ type FetchConfig = {
   params?: ObjectType<string | number>;
   body?: ObjectType | any[];
   headers?: ObjectType<string | number>;
-  handler?: ((params: ResponseType) => ResponseType) | "false";
-  errHandler?: ((params: any) => any) | "false";
+  handler?: ((params: ResponseType) => ResponseType) | false;
+  errHandler?: ((params: any) => any) | false;
   abortController?: AbortController[];
   timeOut?: number;
 };
@@ -48,12 +48,12 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
     resConfig.method = method;
 
     /**处理中间件 */
-    let handler: any;
-    if (cusConfig.handler !== "false") {
+    let handler: ((params: ResponseType) => ResponseType) | false;
+    if (cusConfig.handler) {
       handler = cusConfig.handler || comConfig.handler;
     }
-    let errHandler: any;
-    if (cusConfig.errHandler !== "false") {
+    let errHandler: ((params: any) => any) | false;
+    if (cusConfig.errHandler) {
       errHandler = cusConfig.errHandler || comConfig.errHandler;
     }
 
@@ -93,23 +93,17 @@ export const useFetch = (baseURL: string, comConfig: FetchConfig = {}) => {
         clearAbortController(comConfig, cusConfig, abortControllerId);
         /**如果有中间件，则先处理中间件 */
         if (handler) {
-          if (handler(res)) {
-            return handler(res);
-          }
-        } else {
-          return res;
+          handler(res);
         }
+        return res;
       })
       .catch((err) => {
         clearAbortController(comConfig, cusConfig, abortControllerId);
         /**如果有中间件，则先处理中间件 */
         if (errHandler) {
-          if (errHandler(err)) {
-            return errHandler(err);
-          }
-        } else {
-          return err;
+          errHandler(err);
         }
+        return err;
       });
   };
 };

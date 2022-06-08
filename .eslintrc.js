@@ -14,6 +14,9 @@ module.exports = {
   rules: {
     indent: ["error", 2],
     "@typescript-eslint/no-unused-vars": "error", // 这个针对ts文件的，no-unused-vars无法对ts文件正常lint
+    "@typescript-eslint/no-this-alias": "error",
+    "no-var": "error",
     "no-console": "off",
+    quotes: ["error", "double"],
   },
 };

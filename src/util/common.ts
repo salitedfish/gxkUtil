@@ -142,9 +142,9 @@ export const useDeepCopy = <T>(oldData: T): T => {
  */
 export const useDownloadByURL = (url: string, name = "file") => {
   const link = document.createElement("a");
-  link.download = name;
   link.style.display = "none";
   link.href = url;
+  link.download = name;
   document.body.appendChild(link);
   link.click();
   URL.revokeObjectURL(link.href);
