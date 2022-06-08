@@ -48,7 +48,7 @@ export default {
   /**打包入口 */
   input: getPath("./src/index.ts"),
   /**排除外部引入的包 */
-  external: ["axios"],
+  external: Object.keys(packageJSON.dependencies),
   plugins: [nodeResolve({}), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
   /**同时支持ESModule和commonjs导出 */
   output: [
