@@ -1,11 +1,10 @@
 import path from "path";
-import resolve from "@rollup/plugin-node-resolve";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import rollupJSON from "@rollup/plugin-json";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
 import { eslint } from "rollup-plugin-eslint";
 import babel from "@rollup/plugin-babel";
-// import replace from "@rollup/plugin-replace";
 import genPackageJson from "rollup-plugin-generate-package-json";
 import packageJSON from "./package.json";
 
@@ -41,13 +40,15 @@ const packageJsonPlugin = genPackageJson({
   }),
 });
 
-// const replacePlugin = replace({
-//   "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-//   preventAssignment: true,
-// });
-
 export default {
+  /**打包入口 */
   input: getPath("./src/index.ts"),
-  plugins: [resolve([".js", ".ts"]), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
-  output: { file: packageJSON.module, format: "es", name: packageJSON.name },
+  /**排除外部引入的包 */
+  external: ["axios"],
+  plugins: [nodeResolve({}), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
+  /**同时支持ESModule和commonjs导出 */
+  output: [
+    { file: packageJSON.module, format: "esm", name: packageJSON.name },
+    { file: packageJSON.main, format: "cjs", name: packageJSON.name },
+  ],
 };
