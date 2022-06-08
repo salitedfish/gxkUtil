@@ -84,7 +84,7 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
  * @param options count countDown 最大请求次数 请求返回后间隔多少时间请求一次
  * @returns
  */
-export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, params, options = {}) => {
+export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, params, options) => {
   const resOptions = { count: 3, countDown: 500, ...options };
   let count = 0;
   return new Promise((resolve, reject) => {

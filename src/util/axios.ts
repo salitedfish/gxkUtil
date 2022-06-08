@@ -1,7 +1,7 @@
 import { Method, PromiseWithVoid, ResponseType, ObjectReadonlyType, ObjectType } from "../type";
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";
 
-export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerConfig: ObjectReadonlyType<string | number> = {}) => {
+export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerConfig: ObjectReadonlyType<string | number>) => {
   const baseAxios: AxiosInstance = axios.create({
     baseURL,
     timeout,
@@ -30,9 +30,9 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
   const service = async (
     method: Method,
     url: string,
-    params: ObjectReadonlyType<string | number> = {},
-    data: ObjectReadonlyType = {},
-    config: ObjectReadonlyType<string | number> = {},
+    params: ObjectReadonlyType<string | number>,
+    data: ObjectReadonlyType,
+    config: ObjectReadonlyType<string | number>,
     cancelSourceArray?: any[]
   ): PromiseWithVoid<ResponseType> => {
     /**如果有传递过来收集取消器的数组，那就收集取消器，一般用不到 */
