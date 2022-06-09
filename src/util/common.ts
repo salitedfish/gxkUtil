@@ -181,7 +181,7 @@ export const useRemoveDuplication = <V extends number | string>(array: V[]): V[]
  * @param params
  * @returns
  */
-export const useGenUrlParams = (url: string, params: { [key: string]: string | number } = {}): string => {
+export const useGenParamsUrl = (url: string, params: { [key: string]: string | number } = {}): string => {
   let resUrl: string;
   if (url[url.length - 1] === "?") {
     resUrl = url;

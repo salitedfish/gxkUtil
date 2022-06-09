@@ -7,3 +7,19 @@ export const useIsMobile = () => {
   let width = document.documentElement.clientWidth;
   return !!(flag || width <= 500);
 };
+
+/**
+ * 判断是否是app内置的浏览器
+ * @returns
+ */
+export const useIsNeizhi = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  if (ua.includes("micromessenger")) {
+    return "WX";
+  } else if (ua.includes("qq")) {
+    return "QQ";
+  } else if (ua.includes("alipay")) {
+    return "Alipay";
+  }
+  return false;
+};
