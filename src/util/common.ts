@@ -181,15 +181,6 @@ export const useDownloadByURL = (url: string, name = "file") => {
 };
 
 /**
- * 简单数组去重
- * @param array number | string
- * @returns
- */
-export const useRemoveDuplication = <V extends number | string>(array: V[]): V[] => {
-  return Array.from(new Set(array));
-};
-
-/**
  * 组装url参数
  * @param url
  * @param params
@@ -215,15 +206,15 @@ export const useGenParamsUrl = (url: string, params: { [key: string]: string | n
 
 /**
  * 深度比较两个数据是否相同
- * @param origin
- * @param target
+ * @param origin 例如: {a: 1}
+ * @param target 例如: {a: 1}
  * @returns
  */
 export const useDeepCompare = (origin: any, target: any): boolean => {
   if (useCheckUndefined(origin, target)) {
     throw new Error("origin or target is undefined");
   }
-  if (["string", "number"].includes(typeof origin) || ["string", "number"].includes(typeof target) || origin === null || target === null) {
+  if (["string", "number"].includes(typeof origin) || ["string", "number"].includes(typeof target) || [origin, target].includes(null)) {
     return origin === target;
   } else {
     /**false优先，只要有不同就return false */
@@ -253,15 +244,15 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
 
 /**
  * 深度判断数组中是否包含某个值
- * @param origin
- * @param target
+ * @param origin 例如【{a:1}】
+ * @param target 例如 {a:1}
  * @returns
  */
 export const useDeepInclude = (origin: unknown[], target: unknown): boolean | number => {
   if (useCheckUndefined(origin, target)) {
     throw new Error("origin or target is undefined");
   }
-  if (["string", "number"].includes(typeof origin) || target === null) {
+  if (["string", "number"].includes(typeof target) || target === null) {
     return origin.includes(target);
   } else {
     for (const item of origin) {
@@ -271,4 +262,19 @@ export const useDeepInclude = (origin: unknown[], target: unknown): boolean | nu
     }
     return true;
   }
+};
+
+/**
+ * 深度数组去重，不改变原数组
+ * @param oldArr
+ * @returns
+ */
+export const useDeepRmDuplication = <V>(oldArr: V[]): V[] => {
+  const newArr: V[] = [];
+  for (const item of oldArr) {
+    if (!useDeepInclude(newArr, item)) {
+      newArr.push(item);
+    }
+  }
+  return newArr;
 };
