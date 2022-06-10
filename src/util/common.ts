@@ -1,6 +1,15 @@
 import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue } from "../type";
 
 /**
+ * 检查参数中是否有undefined
+ * @param argument
+ * @returns
+ */
+export const useCheckUndefined = (...argument: any[]): boolean => {
+  return argument.includes(undefined);
+};
+
+/**
  * 防抖Hook
  * @param callBack
  * @param countDown
@@ -132,7 +141,12 @@ export const useFileNameFromURL = (URL: string, withExt = false) => {
  * @returns
  */
 export const useDeepCopy = <T>(oldData: T): T => {
-  if (Array.isArray(oldData)) {
+  if (useCheckUndefined(oldData)) {
+    throw new Error("oldData is undefined");
+  }
+  if (oldData === null) {
+    return oldData;
+  } else if (Array.isArray(oldData)) {
     const newData: any = [];
     for (const item of oldData) {
       newData.push(useDeepCopy(item));
@@ -182,6 +196,9 @@ export const useRemoveDuplication = <V extends number | string>(array: V[]): V[]
  * @returns
  */
 export const useGenParamsUrl = (url: string, params: { [key: string]: string | number } = {}): string => {
+  if (useCheckUndefined(url, params)) {
+    throw new Error("url or params is undefined");
+  }
   let resUrl: string;
   if (url[url.length - 1] === "?") {
     resUrl = url;
@@ -202,29 +219,26 @@ export const useGenParamsUrl = (url: string, params: { [key: string]: string | n
  * @param target
  * @returns
  */
-export const useDeepCompare = <T>(origin: T, target: T): boolean => {
-  if ([typeof origin, typeof target].includes("undefined")) {
+export const useDeepCompare = (origin: any, target: any): boolean => {
+  if (useCheckUndefined(origin, target)) {
     throw new Error("origin or target is undefined");
   }
-  if (["string", "number"].includes(typeof origin) || origin === null || target === null) {
+  if (["string", "number"].includes(typeof origin) || ["string", "number"].includes(typeof target) || origin === null || target === null) {
     return origin === target;
   } else {
-    if (Array.isArray(origin)) {
-      if (Array.isArray(target)) {
-        if (origin.length !== target.length) {
-          return false;
-        } else {
-          for (let i = 0; i < origin.length; i++) {
-            if (!useDeepCompare(origin[i], target[i])) {
-              return false;
-            }
-          }
-          return true;
-        }
-      } else {
+    /**false优先，只要有不同就return false */
+    if (Array.isArray(origin) && Array.isArray(target)) {
+      if (origin.length !== target.length) {
         return false;
+      } else {
+        for (let i = 0; i < origin.length; i++) {
+          if (!useDeepCompare(origin[i], target[i])) {
+            return false;
+          }
+        }
+        return true;
       }
-    } else if (typeof target === "object") {
+    } else if (typeof origin === "object" && typeof target === "object") {
       for (const key in origin) {
         if (!useDeepCompare(origin[key], target[key])) {
           return false;
@@ -240,11 +254,11 @@ export const useDeepCompare = <T>(origin: T, target: T): boolean => {
 /**
  * 深度判断数组中是否包含某个值
  * @param origin
- * @param params
+ * @param target
  * @returns
  */
-export const useDeepInclude = <T>(origin: T[], target: T): boolean | number => {
-  if ([typeof origin, typeof target].includes("undefined")) {
+export const useDeepInclude = (origin: unknown[], target: unknown): boolean | number => {
+  if (useCheckUndefined(origin, target)) {
     throw new Error("origin or target is undefined");
   }
   if (["string", "number"].includes(typeof origin) || target === null) {
