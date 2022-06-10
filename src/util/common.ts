@@ -195,3 +195,66 @@ export const useGenParamsUrl = (url: string, params: { [key: string]: string | n
   }
   return resUrl.slice(0, url.length - 1);
 };
+
+/**
+ * 深度比较两个数据是否相同
+ * @param origin
+ * @param target
+ * @returns
+ */
+export const useDeepCompare = <T>(origin: T, target: T): boolean => {
+  if ([typeof origin, typeof target].includes("undefined")) {
+    throw new Error("origin or target is undefined");
+  }
+  if (["string", "number"].includes(typeof origin) || origin === null || target === null) {
+    return origin === target;
+  } else {
+    if (Array.isArray(origin)) {
+      if (Array.isArray(target)) {
+        if (origin.length !== target.length) {
+          return false;
+        } else {
+          for (let i = 0; i < origin.length; i++) {
+            if (!useDeepCompare(origin[i], target[i])) {
+              return false;
+            }
+          }
+          return true;
+        }
+      } else {
+        return false;
+      }
+    } else if (typeof target === "object") {
+      for (const key in origin) {
+        if (!useDeepCompare(origin[key], target[key])) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      return origin === target;
+    }
+  }
+};
+
+/**
+ * 深度判断数组中是否包含某个值
+ * @param origin
+ * @param params
+ * @returns
+ */
+export const useDeepInclude = <T>(origin: T[], target: T): boolean | number => {
+  if ([typeof origin, typeof target].includes("undefined")) {
+    throw new Error("origin or target is undefined");
+  }
+  if (["string", "number"].includes(typeof origin) || target === null) {
+    return origin.includes(target);
+  } else {
+    for (const item of origin) {
+      if (!useDeepCompare(item, target)) {
+        return false;
+      }
+    }
+    return true;
+  }
+};
