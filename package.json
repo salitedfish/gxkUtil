@@ -1,13 +1,15 @@
 {
   "name": "gxkutil",
-  "version": "1.1.1",
+  "version": "1.1.4",
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build_publish": "rm -rf ./lib && rollup -c rollup.config.js && cd ./lib && npm publish",
-    "build": "rm -rf ./lib && rollup -c rollup.config.js"
+    "test": "node test.mjs",
+    "build": "rm -rf ./lib && rollup -c rollup.config.js",
+    "build_link": "npm run build && npm link",
+    "build_publish": "npm run build && cd ./lib && npm publish"
   },
   "author": "",
   "license": "ISC",

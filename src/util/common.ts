@@ -211,9 +211,6 @@ export const useGenParamsUrl = (url: string, params: { [key: string]: string | n
  * @returns
  */
 export const useDeepCompare = (origin: any, target: any): boolean => {
-  if (useCheckUndefined(origin, target)) {
-    throw new Error("origin or target is undefined");
-  }
   if (["string", "number"].includes(typeof origin) || ["string", "number"].includes(typeof target) || [origin, target].includes(null)) {
     return origin === target;
   } else {
@@ -256,11 +253,11 @@ export const useDeepInclude = (origin: unknown[], target: unknown): boolean | nu
     return origin.includes(target);
   } else {
     for (const item of origin) {
-      if (!useDeepCompare(item, target)) {
-        return false;
+      if (useDeepCompare(item, target)) {
+        return true;
       }
     }
-    return true;
+    return false;
   }
 };
 
