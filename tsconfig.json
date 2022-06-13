@@ -18,11 +18,12 @@
     "declaration": true, //生成定义文件
     "declarationMap": false,
     // "declarationDir": "./lib/types",
-    "types": ["node"] //导入类型包
+    "types": ["node", "jest"] //导入类型包
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
+    "src/**/*.test.ts"
   ],
   "exclude": ["node_modules", "lib"]
 }

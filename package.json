@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "node test.mjs",
+    "test": "jest",
     "build": "rm -rf ./lib && rollup -c rollup.config.js",
     "build_link": "npm run build && npm link",
     "build_publish": "npm run build && cd ./lib && npm publish"
@@ -21,11 +21,14 @@
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
+    "@types/jest": "^28.1.1",
     "@types/node": "^17.0.40",
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "babel-eslint": "^10.1.0",
+    "babel-jest": "^28.1.1",
     "babel-preset-latest": "^6.24.1",
+    "jest": "^28.1.1",
     "rollup": "^2.75.5",
     "rollup-plugin-eslint": "^7.0.0",
     "rollup-plugin-generate-package-json": "^3.2.0",

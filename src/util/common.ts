@@ -140,7 +140,7 @@ export const useFileNameFromURL = (URL: string, withExt = false) => {
  * @param oldData
  * @returns
  */
-export const useDeepCopy = <T>(oldData: T): T => {
+export const useDeepClone = <T>(oldData: T): T => {
   if (useCheckUndefined(oldData)) {
     throw new Error("oldData is undefined");
   }
@@ -149,13 +149,13 @@ export const useDeepCopy = <T>(oldData: T): T => {
   } else if (Array.isArray(oldData)) {
     const newData: any = [];
     for (const item of oldData) {
-      newData.push(useDeepCopy(item));
+      newData.push(useDeepClone(item));
     }
     return newData;
   } else if (typeof oldData === "object") {
     const newData: any = {};
     for (const key in oldData) {
-      newData[key] = useDeepCopy(oldData[key]);
+      newData[key] = useDeepClone(oldData[key]);
     }
     return newData;
   } else {
@@ -241,7 +241,7 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
 
 /**
  * 深度判断数组中是否包含某个值
- * @param origin 例如【{a:1}】
+ * @param origin 例如[{a:1}]
  * @param target 例如 {a:1}
  * @returns
  */
