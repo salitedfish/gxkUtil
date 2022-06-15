@@ -44,15 +44,17 @@ const packageJsonPlugin = genPackageJson({
   }),
 });
 
-export default {
-  /**打包入口 */
-  input: getPath("./src/index.ts"),
-  /**排除外部引入的包 */
-  external: Object.keys(packageJSON.dependencies),
-  plugins: [nodeResolve({}), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
-  /**同时支持ESModule和commonjs导出 */
-  output: [
-    { file: packageJSON.module, format: "esm", name: packageJSON.name },
-    { file: packageJSON.main, format: "cjs", name: packageJSON.name },
-  ],
+export default () => {
+  return {
+    /**打包入口 */
+    input: getPath("./src/index.ts"),
+    /**排除外部引入的包 */
+    external: Object.keys(packageJSON.dependencies),
+    plugins: [nodeResolve({}), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
+    /**同时支持ESModule和commonjs导出 */
+    output: [
+      { file: packageJSON.module, format: "esm", name: packageJSON.name },
+      { file: packageJSON.main, format: "cjs", name: packageJSON.name },
+    ],
+  };
 };

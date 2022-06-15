@@ -1,4 +1,4 @@
-import * as useCommon from "../util/common";
+import * as useCommon from "../util/dataOperate";
 
 const obj = { a: 1, b: { a: 1, b: 2 }, c: [1, 2, 3] };
 const cloneObj = useCommon.useDeepClone(obj);
