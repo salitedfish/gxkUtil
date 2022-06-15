@@ -27,14 +27,7 @@ export const useAxios = (baseURL: string = "/", timeout: number = 10000, headerC
   );
   const CancelToken = axios.CancelToken;
 
-  const service = async (
-    method: Method,
-    url: string,
-    params?: ObjectReadonlyType<string | number>,
-    data?: ObjectReadonlyType,
-    config?: { headers?: ObjectType<string | number>; responseType?: string },
-    cancelSourceArray?: any[]
-  ): PromiseWithVoid<ResponseType> => {
+  const service = async (method: Method, url: string, params?: ObjectReadonlyType<string | number>, data?: ObjectReadonlyType, config?: { headers?: ObjectType<string | number>; responseType?: string }, cancelSourceArray?: any[]): PromiseWithVoid<ResponseType> => {
     /**如果有传递过来收集取消器的数组，那就收集取消器，一般用不到 */
     let resConfig: ObjectType = { headers: {}, ...config, params };
     if (cancelSourceArray) {
