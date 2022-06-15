@@ -108,7 +108,7 @@ export const useDeepRmDuplication = <V>(oldArr: V[]): V[] => {
   return newArr;
 };
 
-type Position = "pre" | "center" | "next" | "between";
+type Position = "first" | "center" | "last" | "between";
 /**
  * 根据提供的位置替换字符串
  * @param target
@@ -117,15 +117,15 @@ type Position = "pre" | "center" | "next" | "between";
  * @param replaceStr
  */
 export function useHidPartString(target: string, position: "center" | "between", count: [number, number], replaceStr?: string): string;
-export function useHidPartString(target: string, position: "pre" | "next", count: [number], replaceStr?: string): string;
+export function useHidPartString(target: string, position: "first" | "last", count: [number], replaceStr?: string): string;
 export function useHidPartString(target: string, position: Position, count: number[], replaceStr: string = "*"): string {
-  if (position === "pre" || position === "next") {
+  if (position === "first" || position === "last") {
     /**二段 */
     const preStr = target.slice(0, count[0]);
     const nextStr = target.slice(count[0]);
-    if (position === "pre") {
+    if (position === "first") {
       return preStr.replace(/./g, replaceStr) + nextStr;
-    } else if (position === "next") {
+    } else if (position === "last") {
       return preStr + nextStr.replace(/./g, replaceStr);
     }
   } else if (position === "center" || position === "between") {
