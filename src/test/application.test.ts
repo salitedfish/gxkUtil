@@ -30,3 +30,7 @@ test("test useFileNameFromURL", () => {
   expect(useApplication.useFileNameFromURL("http://test.com/home/test.jpg")).toBe("test");
   expect(useApplication.useFileNameFromURL("http://test.com/home/test.jpg", true)).toBe("test.jpg");
 });
+
+test("test useIsEarly", () => {
+  expect(useApplication.useIsEarly(Number(new Date("2022-12-12 12:12:12")))).toBe(false);
+});

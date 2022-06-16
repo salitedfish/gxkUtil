@@ -159,7 +159,7 @@ export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, par
           /**超出最大次数返回reject */
           reject("Exceeded times");
         } else {
-          /**否则继续请求 */
+          /**否则继续执行 */
           setTimeout(handler, resOptions.countDown);
         }
       } catch (error) {
@@ -235,7 +235,7 @@ export const useTimeFormat = (time: number, format: string): string => {
 
 /**
  * 判断目标时间是否比当前时间早
- * @param target
+ * @param target 目标时间戳,毫秒
  * @param curTime
  * @returns
  */
