@@ -9,7 +9,7 @@ export * from "./dom";
 export * from "./application";
 
 /**统一导出全部工具 */
-import * as useCommon from "./dataOperate";
+import * as useDataOperate from "./dataOperate";
 import * as useEnvironment from "./environment";
 import * as useStorage from "./storage";
 import * as useWebsocket from "./websocket";
@@ -19,7 +19,7 @@ import * as useDom from "./dom";
 import * as useApplication from "./application";
 
 export default {
-  ...useCommon,
+  ...useDataOperate,
   ...useEnvironment,
   ...useStorage,
   ...useWebsocket,

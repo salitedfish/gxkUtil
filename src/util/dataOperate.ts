@@ -1,3 +1,4 @@
+import { ObjectType } from "../type";
 /**
  * 检查参数中是否有undefined
  * @param argument
@@ -43,7 +44,11 @@ export const useDeepClone = <T>(oldData: T): T => {
  * @returns
  */
 export const useDeepCompare = (origin: any, target: any): boolean => {
-  if (["string", "number"].includes(typeof origin) || ["string", "number"].includes(typeof target) || [origin, target].includes(null)) {
+  if (
+    ["string", "number"].includes(typeof origin) ||
+    ["string", "number"].includes(typeof target) ||
+    [origin, target].includes(null)
+  ) {
     return origin === target;
   } else {
     /**false优先，只要有不同就return false */
@@ -108,27 +113,42 @@ export const useDeepRmDuplication = <V>(oldArr: V[]): V[] => {
   return newArr;
 };
 
-type Position = "first" | "center" | "last" | "between";
+type Position = "head" | "center" | "tail" | "between";
 /**
  * 根据提供的位置替换字符串
  * @param target
  * @param position
  * @param count 如果是两个值,第二个值表示从后面开始计数
- * @param replaceStr
+ * @param replaceStr default: "*"
  */
-export function useHidPartString(target: string, position: "center" | "between", count: [number, number], replaceStr?: string): string;
-export function useHidPartString(target: string, position: "first" | "last", count: [number], replaceStr?: string): string;
-export function useHidPartString(target: string, position: Position, count: number[], replaceStr: string = "*"): string {
-  if (position === "first" || position === "last") {
+export function useRepPartStr(
+  target: string,
+  position: "center" | "between",
+  count: [number, number],
+  replaceStr?: string
+): string;
+export function useRepPartStr(
+  target: string,
+  position: "head" | "tail",
+  count: [number],
+  replaceStr?: string
+): string;
+export function useRepPartStr(
+  target: string,
+  position: Position,
+  count: number[],
+  replaceStr: string = "*"
+): string {
+  if (["head", "tail"].includes(position)) {
     /**二段 */
     const preStr = target.slice(0, count[0]);
     const nextStr = target.slice(count[0]);
-    if (position === "first") {
+    if (position === "head") {
       return preStr.replace(/./g, replaceStr) + nextStr;
-    } else if (position === "last") {
+    } else if (position === "tail") {
       return preStr + nextStr.replace(/./g, replaceStr);
     }
-  } else if (position === "center" || position === "between") {
+  } else if (["center", "between"].includes(position)) {
     /**三段 */
     const preStr = target.slice(0, count[0]);
     const centerStr = target.slice(count[0], -count[1]);
@@ -141,3 +161,24 @@ export function useHidPartString(target: string, position: Position, count: numb
   }
   return target;
 }
+
+/**
+ * 去除字符串中的空格
+ * @param target
+ * @param position
+ * @returns
+ */
+export const useTrimStr = (
+  target: string,
+  position: "head" | "tail" | "between" | "global" = "global"
+): string => {
+  if (position === "head") {
+    return target.replace(/^\s+/g, "");
+  } else if (position === "tail") {
+    return target.replace(/\s+$/g, "");
+  } else if (position === "between") {
+    return target.replace(/^\s+|\s+$/g, "");
+  } else {
+    return target.replace(/\s+/g, "");
+  }
+};

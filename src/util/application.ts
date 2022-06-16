@@ -1,4 +1,4 @@
-import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue } from "../type";
+import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue, ObjectType } from "../type";
 import { useCheckUndefined } from "./dataOperate";
 
 /**
@@ -54,10 +54,10 @@ export const useGenParamsUrl = (
   }
   if (params) {
     for (const key in params) {
-      url = `${url}${key}=${params[key]}&`;
+      resUrl = `${resUrl}${key}=${params[key]}&`;
     }
   }
-  return resUrl.slice(0, url.length - 1);
+  return resUrl.slice(0, resUrl.length - 1);
 };
 
 /**
@@ -137,7 +137,7 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
 };
 
 /**
- * promise返回结果后，如果成功则返回，否则继续请求,直到最终满足条件
+ * promise返回结果后，如果成功则返回，否则继续执行，直到最终满足条件
  * @param asyncCallBack
  * @param params
  * @param isCondition 判断是否满足条件的函数，返回true表示满足
@@ -168,4 +168,77 @@ export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, par
     };
     setTimeout(handler, resOptions.countDown);
   });
+};
+
+/**
+ * 倒计时格式化
+ * @param time 单位为毫秒
+ * @returns
+ */
+export const useCountDownFormat = (time: number, format: string): string => {
+  /**解析时间 */
+  const date: ObjectType = {
+    "d+": Math.floor(time / 1000 / 3600 / 24),
+    "h+": Math.floor((time % (1000 * 3600 * 24)) / 1000 / 3600),
+    "m+": Math.floor((time % (1000 * 60 * 60)) / 1000 / 60),
+    "s+": Math.floor((time % (1000 * 60)) / 1000),
+  };
+  for (const key in date) {
+    const reg = new RegExp("(" + key + ")");
+    if (reg.test(format)) {
+      const regRes = reg.exec(format) || [];
+      const replaceValue =
+        regRes[0].length == 1 ? date[key] : date[key].toString().padStart(2, "0");
+      format = format.replace(regRes[0], replaceValue);
+    }
+  }
+  return format;
+};
+
+/**
+ * 时间戳格式化
+ * @param time 单位为毫秒
+ * @param format DDDD-MM-DD HH:mm:ss
+ */
+export const useTimeFormat = (time: number, format: string): string => {
+  const targetDate = new Date(time);
+  /**解析时间 */
+  const date: ObjectType = {
+    "M+": targetDate.getMonth() + 1,
+    "d+": targetDate.getDate(),
+    "h+": targetDate.getHours(),
+    "m+": targetDate.getMinutes(),
+    "s+": targetDate.getSeconds(),
+    "q+": Math.floor((targetDate.getMonth() + 3) / 3),
+    "S+": targetDate.getMilliseconds(),
+  };
+  const fullYear = targetDate.getFullYear();
+
+  /**替换格式化字符串,年和其他分开替换 */
+  if (/(y+)/i.test(format)) {
+    const reg = /(y+)/i;
+    const regRes = reg.exec(format) || [];
+    const replaceValue = fullYear.toString().slice(4 - regRes[0].length);
+    format = format.replace(regRes[0], replaceValue);
+  }
+  for (const key in date) {
+    const reg = new RegExp("(" + key + ")");
+    if (reg.test(format)) {
+      const regRes = reg.exec(format) || [];
+      const replaceValue =
+        regRes[0].length == 1 ? date[key] : date[key].toString().padStart(2, "0");
+      format = format.replace(regRes[0], replaceValue);
+    }
+  }
+  return format;
+};
+
+/**
+ * 判断目标时间是否比当前时间早
+ * @param target
+ * @param curTime
+ * @returns
+ */
+export const useIsEarly = (target: number, curTime: number = Date.now()) => {
+  return target < curTime;
 };
