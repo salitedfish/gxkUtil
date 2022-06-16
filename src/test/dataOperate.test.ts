@@ -1,6 +1,6 @@
 import * as useDataOperate from "../util/dataOperate";
 
-const obj = { a: 1, b: { a: 1, b: 2 }, c: [1, 2, 3] };
+const obj = { a: 1, b: { a: 1, b: 2 }, c: [1, 2, 3, null, undefined], d: null };
 const cloneObj = useDataOperate.useDeepClone(obj);
 
 test("test useDeepClone", () => {

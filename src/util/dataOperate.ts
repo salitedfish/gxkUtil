@@ -13,26 +13,23 @@ export const useCheckUndefined = (...argument: any[]): boolean => {
  * @returns
  */
 export const useDeepClone = <T>(oldData: T): T => {
-  if (useCheckUndefined(oldData)) {
-    throw new Error("oldData is undefined");
-  }
-  if (oldData === null) {
-    return oldData;
-  } else if (Array.isArray(oldData)) {
+  if (Array.isArray(oldData)) {
     const newData: any = [];
     for (const item of oldData) {
       newData.push(useDeepClone(item));
     }
     return newData;
   } else if (typeof oldData === "object") {
+    if (oldData === null) {
+      return oldData;
+    }
     const newData: any = {};
     for (const key in oldData) {
       newData[key] = useDeepClone(oldData[key]);
     }
     return newData;
   } else {
-    const newData = oldData;
-    return newData;
+    return oldData;
   }
 };
 
