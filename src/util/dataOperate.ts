@@ -1,4 +1,3 @@
-import { ObjectType } from "../type";
 /**
  * 检查参数中是否有undefined
  * @param argument
