@@ -39,7 +39,10 @@ export const useFileNameFromURL = (URL: string, withExt = false) => {
  * @param params
  * @returns
  */
-export const useGenParamsUrl = (url: string, params: { [key: string]: string | number } = {}): string => {
+export const useGenParamsUrl = (
+  url: string,
+  params: { [key: string]: string | number } = {}
+): string => {
   if (useCheckUndefined(url, params)) {
     throw new Error("url or params is undefined");
   }

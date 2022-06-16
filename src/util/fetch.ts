@@ -9,8 +9,9 @@ type ComFetchConfig = {
   credentials?: FetchCredentials;
 };
 type ComFetchOptions = {
-  resHandler?: ((params: ResponseType) => ResponseType) | false;
-  errHandler?: ((params: any) => any) | false;
+  reqHandler?: (params: CusFetchConfig) => void;
+  resHandler?: (params: ResponseType) => ResponseType;
+  errHandler?: (params: any) => any;
   timeOut?: number;
 };
 type CusFetchConfig = {
@@ -23,14 +24,19 @@ type CusFetchConfig = {
   credentials?: FetchCredentials;
 };
 type CusFetchOptions = {
-  resHandler?: ((params: ResponseType) => ResponseType) | false;
-  errHandler?: ((params: any) => any) | false;
+  reqHandler?: (params: CusFetchConfig) => void;
+  resHandler?: (params: ResponseType) => ResponseType;
+  errHandler?: (params: any) => any;
   abortController?: AbortController[];
   timeOut?: number;
 };
 
 /**构造清空终止控制器函数，以便请求完成后清空终止控制器 */
-const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, abortControllerId: NodeJS.Timeout) => {
+const clearAbortController = (
+  comOptions: ComFetchOptions,
+  cusOptions: CusFetchOptions,
+  abortControllerId: NodeJS.Timeout
+) => {
   /**清空终止控制器延时器 */
   if (cusOptions.timeOut || comOptions.timeOut) {
     clearTimeout(abortControllerId);
@@ -46,22 +52,32 @@ const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchO
  * @param comConfig params body headers handler errHandler
  * @returns
  */
-export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
+export const useFetch = (
+  baseURL: string = "/",
+  comConfig: ComFetchConfig = {},
+  comOptions: ComFetchOptions = {}
+) => {
   /**
    * @param URL 要以'/'开头,例：'/user/list'
    * @param method
    * @param cusConfig params body headers handler errHandler
    * @returns
    */
-  return async (URL: string, cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): PromiseWithVoid<ResponseType> => {
+  return async (
+    URL: string,
+    cusConfig: CusFetchConfig,
+    cusOptions: CusFetchOptions = {}
+  ): PromiseWithVoid<ResponseType> => {
     /**处理url */
     let url = useGenParamsUrl(baseURL + URL, cusConfig.params);
 
     /**处理config */
     let resConfig: any = { ...comConfig, ...cusConfig };
+    resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
     resConfig.body = JSON.stringify(cusConfig.body);
 
     /**处理中间件 */
+    const reqHandler = cusOptions.reqHandler || comOptions.reqHandler;
     const resHandler = cusOptions.resHandler || comOptions.resHandler;
     const errHandler = cusOptions.errHandler || comOptions.errHandler;
 
@@ -82,6 +98,9 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
         cusOptions.abortController.push(abortController);
       }
     }
+
+    /**请求前先执行,类似于请求拦截器 */
+    reqHandler ? reqHandler(resConfig) : null;
 
     /**返回请求结果 */
     return fetch(url, resConfig)
