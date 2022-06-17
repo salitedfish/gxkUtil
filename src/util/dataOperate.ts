@@ -109,6 +109,15 @@ export const useDeepRmDuplication = <V>(oldArr: V[]): V[] => {
   return newArr;
 };
 
+/**
+ * 浅度数组去重，不改变原数组
+ * @param oldArr
+ * @returns
+ */
+export const useShallowRmDuplication = <V>(oldArr: V[]): V[] => {
+  return Array.from(new Set(oldArr));
+};
+
 type Position = "head" | "center" | "tail" | "between";
 /**
  * 根据提供的位置替换字符串

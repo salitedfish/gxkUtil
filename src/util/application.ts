@@ -173,9 +173,13 @@ export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, par
 /**
  * 倒计时格式化
  * @param time 单位为毫秒
+ * @format 格式化格式，默认为"{dd}天{hh}时{mm}分{ss}秒"
  * @returns
  */
-export const useCountDownFormat = (time: number, format: string): string => {
+export const useCountDownFormat = (
+  time: number,
+  format: string = "{dd}天{hh}时{mm}分{ss}秒"
+): string => {
   /**解析时间 */
   const date: ObjectType = {
     "d+": Math.floor(time / 1000 / 3600 / 24),
@@ -183,12 +187,13 @@ export const useCountDownFormat = (time: number, format: string): string => {
     "m+": Math.floor((time % (1000 * 60 * 60)) / 1000 / 60),
     "s+": Math.floor((time % (1000 * 60)) / 1000),
   };
+  /**替换格式化字符串 */
   for (const key in date) {
-    const reg = new RegExp("(" + key + ")");
+    const reg = new RegExp("({" + key + "})");
     if (reg.test(format)) {
       const regRes = reg.exec(format) || [];
       const replaceValue =
-        regRes[0].length == 1 ? date[key] : date[key].toString().padStart(2, "0");
+        regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], replaceValue);
     }
   }
@@ -198,9 +203,12 @@ export const useCountDownFormat = (time: number, format: string): string => {
 /**
  * 时间戳格式化
  * @param time 单位为毫秒
- * @param format DDDD-MM-DD HH:mm:ss
+ * @param format 格式化格式，默认为"{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}"
  */
-export const useTimeFormat = (time: number, format: string): string => {
+export const useTimeFormat = (
+  time: number,
+  format: string = "{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}"
+): string => {
   const targetDate = new Date(time);
   /**解析时间 */
   const date: ObjectType = {
@@ -215,18 +223,18 @@ export const useTimeFormat = (time: number, format: string): string => {
   const fullYear = targetDate.getFullYear();
 
   /**替换格式化字符串,年和其他分开替换 */
-  if (/(y+)/i.test(format)) {
-    const reg = /(y+)/i;
+  if (/({y+})/i.test(format)) {
+    const reg = /({y+})/i;
     const regRes = reg.exec(format) || [];
-    const replaceValue = fullYear.toString().slice(4 - regRes[0].length);
+    const replaceValue = fullYear.toString().slice(6 - regRes[0].length);
     format = format.replace(regRes[0], replaceValue);
   }
   for (const key in date) {
-    const reg = new RegExp("(" + key + ")");
+    const reg = new RegExp("({" + key + "})");
     if (reg.test(format)) {
       const regRes = reg.exec(format) || [];
       const replaceValue =
-        regRes[0].length == 1 ? date[key] : date[key].toString().padStart(2, "0");
+        regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], replaceValue);
     }
   }
@@ -236,7 +244,7 @@ export const useTimeFormat = (time: number, format: string): string => {
 /**
  * 判断目标时间是否比当前时间早
  * @param target 目标时间戳,毫秒
- * @param curTime
+ * @param curTime 默认为当前时间戳,毫秒
  * @returns
  */
 export const useIsEarly = (target: number, curTime: number = Date.now()) => {
