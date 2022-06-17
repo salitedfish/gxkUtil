@@ -8,21 +8,45 @@ export const useCheckUndefined = (...argument: any[]): boolean => {
 };
 
 /**
- * 深拷贝,这里函数不考虑，map、set等没考虑到
+ * 检查是否含有简单数据类型, string number boolean null undefined
+ * @param argument
+ */
+export const useCheckSimpleData = (...argument: any[]) => {
+  for (let item of argument) {
+    if (["string", "number", "boolean"].includes(typeof item) || [null, undefined].includes(item)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * 深拷贝
  * @param oldData
  * @returns
  */
 export const useDeepClone = <T>(oldData: T): T => {
-  if (Array.isArray(oldData)) {
+  if (useCheckSimpleData(oldData)) {
+    return oldData;
+  } else if (Array.isArray(oldData)) {
     const newData: any = [];
     for (const item of oldData) {
       newData.push(useDeepClone(item));
     }
     return newData;
-  } else if (typeof oldData === "object") {
-    if (oldData === null) {
-      return oldData;
+  } else if (oldData instanceof Map) {
+    const newData: any = new Map();
+    for (const [key, value] of oldData) {
+      newData.set(key, useDeepClone(value));
     }
+    return newData;
+  } else if (oldData instanceof Set) {
+    const newData: any = new Set();
+    for (const item of oldData) {
+      newData.add(useDeepClone(item));
+    }
+    return newData;
+  } else if (typeof oldData === "object") {
     const newData: any = {};
     for (const key in oldData) {
       newData[key] = useDeepClone(oldData[key]);
@@ -34,26 +58,45 @@ export const useDeepClone = <T>(oldData: T): T => {
 };
 
 /**
- * 深度比较两个数据是否相同
+ * 深度比较
  * @param origin 例如: {a: 1}
  * @param target 例如: {a: 1}
  * @returns
  */
 export const useDeepCompare = (origin: any, target: any): boolean => {
-  if (
-    ["string", "number"].includes(typeof origin) ||
-    ["string", "number"].includes(typeof target) ||
-    [origin, target].includes(null)
-  ) {
+  if (useCheckSimpleData(origin, target)) {
     return origin === target;
   } else {
-    /**false优先，只要有不同就return false */
     if (Array.isArray(origin) && Array.isArray(target)) {
       if (origin.length !== target.length) {
         return false;
       } else {
         for (let i = 0; i < origin.length; i++) {
           if (!useDeepCompare(origin[i], target[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else if (origin instanceof Map && target instanceof Map) {
+      if (origin.size !== target.size) {
+        return false;
+      } else {
+        for (const [key, value] of origin) {
+          if (!useDeepCompare(value, target.get(key))) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else if (origin instanceof Set && target instanceof Set) {
+      if (origin.size !== target.size) {
+        return false;
+      } else {
+        const originArr = Array.from(origin);
+        const newArr = Array.from(target);
+        for (let i = 0; i < originArr.length; i++) {
+          if (!useDeepCompare(originArr[i], newArr[i])) {
             return false;
           }
         }
@@ -83,10 +126,7 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
  * @returns
  */
 export const useDeepInclude = (origin: unknown[], target: unknown): boolean | number => {
-  if (useCheckUndefined(origin, target)) {
-    throw new Error("origin or target is undefined");
-  }
-  if (["string", "number"].includes(typeof target) || target === null) {
+  if (useCheckSimpleData(target)) {
     return origin.includes(target);
   } else {
     for (const item of origin) {

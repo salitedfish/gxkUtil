@@ -1,6 +1,17 @@
 import * as useDataOperate from "../util/dataOperate";
 
-const obj = { a: 1, b: { a: 1, b: 2 }, c: [1, 2, 3, null, undefined], d: null };
+const f = new Map();
+f.set("a", { a: 1 });
+const g = new Map();
+g.set("a", { a: 1 });
+const obj = {
+  a: 1,
+  b: { a: 1, b: 2 },
+  c: [1, 2, 3, null, undefined],
+  d: null,
+  e: new Set([1, 2, 3]),
+  f,
+};
 const cloneObj = useDataOperate.useDeepClone(obj);
 
 /**test useDeepClone */
@@ -13,11 +24,13 @@ test("test useDeepCompare", () => {
   expect(useDataOperate.useDeepCompare(cloneObj, obj)).toBe(true);
   expect(useDataOperate.useDeepCompare({ a: 1 }, { a: 1, b: 1 })).toBe(false);
   expect(useDataOperate.useDeepCompare([1, 2], [1, 2])).toBe(true);
+  expect(useDataOperate.useDeepCompare(f, g)).toBe(true);
 });
 
 /**test useDeepInclude */
 test("test useDeepInclude", () => {
   expect(useDataOperate.useDeepInclude([obj], cloneObj)).toBe(true);
+  expect(useDataOperate.useDeepInclude([f], g)).toBe(true);
   expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { a: 1 })).toBe(false);
 });
 

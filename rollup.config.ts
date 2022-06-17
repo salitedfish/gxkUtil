@@ -7,13 +7,14 @@ import { eslint } from "rollup-plugin-eslint";
 import babel from "@rollup/plugin-babel";
 import genPackageJson from "rollup-plugin-generate-package-json";
 import packageJSON from "./package.json";
+/**rollup-plugin test */
+import { useRollupPluginTest } from "./src/rollupPlugin";
 
-const getPath = (_path) => path.resolve(__dirname, _path);
+const getPath = (_path: string) => path.resolve(__dirname, _path);
 
 /**ts解析插件 */
 const tsPlugin = typescript({
   tsconfig: "tsconfig.json",
-  extensions: [".ts", ".js"],
 });
 
 /**eslint插件 */
@@ -50,7 +51,17 @@ export default () => {
     input: getPath("./src/index.ts"),
     /**排除外部引入的包 */
     external: Object.keys(packageJSON.dependencies),
-    plugins: [nodeResolve({}), esPlugin, rollupJSON(), tsPlugin, babelPlugin, commonjs(), packageJsonPlugin],
+    plugins: [
+      nodeResolve({}),
+      esPlugin,
+      rollupJSON(),
+      tsPlugin,
+      babelPlugin,
+      commonjs(),
+      packageJsonPlugin,
+      /**rollup-plugin test */
+      useRollupPluginTest(),
+    ],
     /**同时支持ESModule和commonjs导出 */
     output: [
       { file: packageJSON.module, format: "esm", name: packageJSON.name },
