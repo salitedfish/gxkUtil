@@ -60,12 +60,16 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
         return true;
       }
     } else if (typeof origin === "object" && typeof target === "object") {
-      for (const key in origin) {
-        if (!useDeepCompare(origin[key], target[key])) {
-          return false;
+      if (Object.keys(origin).length !== Object.keys(target).length) {
+        return false;
+      } else {
+        for (const key in origin) {
+          if (!useDeepCompare(origin[key], target[key])) {
+            return false;
+          }
         }
+        return true;
       }
-      return true;
     } else {
       return origin === target;
     }
@@ -73,7 +77,7 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
 };
 
 /**
- * 深度判断数组中是否包含某个值
+ * 深度判断数组中是否包含某个值, 依赖useDeepCompare
  * @param origin 例如[{a:1}]
  * @param target 例如 {a:1}
  * @returns
@@ -95,11 +99,11 @@ export const useDeepInclude = (origin: unknown[], target: unknown): boolean | nu
 };
 
 /**
- * 深度数组去重，不改变原数组
+ * 深度数组去重，不改变原数组, 依赖useDeepInclude
  * @param oldArr
  * @returns
  */
-export const useDeepRmDuplication = <V>(oldArr: V[]): V[] => {
+export const useDeepRmRpt = <V>(oldArr: V[]): V[] => {
   const newArr: V[] = [];
   for (const item of oldArr) {
     if (!useDeepInclude(newArr, item)) {
@@ -114,7 +118,7 @@ export const useDeepRmDuplication = <V>(oldArr: V[]): V[] => {
  * @param oldArr
  * @returns
  */
-export const useShallowRmDuplication = <V>(oldArr: V[]): V[] => {
+export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
   return Array.from(new Set(oldArr));
 };
 

@@ -11,23 +11,26 @@ test("test useDeepClone", () => {
 /**test useDeepCompare */
 test("test useDeepCompare", () => {
   expect(useDataOperate.useDeepCompare(cloneObj, obj)).toBe(true);
+  expect(useDataOperate.useDeepCompare({ a: 1 }, { a: 1, b: 1 })).toBe(false);
+  expect(useDataOperate.useDeepCompare([1, 2], [1, 2])).toBe(true);
 });
 
 /**test useDeepInclude */
 test("test useDeepInclude", () => {
   expect(useDataOperate.useDeepInclude([obj], cloneObj)).toBe(true);
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { a: 1 })).toBe(false);
 });
 
-/**useDeepRmDuplication */
-test("test useDeepRmDuplication", () => {
+/**useDeepRmRpt */
+test("test useDeepRmRpt", () => {
   const arr = [cloneObj, cloneObj, obj, obj];
-  expect(useDataOperate.useDeepRmDuplication(arr).length).toBe(1);
+  expect(useDataOperate.useDeepRmRpt(arr).length).toBe(1);
 });
 
-/**useShallowRmDuplication */
-test("test useShallowRmDuplication", () => {
+/**useShallowRmRpt */
+test("test useShallowRmRpt", () => {
   const arr = [cloneObj, cloneObj, obj, obj];
-  expect(useDataOperate.useShallowRmDuplication(arr).length).toBe(2);
+  expect(useDataOperate.useShallowRmRpt(arr).length).toBe(2);
 });
 
 /**test useRepPartStr */
