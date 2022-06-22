@@ -25,6 +25,7 @@
     "src/**/*.d.ts",
     "src/**/*.test.ts",
     "./*.ts",
+    "learn/**/*.ts"
   ],
   "exclude": ["node_modules", "lib",]
 }

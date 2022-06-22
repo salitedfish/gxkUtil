@@ -7,6 +7,7 @@ export * from "./axios";
 export * from "./environment";
 export * from "./dom";
 export * from "./application";
+export * from "./lib";
 
 /**统一导出全部工具 */
 import * as useDataOperate from "./dataOperate";
@@ -17,6 +18,7 @@ import * as useFetch from "./fetch";
 import * as useAxios from "./axios";
 import * as useDom from "./dom";
 import * as useApplication from "./application";
+import * as useLib from "./lib";
 
 export default {
   ...useDataOperate,
@@ -27,4 +29,5 @@ export default {
   ...useAxios,
   ...useDom,
   ...useApplication,
+  ...useLib,
 };

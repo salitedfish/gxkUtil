@@ -1,5 +1,8 @@
 import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue, ObjectType } from "../type";
 import { useCheckUndefined } from "./dataOperate";
+import SparkMD5 from "spark-md5";
+import sha256 from "crypto-js/sha256";
+import Clipboard from "clipboard";
 
 /**
  * 通过文件地址点击下载
@@ -101,7 +104,7 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
 /**
  * 多次点击Hook,支持节流
  * @param callBack
- * @param option 可选参数times默认两次，持续500ms,间隔0秒
+ * @param option 可选参数times默认两次，countDown持续500ms, interval间隔0秒
  * @returns
  */
 export const useTimesClick: UseTimesClick = (callBack, option) => {
@@ -249,4 +252,66 @@ export const useTimeFormat = (
  */
 export const useIsEarly = (target: number, curTime: number = Date.now()) => {
   return target < curTime;
+};
+
+/**
+ * 计算文件或字符串MD5hash
+ * @param data
+ * @returns
+ * md5加密安全性没sha256高，但是速度快点，这里文件加密用md5
+ */
+export const useGenMD5Hash = async (data: File | string) => {
+  if (typeof data == "string") {
+    return SparkMD5.hash(data);
+  } else {
+    const dataBufferArr = await data.arrayBuffer(); //将文件读取成buffer数组
+    let chunkSize = 104857600; //如果文件文件大于1m，则需要分块
+    let chunks = Math.ceil(data.size / chunkSize);
+    let currentChunk = 0;
+    let spark = new SparkMD5.ArrayBuffer();
+    //循环将每块文件块计算hash
+    while (currentChunk < chunks) {
+      const start = currentChunk * chunkSize,
+        end = start + chunkSize >= data.size ? data.size : start + chunkSize;
+      spark.append(Buffer.from(dataBufferArr).slice(start, end));
+      currentChunk++;
+    }
+    return spark.end();
+  }
+};
+
+/**
+ * 计算字符串sha256hash
+ * @param data
+ */
+export const useGenSha256Hash = (data: string) => {
+  return sha256(data);
+};
+
+/**
+ * 点击复制
+ * @param text 复制的文字
+ * @param domID 为了规范，统一传入dom的id
+ * @param options 失败与成功后的回调
+ */
+export const useClipboard = (
+  text: string,
+  domID: string,
+  options?: {
+    success?: () => void;
+    fail?: () => void;
+  }
+) => {
+  let clipboard = new Clipboard(`#${domID}`, {
+    text: function () {
+      return text;
+    },
+  });
+  clipboard.on("success", (e) => {
+    options?.success ? options.success() : null;
+    e.clearSelection();
+  });
+  clipboard.on("error", () => {
+    options?.fail ? options.fail() : null;
+  });
 };
