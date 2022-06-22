@@ -206,11 +206,11 @@ export const useCountDownFormat = (
 /**
  * 时间戳格式化
  * @param time 单位为毫秒
- * @param format 格式化格式，默认为"{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}"
+ * @param format 格式化格式，默认为"{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"
  */
 export const useTimeFormat = (
   time: number,
-  format: string = "{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}"
+  format: string = "{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"
 ): string => {
   const targetDate = new Date(time);
   /**解析时间 */
