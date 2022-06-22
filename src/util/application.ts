@@ -291,12 +291,12 @@ export const useGenSha256Hash = (data: string) => {
 /**
  * 点击复制
  * @param text 复制的文字
- * @param domID 为了规范，统一传入dom的id
+ * @param domID 为了规范，统一传入dom的id, 默认为app
  * @param options 失败与成功后的回调
  */
 export const useClipboard = (
   text: string,
-  domID: string,
+  domID: string = "app",
   options?: {
     success?: () => void;
     fail?: () => void;
