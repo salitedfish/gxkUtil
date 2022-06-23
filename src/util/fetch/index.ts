@@ -1,5 +1,5 @@
-import { ResponseType, PromiseWithVoid, Method, ObjectType } from "../type";
-import { useGenParamsUrl } from "./index";
+import { ResponseType, PromiseWithVoid, Method, ObjectType } from "../../type";
+import { useGenParamsUrl } from "../../index";
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
 type FetchCredentials = "omit" | "same-origin" | "include";
 type ComFetchConfig = {

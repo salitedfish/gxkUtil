@@ -1,4 +1,4 @@
-import { Method, PromiseWithVoid, ResponseType, ObjectReadonlyType, ObjectType } from "../type";
+import { Method, PromiseWithVoid, ResponseType, ObjectReadonlyType, ObjectType } from "../../type";
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from "axios";
 
 export const useAxios = (

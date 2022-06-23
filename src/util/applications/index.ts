@@ -1,5 +1,5 @@
-import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue, ObjectType } from "../type";
-import { useCheckUndefined } from "./dataOperate";
+import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue, ObjectType } from "../../type";
+import { useCheckUndefined } from "../dataOperate";
 import SparkMD5 from "spark-md5";
 import sha256 from "crypto-js/sha256";
 import Clipboard from "clipboard";
@@ -264,8 +264,10 @@ export const useGenMD5Hash = async (data: File | string) => {
   if (typeof data == "string") {
     return SparkMD5.hash(data);
   } else {
-    const dataBufferArr = await data.arrayBuffer(); //将文件读取成buffer数组
-    let chunkSize = 104857600; //如果文件文件大于1m，则需要分块
+    //将文件读取成buffer数组
+    const dataBufferArr = await data.arrayBuffer();
+    //如果文件文件大于1m，则需要分块
+    let chunkSize = 104857600;
     let chunks = Math.ceil(data.size / chunkSize);
     let currentChunk = 0;
     let spark = new SparkMD5.ArrayBuffer();
@@ -302,6 +304,9 @@ export const useClipboard = (
     fail?: () => void;
   }
 ) => {
+  if (useCheckUndefined(text)) {
+    return;
+  }
   let clipboard = new Clipboard(`#${domID}`, {
     text: function () {
       return text;

@@ -1,4 +1,4 @@
-import * as useApplication from "../util/application";
+import * as useApplication from "../..";
 
 /**test useCountDownFormat */
 test("test useCountDownFormat", () => {
@@ -28,10 +28,10 @@ test("test useTimeFormat", () => {
   ).toBe("22-12-12 2-02-12");
   expect(
     useApplication.useTimeFormat(
-      Number(new Date("2022-12-12 2:2:12")),
+      Number(new Date("2022-12-12 12:2:12")),
       "{YY}年{MM}月{dd}日 {h}h{mm}m{ss}s"
     )
-  ).toBe("22年12月12日 2h02m12s");
+  ).toBe("22年12月12日 12h02m12s");
 });
 
 /**test useGenParamsUrl */

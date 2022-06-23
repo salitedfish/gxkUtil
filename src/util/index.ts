@@ -6,7 +6,7 @@ export * from "./fetch";
 export * from "./axios";
 export * from "./environment";
 export * from "./dom";
-export * from "./application";
+export * from "./applications";
 export * from "./lib";
 
 /**统一导出全部工具 */
@@ -17,7 +17,7 @@ import * as useWebsocket from "./websocket";
 import * as useFetch from "./fetch";
 import * as useAxios from "./axios";
 import * as useDom from "./dom";
-import * as useApplication from "./application";
+import * as useApplication from "./applications";
 import * as useLib from "./lib";
 
 export default {

@@ -8,7 +8,7 @@ import babel from "@rollup/plugin-babel";
 import genPackageJson from "rollup-plugin-generate-package-json";
 import packageJSON from "./package.json";
 /**rollup-plugin test */
-import { useRollupPluginTest } from "./src/rollupPlugin";
+import { useRollupPluginTest } from "./src/plugin";
 
 const getPath = (_path: string) => path.resolve(__dirname, _path);
 
