@@ -109,7 +109,7 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件 */
         errHandler ? errHandler(err) : null;
-        return err;
+        return Promise.reject(err);
       });
   };
 };

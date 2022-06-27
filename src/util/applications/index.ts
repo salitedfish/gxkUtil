@@ -179,16 +179,16 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
   };
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type UsePromiseQueue = <V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, isCondition?: (params: T) => boolean, options?: { count?: number; countDown?: number }) => (...params: V) => Promise<T>;
+type UsePromiseInsist = <V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, isCondition?: (params: T) => boolean, options?: { count?: number; countDown?: number }) => (...params: V) => Promise<T>;
 /**
- * promise返回结果后，如果成功则返回，否则继续执行，直到最终满足条件
+ * promise返回结果后，如果满足条件则返回，否则继续执行，直到最终满足条件或达到最大次数
  * @param asyncCallBack
  * @param isCondition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
- * @param options count 最大请求次数，默认5， countDown 请求返回后间隔多少时间请求一次，默认500
- * @returns
+ * @param options count 最大请求次数，默认3， countDown 请求返回后间隔多少时间请求一次，默认500
+ * @returns 返回一个直到结果为true才返回promise的函数
  */
-export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition = (res) => !!res, options = {}) => {
-  const resOptions = { count: 5, countDown: 500, ...options };
+export const usePromiseInsist: UsePromiseInsist = (asyncCallBack, isCondition = (res) => !!res, options = {}) => {
+  const resOptions = { count: 3, countDown: 500, ...options };
   let count = 0;
   return (...params) => {
     return new Promise((resolve, reject) => {
