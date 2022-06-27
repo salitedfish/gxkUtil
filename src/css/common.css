@@ -1,0 +1,50 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+/**主题相关*/
+.dark {
+    --baseBackgroundColor: #333;
+    --baseFontColor: #fff;
+}
+.white {
+    --baseBgColor: #fff;
+    --baseFontColor: #333;
+}
+
+/**项目相关*/
+.flex-center-a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.flex-center-j {
+    display: flex;
+    justify-content: center;
+}
+.flex-center-v {
+    display: flex;
+    align-items: center;
+}
+.fixed-center-a {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.absolute-center-a {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.img-fill {
+    width: 100%;
+    height: 100%;
+}

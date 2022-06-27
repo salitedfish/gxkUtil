@@ -1,3 +1,4 @@
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 简化localStorage的使用
  * @param key
@@ -16,7 +17,7 @@ export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
     return value;
   }
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param key
  * @param value
@@ -24,10 +25,10 @@ export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
 export const useSetLStorage = (key: string, value: string) => {
   localStorage.setItem(key, value);
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param key
  */
-export const useRmLStorage = (key: string) => {
+export const useRemoveLStorage = (key: string) => {
   localStorage.removeItem(key);
 };

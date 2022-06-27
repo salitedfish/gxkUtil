@@ -1,9 +1,9 @@
-import { UseDebounce, UseThrottling, UseTimesClick, UsePromiseQueue, ObjectType } from "../../type";
+import { ObjectType } from "../../type";
 import { useCheckUndefined } from "../dataOperate";
 import SparkMD5 from "spark-md5";
 import sha256 from "crypto-js/sha256";
 import Clipboard from "clipboard";
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 通过文件地址点击下载
  * @param url
@@ -19,14 +19,14 @@ export const useDownloadByURL = (url: string, name = "file") => {
   URL.revokeObjectURL(link.href);
   document.body.removeChild(link);
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 从URL中获取文件名、文件名.扩展名
  * @param URL
  * @param withExt true表示携带扩展名
  * @returns
  */
-export const useFileNameFromURL = (URL: string, withExt = false) => {
+export const useFileNameFromURL = (URL: string, withExt: boolean = false) => {
   const firstIndex = URL.lastIndexOf("/") + 1;
   const lastIndex = URL.lastIndexOf(".");
   if (withExt) {
@@ -35,17 +35,54 @@ export const useFileNameFromURL = (URL: string, withExt = false) => {
     return URL.slice(firstIndex, lastIndex);
   }
 };
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 从URL中获取文件类型
+ * @param URL
+ * @param format 默认为false，false则直接返回扩展名，true为格式化为img，video等
+ * @returns
+ */
+export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
+  const fileType = URL.slice(URL.lastIndexOf(".") + 1);
+  if (!format) {
+    return fileType;
+  }
+  const imgType = ["png", "jpg", "jpeg", "gif"];
+  const videoType = ["wmv", "asf", "asx", "rm", "rmvb", "mpg", "mpeg", "mp4", "3gp", "mov", "m4v", "avi", "mkv", "flv", "vob"];
+  const audioType = ["mp3", "wma", "wav", "amr", "m4a"];
+  const pptType = ["ppt", "pptx"];
+  const wordType = ["doc", "docx"];
+  const excelType = ["xls", "xlsx"];
+  const pdfType = ["pdf"];
+  const txtType = ["txt"];
 
+  if (imgType.includes(fileType)) {
+    return "img";
+  } else if (videoType.includes(fileType)) {
+    return "video";
+  } else if (audioType.includes(fileType)) {
+    return "audio";
+  } else if (pptType.includes(fileType)) {
+    return "ppt";
+  } else if (wordType.includes(fileType)) {
+    return "word";
+  } else if (excelType.includes(fileType)) {
+    return "excel";
+  } else if (pdfType.includes(fileType)) {
+    return "pdf";
+  } else if (txtType.includes(fileType)) {
+    return "txt";
+  }
+  return "other";
+};
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 组装url参数
  * @param url
  * @param params
  * @returns
  */
-export const useGenParamsUrl = (
-  url: string,
-  params: { [key: string]: string | number } = {}
-): string => {
+export const useGenParamsUrl = (url: string, params: { [key: string]: string | number } = {}): string => {
   if (useCheckUndefined(url, params)) {
     throw new Error("url or params is undefined");
   }
@@ -62,11 +99,12 @@ export const useGenParamsUrl = (
   }
   return resUrl.slice(0, resUrl.length - 1);
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type UseDebounce = <V extends any[], R>(callBack: (...params: V) => R, countDown?: number) => (...params: V) => R | void;
 /**
  * 防抖Hook
  * @param callBack
- * @param countDown
+ * @param countDown 默认为1000
  * @returns
  */
 export const useDebounce: UseDebounce = (callBack, countDown = 1000) => {
@@ -76,16 +114,17 @@ export const useDebounce: UseDebounce = (callBack, countDown = 1000) => {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
-      callBack(...params);
       clearTimeout(timer);
+      return callBack(...params);
     }, countDown);
   };
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type UseThrottling = <V extends any[], R>(callBack: (...params: V) => R, countDown?: number) => (...params: V) => R | void;
 /**
  * 节流Hook
  * @param callBack
- * @param countDown
+ * @param countDown 默认为1000
  * @returns
  */
 export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
@@ -94,13 +133,14 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
     if (!lock) {
       lock = true;
       setTimeout(() => {
-        callBack(...params);
         lock = false;
+        return callBack(...params);
       }, countDown);
     }
   };
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type UseTimesClick = <V extends any[], R>(callBack: (...params: V) => R, option?: { times?: number; countDown?: number; interval?: number }) => (...params: V) => R | void;
 /**
  * 多次点击Hook,支持节流
  * @param callBack
@@ -129,60 +169,59 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
       }
       times = times + 1;
       if (times === op.times) {
-        callBack(...params);
         lock = true;
         setTimeout(() => {
           lock = false;
         }, op.interval);
+        return callBack(...params);
       }
     }
   };
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type UsePromiseQueue = <V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, isCondition?: (params: T) => boolean, options?: { count?: number; countDown?: number }) => (...params: V) => Promise<T>;
 /**
  * promise返回结果后，如果成功则返回，否则继续执行，直到最终满足条件
  * @param asyncCallBack
- * @param params
- * @param isCondition 判断是否满足条件的函数，返回true表示满足
- * @param options count countDown 最大请求次数 请求返回后间隔多少时间请求一次
+ * @param isCondition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
+ * @param options count 最大请求次数，默认5， countDown 请求返回后间隔多少时间请求一次，默认500
  * @returns
  */
-export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition, params, options) => {
-  const resOptions = { count: 3, countDown: 500, ...options };
+export const usePromiseQueue: UsePromiseQueue = (asyncCallBack, isCondition = (res) => !!res, options = {}) => {
+  const resOptions = { count: 5, countDown: 500, ...options };
   let count = 0;
-  return new Promise((resolve, reject) => {
-    const handler = async () => {
-      count = count + 1;
-      try {
-        const result = await asyncCallBack(params);
-        if (isCondition(result)) {
-          /**满足条件返回 */
-          resolve(result);
-        } else if (count > resOptions.count) {
-          /**超出最大次数返回reject */
-          reject("Exceeded times");
-        } else {
-          /**否则继续执行 */
-          setTimeout(handler, resOptions.countDown);
+  return (...params) => {
+    return new Promise((resolve, reject) => {
+      const handler = async () => {
+        count = count + 1;
+        try {
+          const result = await asyncCallBack(...params);
+          if (isCondition(result)) {
+            /**满足条件返回 */
+            resolve(result);
+          } else if (count > resOptions.count) {
+            /**超出最大次数返回reject */
+            reject("Exceeded times");
+          } else {
+            /**否则继续执行 */
+            setTimeout(handler, resOptions.countDown);
+          }
+        } catch (error) {
+          reject(error);
         }
-      } catch (error) {
-        reject(error);
-      }
-    };
-    setTimeout(handler, resOptions.countDown);
-  });
+      };
+      setTimeout(handler, resOptions.countDown);
+    });
+  };
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 倒计时格式化
  * @param time 单位为毫秒
  * @format 格式化格式，默认为"{dd}天{hh}时{mm}分{ss}秒"
  * @returns
  */
-export const useCountDownFormat = (
-  time: number,
-  format: string = "{dd}天{hh}时{mm}分{ss}秒"
-): string => {
+export const useCountDownFormat = (time: number, format: string = "{dd}天{hh}时{mm}分{ss}秒"): string => {
   /**解析时间 */
   const date: ObjectType = {
     "d+": Math.floor(time / 1000 / 3600 / 24),
@@ -195,23 +234,19 @@ export const useCountDownFormat = (
     const reg = new RegExp("({" + key + "})");
     if (reg.test(format)) {
       const regRes = reg.exec(format) || [];
-      const replaceValue =
-        regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
+      const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], replaceValue);
     }
   }
   return format;
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 时间戳格式化
  * @param time 单位为毫秒
  * @param format 格式化格式，默认为"{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"
  */
-export const useTimeFormat = (
-  time: number,
-  format: string = "{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"
-): string => {
+export const useTimeFormat = (time: number, format: string = "{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"): string => {
   const targetDate = new Date(time);
   /**解析时间 */
   const date: ObjectType = {
@@ -236,14 +271,13 @@ export const useTimeFormat = (
     const reg = new RegExp("({" + key + "})");
     if (reg.test(format)) {
       const regRes = reg.exec(format) || [];
-      const replaceValue =
-        regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
+      const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], replaceValue);
     }
   }
   return format;
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 判断目标时间是否比当前时间早
  * @param target 目标时间戳,毫秒
@@ -253,7 +287,7 @@ export const useTimeFormat = (
 export const useIsEarly = (target: number, curTime: number = Date.now()) => {
   return target < curTime;
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 计算文件或字符串MD5hash
  * @param data
@@ -281,7 +315,7 @@ export const useGenMD5Hash = async (data: File | string) => {
     return spark.end();
   }
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 计算字符串sha256hash
  * @param data
@@ -289,7 +323,7 @@ export const useGenMD5Hash = async (data: File | string) => {
 export const useGenSha256Hash = (data: string) => {
   return sha256(data);
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 点击复制
  * @param text 复制的文字

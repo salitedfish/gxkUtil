@@ -1,3 +1,4 @@
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 检查参数中是否有undefined
  * @param argument
@@ -6,7 +7,7 @@
 export const useCheckUndefined = (...argument: any[]): boolean => {
   return argument.includes(undefined);
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 检查是否含有简单数据类型, string number boolean null undefined
  * @param argument
@@ -19,7 +20,7 @@ export const useCheckSimpleData = (...argument: any[]) => {
   }
   return false;
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深拷贝
  * @param oldData
@@ -56,7 +57,7 @@ export const useDeepClone = <T>(oldData: T): T => {
     return oldData;
   }
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度比较
  * @param origin 例如: {a: 1}
@@ -118,7 +119,7 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
     }
   }
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度判断数组中是否包含某个值, 依赖useDeepCompare
  * @param origin 例如[{a:1}]
@@ -137,7 +138,7 @@ export const useDeepInclude = (origin: unknown[], target: unknown): boolean | nu
     return false;
   }
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度数组去重，不改变原数组, 依赖useDeepInclude
  * @param oldArr
@@ -152,7 +153,7 @@ export const useDeepRmRpt = <V>(oldArr: V[]): V[] => {
   }
   return newArr;
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 浅度数组去重，不改变原数组
  * @param oldArr
@@ -161,7 +162,7 @@ export const useDeepRmRpt = <V>(oldArr: V[]): V[] => {
 export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
   return Array.from(new Set(oldArr));
 };
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type Position = "head" | "center" | "tail" | "between";
 /**
  * 根据提供的位置替换字符串
@@ -170,24 +171,9 @@ type Position = "head" | "center" | "tail" | "between";
  * @param count 如果是两个值,第二个值表示从后面开始计数
  * @param replaceStr default: "*"
  */
-export function useRepPartStr(
-  target: string,
-  position: "center" | "between",
-  count: [number, number],
-  replaceStr?: string
-): string;
-export function useRepPartStr(
-  target: string,
-  position: "head" | "tail",
-  count: [number],
-  replaceStr?: string
-): string;
-export function useRepPartStr(
-  target: string,
-  position: Position,
-  count: number[],
-  replaceStr: string = "*"
-): string {
+export function useRepPartStr(target: string, position: "center" | "between", count: [number, number], replaceStr?: string): string;
+export function useRepPartStr(target: string, position: "head" | "tail", count: [number], replaceStr?: string): string;
+export function useRepPartStr(target: string, position: Position, count: number[], replaceStr: string = "*"): string {
   if (["head", "tail"].includes(position)) {
     /**二段 */
     const preStr = target.slice(0, count[0]);
@@ -210,17 +196,14 @@ export function useRepPartStr(
   }
   return target;
 }
-
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 去除字符串中的空格
  * @param target
  * @param position
  * @returns
  */
-export const useTrimStr = (
-  target: string,
-  position: "head" | "tail" | "between" | "global" = "global"
-): string => {
+export const useTrimStr = (target: string, position: "head" | "tail" | "between" | "global" = "global"): string => {
   if (position === "head") {
     return target.replace(/^\s+/g, "");
   } else if (position === "tail") {

@@ -1,5 +1,7 @@
 import { ResponseType, PromiseWithVoid, Method, ObjectType } from "../../type";
 import { useGenParamsUrl } from "../../index";
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
 type FetchCredentials = "omit" | "same-origin" | "include";
 type ComFetchConfig = {
@@ -32,11 +34,7 @@ type CusFetchOptions = {
 };
 
 /**构造清空终止控制器函数，以便请求完成后清空终止控制器 */
-const clearAbortController = (
-  comOptions: ComFetchOptions,
-  cusOptions: CusFetchOptions,
-  abortControllerId: NodeJS.Timeout
-) => {
+const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, abortControllerId: NodeJS.Timeout) => {
   /**清空终止控制器延时器 */
   if (cusOptions.timeOut || comOptions.timeOut) {
     clearTimeout(abortControllerId);
@@ -52,22 +50,14 @@ const clearAbortController = (
  * @param comConfig params body headers handler errHandler
  * @returns
  */
-export const useFetch = (
-  baseURL: string = "/",
-  comConfig: ComFetchConfig = {},
-  comOptions: ComFetchOptions = {}
-) => {
+export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   /**
    * @param URL 要以'/'开头,例：'/user/list'
    * @param method
    * @param cusConfig params body headers handler errHandler
    * @returns
    */
-  return async (
-    URL: string,
-    cusConfig: CusFetchConfig,
-    cusOptions: CusFetchOptions = {}
-  ): PromiseWithVoid<ResponseType> => {
+  return async (URL: string, cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): PromiseWithVoid<ResponseType> => {
     /**处理url */
     let url = useGenParamsUrl(baseURL + URL, cusConfig.params);
 

@@ -7,7 +7,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript",
+    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts",
     "build_link": "npm run build && npm link",
     "build_publish": "npm run build && cd ./lib && npm publish"
   },
@@ -33,6 +33,7 @@
     "babel-preset-latest": "^6.24.1",
     "jest": "^28.1.1",
     "rollup": "^2.75.5",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-eslint": "^7.0.0",
     "rollup-plugin-generate-package-json": "^3.2.0",
     "rollup-plugin-typescript2": "^0.32.1",

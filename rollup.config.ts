@@ -6,6 +6,7 @@ import typescript from "rollup-plugin-typescript2";
 import { eslint } from "rollup-plugin-eslint";
 import babel from "@rollup/plugin-babel";
 import genPackageJson from "rollup-plugin-generate-package-json";
+import copy from "rollup-plugin-copy";
 import packageJSON from "./package.json";
 /**rollup-plugin test */
 import { useRollupPluginTest } from "./src/plugin";
@@ -45,10 +46,15 @@ const packageJsonPlugin = genPackageJson({
   }),
 });
 
+/**复制文件夹到指定文件夹 */
+const rollupCopy = copy({
+  targets: [{ src: "src/css", dest: "lib" }],
+});
+
 export default () => {
   return {
     /**打包入口 */
-    input: getPath("./src/index.ts"),
+    input: getPath("src/index.ts"),
     /**排除外部引入的包 */
     external: Object.keys(packageJSON.dependencies),
     plugins: [
@@ -59,6 +65,7 @@ export default () => {
       babelPlugin,
       commonjs(),
       packageJsonPlugin,
+      rollupCopy,
       /**rollup-plugin test */
       useRollupPluginTest(),
     ],
