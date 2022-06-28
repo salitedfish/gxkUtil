@@ -1,4 +1,4 @@
-export type CommonFu<V extends any[], T = void> = (...params: V) => T;
+// export type CommonFu<V extends any[], T = void> = (...params: V) => T;
 
 export type ObjectType<T = any> = {
   [key: string]: T;

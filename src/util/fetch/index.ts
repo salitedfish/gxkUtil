@@ -11,7 +11,7 @@ type ComFetchConfig = {
   credentials?: FetchCredentials;
 };
 type ComFetchOptions = {
-  reqHandler?: (params: CusFetchConfig) => void;
+  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
   resHandler?: (params: ResponseType) => ResponseType;
   errHandler?: (params: any) => any;
   timeOut?: number;
@@ -26,7 +26,7 @@ type CusFetchConfig = {
   credentials?: FetchCredentials;
 };
 type CusFetchOptions = {
-  reqHandler?: (params: CusFetchConfig) => void;
+  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
   resHandler?: (params: ResponseType) => ResponseType;
   errHandler?: (params: any) => any;
   abortController?: AbortController[];
@@ -47,14 +47,15 @@ const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchO
 
 /**
  * @param baseURL 要以'/'开头，例：'/api'
- * @param comConfig params body headers handler errHandler
+ * @param comConfig headers responseType mode credentials
+ * @param comOptions reqHandler resHandler errHandler timeOut
  * @returns
  */
 export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   /**
    * @param URL 要以'/'开头,例：'/user/list'
-   * @param method
-   * @param cusConfig params body headers handler errHandler
+   * @param cusConfig method params body headers responseType mode credentails
+   * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns
    */
   return async (URL: string, cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): PromiseWithVoid<ResponseType> => {
@@ -89,20 +90,20 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
       }
     }
 
-    /**请求前先执行,类似于请求拦截器 */
-    reqHandler ? reqHandler(resConfig) : null;
+    /**请求前先执行，类似于请求拦截器 */
+    const retConfig = reqHandler ? reqHandler(resConfig) : resConfig;
 
     /**返回请求结果 */
-    return fetch(url, resConfig)
+    return fetch(url, retConfig)
       .then((res: any) => {
         clearAbortController(comOptions, cusOptions, abortControllerId);
-        /**如果有中间件，则先处理中间件 */
-        resHandler ? resHandler(res) : null;
+        /**如果有中间件，则先处理中间件，处理返回值 */
+        const ret = resHandler ? resHandler(res) : res;
         /**fetch结果如果是4**或5**也不会进入catch,需要手动处理 */
-        if (res.status >= 200 && res.status < 300) {
-          return res;
+        if (ret.status >= 200 && ret.status < 300) {
+          return ret;
         } else {
-          return Promise.reject(res);
+          return Promise.reject(ret);
         }
       })
       .catch((err) => {
@@ -113,3 +114,29 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
       });
   };
 };
+
+/**useage */
+const myFetch = useFetch(
+  "/",
+  {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  },
+  {
+    errHandler: () => {},
+  }
+);
+
+myFetch(
+  "/api",
+  { method: "GET", params: { a: 1 }, responseType: "blob" },
+  {
+    resHandler: (res) => {
+      return res;
+    },
+    errHandler: () => {
+      console.log("err");
+    },
+  }
+);
