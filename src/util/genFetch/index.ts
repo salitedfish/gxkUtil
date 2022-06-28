@@ -116,27 +116,27 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
 };
 
 /**useage */
-const myFetch = useFetch(
-  "/",
-  {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  },
-  {
-    errHandler: () => {},
-  }
-);
+// const myFetch = useFetch(
+//   "/",
+//   {
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   },
+//   {
+//     errHandler: () => {},
+//   }
+// );
 
-myFetch(
-  "/api",
-  { method: "GET", params: { a: 1 }, responseType: "blob" },
-  {
-    resHandler: (res) => {
-      return res;
-    },
-    errHandler: () => {
-      console.log("err");
-    },
-  }
-);
+// myFetch(
+//   "/api",
+//   { method: "GET", params: { a: 1 }, responseType: "blob" },
+//   {
+//     resHandler: (res) => {
+//       return res;
+//     },
+//     errHandler: () => {
+//       console.log("err");
+//     },
+//   }
+// );

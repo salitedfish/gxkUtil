@@ -1,5 +1,10 @@
 import * as useApplication from "../..";
 
+const genAsync = () => {
+  const res = Math.floor(Math.random() * 5);
+  return Promise.resolve(res);
+};
+
 /**test useFileNameFromURL */
 test("test useFileNameFromURL", () => {
   expect(useApplication.useFileNameFromURL("efefer/test.jpg")).toBe("test");
@@ -42,4 +47,16 @@ test("test useFileNameFromURL", () => {
 /**test useIsEarly */
 test("test useIsEarly", () => {
   expect(useApplication.useIsEarly(Number(new Date("2022-12-12 12:12:12")))).toBe(false);
+});
+
+/**test usePromiseInsist */
+test("test usePromiseInsist", async () => {
+  try {
+    const genTarget = await useApplication.usePromiseInsist(genAsync, (res) => {
+      return res === 3;
+    })();
+    expect(genTarget).toBe(3);
+  } catch (err) {
+    expect(err).toBe("Exceeded times");
+  }
 });
