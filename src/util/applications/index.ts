@@ -215,6 +215,31 @@ export const usePromiseInsist: UsePromiseInsist = (asyncCallBack, isCondition = 
   };
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+// type UseAsync = <T extends any[], V>(asyncCallBack: (...params: T) => Promise<V | void>) => (...params: T) => <U>(defaultValue: U, errCallBack?: (err: unknown) => void) => Promise<V | U>;
+// /**
+//  * 旨在对async 和 await的封装，可以传入当异步没返回值或异步出错时的默认返回值和异常回调函数
+//  * @param asyncCallBack
+//  * @returns
+//  */
+// export const useAsync: UseAsync = (asyncCallBack) => {
+//   return (...params) => {
+//     return async (defaultValue, errCallBack) => {
+//       try {
+//         const res = await asyncCallBack(...params);
+//         if (res) {
+//           return res;
+//         } else {
+//           errCallBack ? errCallBack(res) : null;
+//           return Promise.reject(defaultValue);
+//         }
+//       } catch (err) {
+//         errCallBack ? errCallBack(err) : null;
+//         return Promise.reject(defaultValue);
+//       }
+//     };
+//   };
+// };
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 倒计时格式化
  * @param time 单位为毫秒
