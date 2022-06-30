@@ -1,8 +1,13 @@
 import * as useApplication from "../..";
 
+/**测试异步请求用的，随机返回0 ~ 4的整数 */
 const genAsync = () => {
   const res = Math.floor(Math.random() * 5);
-  return Promise.resolve(res);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(res);
+    }, 200);
+  });
 };
 
 /**test useFileNameFromURL */
@@ -15,6 +20,18 @@ test("test useFileNameFromURL", () => {
 test("test useFileTypeFromURL", () => {
   expect(useApplication.useFileTypeFromURL("efefer/test.jpg")).toBe("jpg");
   expect(useApplication.useFileTypeFromURL("efefer/test.jpg", true)).toBe("img");
+});
+
+/**test usePromiseInsist */
+test("test usePromiseInsist", async () => {
+  try {
+    const genTarget = await useApplication.usePromiseInsist(genAsync, (res) => {
+      return res === 3;
+    })();
+    expect(genTarget).toBe(3);
+  } catch (err) {
+    expect(err).toMatch("Exceeded times");
+  }
 });
 
 /**test useCountDownFormat */
@@ -47,16 +64,4 @@ test("test useFileNameFromURL", () => {
 /**test useIsEarly */
 test("test useIsEarly", () => {
   expect(useApplication.useIsEarly(Number(new Date("2022-12-12 12:12:12")))).toBe(false);
-});
-
-/**test usePromiseInsist */
-test("test usePromiseInsist", async () => {
-  try {
-    const genTarget = await useApplication.usePromiseInsist(genAsync, (res) => {
-      return res === 3;
-    })();
-    expect(genTarget).toBe(3);
-  } catch (err) {
-    expect(err).toBe("Exceeded times");
-  }
 });

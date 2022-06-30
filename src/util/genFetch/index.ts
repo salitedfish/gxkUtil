@@ -1,22 +1,24 @@
-import { ResponseType, PromiseWithVoid, Method, ObjectType } from "../../type";
+import { ResponseType, Method, ObjectType } from "../../type";
 import { useGenParamsUrl } from "../../index";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
 type FetchCredentials = "omit" | "same-origin" | "include";
 type ComFetchConfig = {
+  baseURL?: string;
   headers?: ObjectType<string | number>;
   responseType?: string;
   mode?: FetchMode;
   credentials?: FetchCredentials;
 };
 type ComFetchOptions = {
-  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: ResponseType) => ResponseType;
-  errHandler?: (params: any) => any;
+  reqHandler?: ((params: CusFetchConfig) => CusFetchConfig) | false;
+  resHandler?: ((params: ResponseType) => ResponseType) | false;
+  errHandler?: ((params: any) => any) | false;
   timeOut?: number;
 };
 type CusFetchConfig = {
+  URL: string;
   method: Method;
   params?: ObjectType<string | number>;
   body?: ObjectType | any[] | string;
@@ -26,9 +28,9 @@ type CusFetchConfig = {
   credentials?: FetchCredentials;
 };
 type CusFetchOptions = {
-  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: ResponseType) => ResponseType;
-  errHandler?: (params: any) => any;
+  reqHandler?: ((params: CusFetchConfig) => CusFetchConfig) | false;
+  resHandler?: ((params: ResponseType) => ResponseType) | false;
+  errHandler?: ((params: any) => any) | false;
   abortController?: AbortController[];
   timeOut?: number;
 };
@@ -46,21 +48,19 @@ const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchO
 };
 
 /**
- * @param baseURL 要以'/'开头，例：'/api'
- * @param comConfig headers responseType mode credentials
+ * @param comConfig baseURL headers responseType mode credentials
  * @param comOptions reqHandler resHandler errHandler timeOut
- * @returns
+ * @returns 自定义Fetch
  */
-export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
+export const useFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   /**
-   * @param URL 要以'/'开头,例：'/user/list'
-   * @param cusConfig method params body headers responseType mode credentails
+   * @param cusConfig URL method headers params body responseType mode credentails
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
-   * @returns
+   * @returns 原生Fetch请求
    */
-  return async (URL: string, cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): PromiseWithVoid<ResponseType> => {
+  return async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
-    let url = useGenParamsUrl(baseURL + URL, cusConfig.params);
+    let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL, cusConfig.params);
 
     /**处理config */
     let resConfig: any = { ...comConfig, ...cusConfig };
@@ -68,9 +68,9 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
     resConfig.body = JSON.stringify(cusConfig.body);
 
     /**处理中间件 */
-    const reqHandler = cusOptions.reqHandler || comOptions.reqHandler;
-    const resHandler = cusOptions.resHandler || comOptions.resHandler;
-    const errHandler = cusOptions.errHandler || comOptions.errHandler;
+    const reqHandler = String(cusOptions.reqHandler) === "false" ? null : cusOptions.reqHandler || comOptions.reqHandler;
+    const resHandler = String(cusOptions.resHandler) === "false" ? null : cusOptions.resHandler || comOptions.resHandler;
+    const errHandler = String(cusOptions.errHandler) === "false" ? null : cusOptions.errHandler || comOptions.errHandler;
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusOptions.timeOut || comOptions.timeOut;
@@ -117,26 +117,43 @@ export const useFetch = (baseURL: string = "/", comConfig: ComFetchConfig = {}, 
 
 /**useage */
 // const myFetch = useFetch(
-//   "/",
 //   {
 //     headers: {
 //       "Content-Type": "application/json",
 //     },
 //   },
 //   {
+//     reqHandler: (resConfig) => {
+//       return { ...resConfig, token: "123" };
+//     },
+//     resHandler: (res) => {
+//       return res;
+//     },
 //     errHandler: () => {},
+//     timeOut: 10000,
 //   }
 // );
 
 // myFetch(
-//   "/api",
-//   { method: "GET", params: { a: 1 }, responseType: "blob" },
 //   {
-//     resHandler: (res) => {
-//       return res;
+//     URL: "/api",
+//     method: "GET",
+//     params: { a: 1 },
+//     body: { a: 1 },
+//     headers: {
+//       "Content-type": "text",
 //     },
+//     responseType: "blob",
+//   },
+//   {
+//     reqHandler: (resConfig) => {
+//       return resConfig;
+//     },
+//     resHandler: false,
 //     errHandler: () => {
 //       console.log("err");
 //     },
+//     abortController: [],
+//     timeOut: 5000,
 //   }
 // );
