@@ -63,5 +63,10 @@ test("test useFileNameFromURL", () => {
 
 /**test useIsEarly */
 test("test useIsEarly", () => {
-  expect(useApplication.useIsEarly(Number(new Date("2022-12-12 12:12:12")))).toBe(false);
+  expect(useApplication.useIsEarly("2022-1-12 12:12:12")).toBe(true);
+  expect(useApplication.useIsEarly("2022-2-12 12:12:12", "2022-1-12 12:12:12")).toBe(false);
+  expect(useApplication.useIsEarly("2021年2月12日 12:12:12", "2022-1-12 12:12:12")).toBe(true);
+  expect(useApplication.useIsEarly("2023年2/12日 12:12:12", 1234567)).toBe(false);
+  expect(useApplication.useIsEarly("2022-2-12 12:12:12", 234324)).toBe(false);
+  expect(useApplication.useIsEarly(234234, 234324234)).toBe(true);
 });

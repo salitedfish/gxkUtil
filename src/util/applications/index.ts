@@ -305,12 +305,29 @@ export const useTimeFormat = (time: number, format: string = "{YYYY}-{MM}-{DD} {
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 判断目标时间是否比当前时间早
- * @param target 目标时间戳,毫秒
- * @param curTime 默认为当前时间戳,毫秒
+ * @param targetTime 目标时间戳毫秒或时间格式字符串，如果是字符串要求从年开始。
+ * @param currentTime 参照时间戳或时间格式字符串，默认为当前时间戳毫秒，如果是字符串要求从年开始。
  * @returns
  */
-export const useIsEarly = (target: number, curTime: number = Date.now()) => {
-  return target < curTime;
+export const useIsEarly = (targetTime: number | string, currentTime: number | string = Date.now()) => {
+  let targetTimeNum: number;
+  if (typeof targetTime == "number") {
+    targetTimeNum = targetTime;
+  } else {
+    /**ios时间格式不能用-连接改成/ */
+    const target = targetTime.replace(/-|年|月|日|号/g, "/").replace(/时|分|秒/g, ":");
+    targetTimeNum = Number(new Date(target));
+  }
+  let currntTimeNum: number;
+  if (typeof currentTime == "number") {
+    currntTimeNum = currentTime;
+  } else {
+    /**ios时间格式不能用-连接改成/ */
+    const current = currentTime.replace(/-|年|月|日|号/g, "/").replace(/时|分|秒/g, ":");
+    currntTimeNum = Number(new Date(current));
+  }
+  //比较时间戳
+  return targetTimeNum < currntTimeNum;
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
