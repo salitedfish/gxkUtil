@@ -7,7 +7,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts",
+    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript ",
     "build_link": "npm run build && npm link",
     "build_publish": "npm run build && cd ./lib && npm publish"
   },

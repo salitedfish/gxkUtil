@@ -54,7 +54,7 @@ const rollupCopy = copy({
 export default () => {
   return {
     /**打包入口 */
-    input: getPath("src/index.ts"),
+    input: getPath("index.ts"),
     /**排除外部引入的包 */
     external: Object.keys(packageJSON.dependencies),
     plugins: [
