@@ -19,7 +19,7 @@ test("test useFileNameFromURL", () => {
 /**test useFileTypeFromURL */
 test("test useFileTypeFromURL", () => {
   expect(useCommon.useFileTypeFromURL("efefer/test.jpg")).toBe("jpg");
-  expect(useCommon.useFileTypeFromURL("efefer/test.jpg", true)).toBe("img");
+  expect(useCommon.useFileTypeFromURL("efefer/test.jpg", true)).toBe("image");
 });
 
 /**test usePromiseInsist */
