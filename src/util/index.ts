@@ -4,14 +4,13 @@ export * from "./storage";
 export * from "./websocket";
 export * from "./genFetch";
 export * from "./axios";
-export * from "./environment";
 export * from "./dom";
 export * from "./applications";
 export * from "./npm";
 
 /**统一导出全部工具 */
 import * as useDataOperate from "./dataOperate";
-import * as useEnvironment from "./environment";
+import * as useEnvironment from "./applications/environment";
 import * as useStorage from "./storage";
 import * as useWebsocket from "./websocket";
 import * as useFetch from "./genFetch";

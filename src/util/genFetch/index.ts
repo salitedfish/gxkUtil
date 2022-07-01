@@ -50,13 +50,13 @@ const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchO
 /**
  * @param comConfig baseURL headers responseType mode credentials
  * @param comOptions reqHandler resHandler errHandler timeOut
- * @returns 自定义Fetch
+ * @returns 自定义fetch
  */
 export const useFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   /**
    * @param cusConfig URL method headers params body responseType mode credentails
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
-   * @returns 原生Fetch请求
+   * @returns 原生fetch
    */
   return async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
@@ -68,9 +68,9 @@ export const useFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     resConfig.body = JSON.stringify(cusConfig.body);
 
     /**处理中间件 */
-    const reqHandler = String(cusOptions.reqHandler) === "false" ? null : cusOptions.reqHandler || comOptions.reqHandler;
-    const resHandler = String(cusOptions.resHandler) === "false" ? null : cusOptions.resHandler || comOptions.resHandler;
-    const errHandler = String(cusOptions.errHandler) === "false" ? null : cusOptions.errHandler || comOptions.errHandler;
+    const reqHandler = cusOptions.reqHandler === false ? null : cusOptions.reqHandler || comOptions.reqHandler;
+    const resHandler = cusOptions.resHandler === false ? null : cusOptions.resHandler || comOptions.resHandler;
+    const errHandler = cusOptions.errHandler === false ? null : cusOptions.errHandler || comOptions.errHandler;
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusOptions.timeOut || comOptions.timeOut;

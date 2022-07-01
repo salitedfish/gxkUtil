@@ -1,4 +1,4 @@
-import * as useDataOperate from "../..";
+import * as useDataOperate from ".";
 
 const f = new Map();
 f.set("a", { a: 1 });
