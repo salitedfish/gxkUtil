@@ -38,7 +38,7 @@ export const useFileNameFromURL = (URL: string, withExt: boolean = false) => {
 /**
  * 从URL中获取文件类型
  * @param URL
- * @param format 默认为false，false则直接返回扩展名，true为格式化为img，video等
+ * @param format 默认为false，false则直接返回扩展名，true为格式化为image，video等
  * @returns
  */
 export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
@@ -56,7 +56,7 @@ export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
   const txtType = ["txt"];
 
   if (imgType.includes(fileType)) {
-    return "img";
+    return "image";
   } else if (videoType.includes(fileType)) {
     return "video";
   } else if (audioType.includes(fileType)) {
@@ -306,4 +306,3 @@ export const useGenSha256Hash = (data: string) => {
   return sha256(data);
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
