@@ -17,7 +17,6 @@
     "removeComments": true, //删除注释
     "declaration": true, //生成定义文件
     "declarationMap": false,
-    // "declarationDir": "./lib/types",
     "types": ["node", "jest"] //导入类型包
   },
   "include": [
