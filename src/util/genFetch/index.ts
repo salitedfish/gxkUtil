@@ -116,44 +116,47 @@ export const useFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
 };
 
 /**useage */
-// const myFetch = useFetch(
-//   {
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   },
-//   {
-//     reqHandler: (resConfig) => {
-//       return { ...resConfig, token: "123" };
-//     },
-//     resHandler: (res) => {
-//       return res;
-//     },
-//     errHandler: () => {},
-//     timeOut: 10000,
-//   }
-// );
+function useage() {
+  const apiFetch = useFetch(
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+    {
+      reqHandler: (resConfig) => {
+        return { ...resConfig, token: "123" };
+      },
+      resHandler: (res) => {
+        return res;
+      },
+      errHandler: () => {},
+      timeOut: 10000,
+    }
+  );
 
-// myFetch(
-//   {
-//     URL: "/api",
-//     method: "GET",
-//     params: { a: 1 },
-//     body: { a: 1 },
-//     headers: {
-//       "Content-type": "text",
-//     },
-//     responseType: "blob",
-//   },
-//   {
-//     reqHandler: (resConfig) => {
-//       return resConfig;
-//     },
-//     resHandler: false,
-//     errHandler: () => {
-//       console.log("err");
-//     },
-//     abortController: [],
-//     timeOut: 5000,
-//   }
-// );
+  apiFetch(
+    {
+      URL: "/api",
+      method: "GET",
+      params: { a: 1 },
+      body: { a: 1 },
+      headers: {
+        "Content-type": "text",
+      },
+      responseType: "blob",
+    },
+    {
+      reqHandler: (resConfig) => {
+        return resConfig;
+      },
+      resHandler: false,
+      errHandler: () => {
+        console.log("err");
+      },
+      abortController: [],
+      timeOut: 5000,
+    }
+  );
+}
+useage;
