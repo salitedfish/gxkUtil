@@ -31,8 +31,8 @@ export const useGetDom = (target: string) => {
 export const useAddDomClass = (target: string, classNames: string[]) => {
   let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
   if (Array.isArray(targetDom)) {
-    for (let i = 0; i <= targetDom.length - 1; i++) {
-      targetDom[i].classList.add(...classNames);
+    for (let item of targetDom) {
+      item.classList.add(...classNames);
     }
   } else {
     (targetDom as HTMLElement).classList.add(...classNames);
@@ -49,8 +49,8 @@ export const useRemoveDomClass = (target: string, classNames: string[]) => {
   let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
 
   if (Array.isArray(targetDom)) {
-    for (let i = 0; i <= targetDom.length - 1; i++) {
-      targetDom[i].classList.remove(...classNames);
+    for (let item of targetDom) {
+      item.classList.remove(...classNames);
     }
   } else {
     (targetDom as HTMLElement).classList.remove(...classNames);
@@ -63,8 +63,8 @@ export const useRemoveDomClass = (target: string, classNames: string[]) => {
  * @param styleName
  * @returns
  */
-type StyleName = keyof CSSStyleDeclaration & string;
-export const useGetDomStyle = (target: string, styleName: StyleName) => {
+type GetStyleName = keyof CSSStyleDeclaration & string;
+export const useGetDomStyle = (target: string, styleName: GetStyleName) => {
   let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
   if (Array.isArray(targetDom)) {
     return targetDom.map((item) => {
@@ -81,14 +81,14 @@ export const useGetDomStyle = (target: string, styleName: StyleName) => {
  * @param styleName
  * @param styleValue
  */
-//  <V extends ReturnType<CSSStyleDeclaration<StyleName>>>
-export const useSetDomStyle = (target: string, styleName: StyleName, styleValue: string) => {
+type SetStyleName = keyof CSSStyleDeclaration & string;
+export const useSetDomStyle = <T extends SetStyleName>(target: string, styleName: T, styleValue: CSSStyleDeclaration[T]) => {
   let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
   if (Array.isArray(targetDom)) {
     for (let item of targetDom) {
       item.style[styleName] = styleValue;
     }
   } else {
-    (targetDom as any).style[styleName] = styleValue;
+    (targetDom as HTMLElement).style[styleName] = styleValue;
   }
 };
