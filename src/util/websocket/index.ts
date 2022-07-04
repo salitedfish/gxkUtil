@@ -1,5 +1,4 @@
-// const useWebSocket = (socketUrl: string) => {
-export class UseWebSocket {
+class UseWebSocket {
   socket: WebSocket | undefined;
   socketUrl: string;
   socketPingInterval: any;
@@ -95,5 +94,7 @@ export class UseWebSocket {
     return this.messages;
   }
 }
-//   return new UseWebSocket(socketUrl);
-// };
+
+export const useWebSocket = (socketUrl: string) => {
+  return new UseWebSocket(socketUrl);
+};
