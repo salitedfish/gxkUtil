@@ -19,26 +19,26 @@ ul, ol {
 }
 
 /**项目相关*/
-.flex-center-a {
+.flex-center-xy {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.flex-center-j {
+.flex-center-x {
     display: flex;
     justify-content: center;
 }
-.flex-center-v {
+.flex-center-y {
     display: flex;
     align-items: center;
 }
-.fixed-center-a {
+.fixed-center-xy {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
-.absolute-center-a {
+.absolute-center-xy {
     position: absolute;
     top: 50%;
     left: 50%;

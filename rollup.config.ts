@@ -8,6 +8,7 @@ import babel from "@rollup/plugin-babel";
 import genPackageJson from "rollup-plugin-generate-package-json";
 import copy from "rollup-plugin-copy";
 import packageJSON from "./package.json";
+import { terser } from "rollup-plugin-terser";
 /**rollup-plugin test */
 import { useRollupPluginTest } from "./src/plugin";
 
@@ -64,6 +65,7 @@ export default () => {
       tsPlugin,
       babelPlugin,
       commonjs(),
+      terser(),
       packageJsonPlugin,
       rollupCopy,
       /**rollup-plugin test */
