@@ -41,7 +41,7 @@ const packageJsonPlugin = genPackageJson({
     version: packageJSON.version,
     license: "MIT",
     main: "index.js",
-    typings: "index.d.ts",
+    typings: "src/index.d.ts",
     dependencies: packageJSON.dependencies,
   }),
 });
@@ -54,7 +54,7 @@ const rollupCopy = copy({
 export default () => {
   return {
     /**打包入口 */
-    input: getPath("index.ts"),
+    input: getPath("./src/index.ts"),
     /**排除外部引入的包 */
     external: Object.keys(packageJSON.dependencies),
     plugins: [

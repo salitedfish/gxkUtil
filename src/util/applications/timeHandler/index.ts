@@ -3,7 +3,6 @@ import { ObjectType } from "../../../type";
 /**
  * 将时间格式字符串或时间戳转化为时间戳毫秒
  * @param timeStr 如：2010年1月1号 10时2分4或1234567891
- * @returns
  */
 export const useGenTimeStamp = (timeStr: string | number) => {
   if (!isNaN(Number(timeStr))) {
@@ -28,7 +27,6 @@ export const useGenTimeStamp = (timeStr: string | number) => {
  * 判断目标时间是否比参照时间早
  * @param targetTime 目标时间戳或时间格式字符串，如果是字符串要求从年开始。
  * @param referenceTime 参照时间戳或时间格式字符串，默认为当前时间戳毫秒，如果是字符串要求从年开始。
- * @returns
  */
 export const useIsEarly = (targetTime: number | string, referenceTime: number | string = Date.now()) => {
   return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
@@ -38,7 +36,6 @@ export const useIsEarly = (targetTime: number | string, referenceTime: number | 
  * 剩余时间转化为时间格式字符串
  * @param time 剩余时间毫秒
  * @format 格式化格式，默认为"{dd}天{hh}时{mm}分{ss}秒"
- * @returns
  */
 export const useCountDownFormat = (time: number | string, format: string = "{dd}天{hh}时{mm}分{ss}秒"): string => {
   let newTime = Number(time);

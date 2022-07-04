@@ -1,13 +1,13 @@
 {
   "name": "gxk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript ",
+    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts ",
     "build_link": "npm run build && npm link",
     "build_publish": "npm run build && cd ./lib && npm publish"
   },
@@ -31,7 +31,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^28.1.1",
     "babel-preset-latest": "^6.24.1",
-    "gxk": "^0.0.3",
+    "gxk": "^0.0.4",
     "jest": "^28.1.1",
     "rollup": "^2.75.5",
     "rollup-plugin-copy": "^3.4.0",

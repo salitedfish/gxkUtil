@@ -3,7 +3,7 @@
  * 简化localStorage的使用
  * @param key
  * @param defaultValue 默认值
- * @returns
+ * @returns 返回自动处理后的值，对象、数组、字符串、布尔等
  */
 export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
   let value = localStorage.getItem(key);
@@ -20,10 +20,11 @@ export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param key
- * @param value
+ * @param value 函数自动转化为json
  */
-export const useSetLStorage = (key: string, value: string) => {
-  localStorage.setItem(key, value);
+export const useSetLStorage = (key: string, value: any) => {
+  const valueJSON = JSON.stringify(value);
+  localStorage.setItem(key, valueJSON);
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
