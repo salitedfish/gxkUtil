@@ -1,17 +1,17 @@
 {
   "name": "gxk",
-  "version": "0.0.4",
+  "version": "0.0.19",
   "description": "",
   "module": "lib/index.mjs",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/index.cjs",
+  "types": "lib/src/index.d.ts",
   "scripts": {
     "test": "jest",
     "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts ",
     "build_link": "npm run build && npm link",
     "build_publish": "npm run build && cd ./lib && npm publish"
   },
-  "author": "",
+  "author": "gxk",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.18.2",
