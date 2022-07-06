@@ -12,7 +12,7 @@ export const useGenTimeStamp = (timeStr: string | number) => {
     } else if (String(timeStr).length === 13) {
       return Number(timeStr);
     } else {
-      throw new Error("useGenTimeStamp：时间戳错误");
+      throw new Error("useGenTimeStamp：时间戳错误!");
     }
   } else {
     /**如果是"2010年1月1号 10时2分4 */
