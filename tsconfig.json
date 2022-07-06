@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "noUnusedLocals": true, //未使用变量报错
-    "removeComments": true, //删除注释
+    "removeComments": false, //不删除注释，为了项目里使用时能看到注释
     "declaration": true, //生成定义文件
     "declarationMap": false,
     "types": ["node", "jest"] //导入类型包
