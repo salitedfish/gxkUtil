@@ -4,7 +4,6 @@
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
-  "types": "lib/src/index.d.ts",
   "scripts": {
     "test": "jest",
     "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts ",

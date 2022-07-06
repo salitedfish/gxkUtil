@@ -46,7 +46,7 @@ const packageJsonPlugin = genPackageJson({
     typings: "src/index.d.ts",
     dependencies: packageJSON.dependencies,
     sideEffects: false,
-    keywords: "gxk",
+    keywords: ["gxk"],
   }),
 });
 
