@@ -15,11 +15,7 @@ export const useSetHTMLTitle = (title: string): void => {
  */
 export const useGetDom = (target: string) => {
   let targetDom: NodeListOf<HTMLElement> = document.querySelectorAll(target);
-  if (targetDom.length === 1) {
-    return targetDom[0];
-  } else {
-    return targetDom;
-  }
+  return targetDom;
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -29,13 +25,9 @@ export const useGetDom = (target: string) => {
  * @returns
  */
 export const useAddDomClass = (target: string, classNames: string[]) => {
-  let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
-  if (Array.isArray(targetDom)) {
-    for (let item of targetDom) {
-      item.classList.add(...classNames);
-    }
-  } else {
-    (targetDom as HTMLElement).classList.add(...classNames);
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    targetDom[i].classList.add(...classNames);
   }
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -46,49 +38,39 @@ export const useAddDomClass = (target: string, classNames: string[]) => {
  * @returns
  */
 export const useRemoveDomClass = (target: string, classNames: string[]) => {
-  let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
-
-  if (Array.isArray(targetDom)) {
-    for (let item of targetDom) {
-      item.classList.remove(...classNames);
-    }
-  } else {
-    (targetDom as HTMLElement).classList.remove(...classNames);
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    targetDom[i].classList.remove(...classNames);
   }
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 获取dom的style各属性值
  * @param target
- * @param styleName
+ * @param styleName 如：width
  * @returns
  */
 type GetStyleName = keyof CSSStyleDeclaration & string;
 export const useGetDomStyle = (target: string, styleName: GetStyleName) => {
-  let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
-  if (Array.isArray(targetDom)) {
-    return targetDom.map((item) => {
-      return window.getComputedStyle(item).getPropertyValue(styleName);
-    });
-  } else {
-    return window.getComputedStyle(targetDom as HTMLElement).getPropertyValue(styleName);
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  const styles = [];
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    /**dom.style只能获取到内联style的属性值，所以用这种方式获取 */
+    styles.push(window.getComputedStyle(targetDom[i]).getPropertyValue(styleName));
   }
+  return styles;
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 设置dom的style各属性值
  * @param target
- * @param styleName
- * @param styleValue
+ * @param styleName 如：width
+ * @param styleValue 如：12px
  */
 type SetStyleName = keyof CSSStyleDeclaration & string;
 export const useSetDomStyle = <T extends SetStyleName>(target: string, styleName: T, styleValue: CSSStyleDeclaration[T]) => {
-  let targetDom: NodeListOf<HTMLElement> | HTMLElement = useGetDom(target);
-  if (Array.isArray(targetDom)) {
-    for (let item of targetDom) {
-      item.style[styleName] = styleValue;
-    }
-  } else {
-    (targetDom as HTMLElement).style[styleName] = styleValue;
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    targetDom[i].style[styleName] = styleValue;
   }
 };

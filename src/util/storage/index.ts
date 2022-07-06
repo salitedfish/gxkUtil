@@ -19,8 +19,9 @@ export const useGetLStorage = (key: string, defaultValue: any = undefined) => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
+ * 简化localStorage的使用
  * @param key
- * @param value 函数自动转化为json
+ * @param value 数组对象自动转化为json
  */
 export const useSetLStorage = (key: string, value: any) => {
   const valueJSON = JSON.stringify(value);
@@ -28,6 +29,7 @@ export const useSetLStorage = (key: string, value: any) => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
+ * 简化localStorage的使用
  * @param key
  */
 export const useRemoveLStorage = (key: string) => {
