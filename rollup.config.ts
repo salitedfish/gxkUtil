@@ -46,12 +46,16 @@ const packageJsonPlugin = genPackageJson({
     typings: "src/index.d.ts",
     dependencies: packageJSON.dependencies,
     sideEffects: false,
+    keywords: "gxk",
   }),
 });
 
 /**复制文件夹到指定文件夹 */
 const rollupCopy = copy({
-  targets: [{ src: "src/css", dest: "lib" }],
+  targets: [
+    { src: "src/css", dest: "lib" },
+    { src: "./readme.md", dest: "lib" },
+  ],
 });
 
 export default () => {
