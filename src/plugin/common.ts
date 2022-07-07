@@ -1,16 +1,19 @@
 export const useRollupPluginTest = () => {
-  // let count = 0;
+  let count = 0;
   return {
     name: "rollup-plugin-test",
     // options(source: unknown) {
     //   console.log("options", source);
     // },
-    // buildStart(source: unknown) {
-    //   console.log("buildStart", source);
+    // buildStart(source: any) {
     // },
-    // resolveId(source: string) {
-    //   console.log("resolveId", source);
+    // resolveId(source: string,) {
+    //   console.log("source", source);
     // },
+    load() {
+      count++;
+      console.log(count);
+    },
     // load(source: string) {
     //   count = count + 1;
     //   console.log(`第${count}个文件`, source);
