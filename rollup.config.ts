@@ -4,7 +4,7 @@ import rollupJSON from "@rollup/plugin-json";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
 import { eslint } from "rollup-plugin-eslint";
-// import babel from "@rollup/plugin-babel";
+import babel from "@rollup/plugin-babel";
 import genPackageJson from "rollup-plugin-generate-package-json";
 import copy from "rollup-plugin-copy";
 import packageJSON from "./package.json";
@@ -28,11 +28,11 @@ const esPlugin = eslint({
 });
 
 /**babel插件 */
-// const babelPlugin = babel({
-//   exclude: "node_modules/**",
-//   babelHelpers: "bundled",
-//   extensions: [".ts", ".js"],
-// });
+const babelPlugin = babel({
+  exclude: "node_modules/**",
+  babelHelpers: "bundled",
+  extensions: [".ts", ".js"],
+});
 
 /**生成package.json插件 */
 const packageJsonPlugin = genPackageJson({
@@ -69,7 +69,7 @@ export default () => {
       esPlugin,
       rollupJSON(),
       tsPlugin,
-      // babelPlugin,
+      babelPlugin,
       commonjs(),
       // terser(),
       packageJsonPlugin,
