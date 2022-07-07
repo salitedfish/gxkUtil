@@ -64,61 +64,70 @@ export const useDeepClone = <T>(oldData: T): T => {
  * @param target 例如: {a: 1}
  * @returns
  */
-export const useDeepCompare = (origin: any, target: any): boolean => {
-  if (useCheckSimpleData(origin, target)) {
-    return origin === target;
-  } else {
-    if (Array.isArray(origin) && Array.isArray(target)) {
-      if (origin.length !== target.length) {
-        return false;
-      } else {
-        for (let i = 0; i < origin.length; i++) {
-          if (!useDeepCompare(origin[i], target[i])) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else if (origin instanceof Map && target instanceof Map) {
-      if (origin.size !== target.size) {
-        return false;
-      } else {
-        for (const [key, value] of origin) {
-          if (!useDeepCompare(value, target.get(key))) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else if (origin instanceof Set && target instanceof Set) {
-      if (origin.size !== target.size) {
-        return false;
-      } else {
-        const originArr = Array.from(origin);
-        const newArr = Array.from(target);
-        for (let i = 0; i < originArr.length; i++) {
-          if (!useDeepCompare(originArr[i], newArr[i])) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else if (typeof origin === "object" && typeof target === "object") {
-      if (Object.keys(origin).length !== Object.keys(target).length) {
-        return false;
-      } else {
-        for (const key in origin) {
-          if (!useDeepCompare(origin[key], target[key])) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else {
+export function useDeepCompare(origin: any): (target: any) => boolean;
+export function useDeepCompare(origin: any, target: any): boolean;
+export function useDeepCompare(origin: any, target?: any) {
+  const handler = (target: any) => {
+    if (useCheckSimpleData(origin, target)) {
       return origin === target;
+    } else {
+      if (Array.isArray(origin) && Array.isArray(target)) {
+        if (origin.length !== target.length) {
+          return false;
+        } else {
+          for (let i = 0; i < origin.length; i++) {
+            if (!useDeepCompare(origin[i], target[i])) {
+              return false;
+            }
+          }
+          return true;
+        }
+      } else if (origin instanceof Map && target instanceof Map) {
+        if (origin.size !== target.size) {
+          return false;
+        } else {
+          for (const [key, value] of origin) {
+            if (!useDeepCompare(value, target.get(key))) {
+              return false;
+            }
+          }
+          return true;
+        }
+      } else if (origin instanceof Set && target instanceof Set) {
+        if (origin.size !== target.size) {
+          return false;
+        } else {
+          const originArr = Array.from(origin);
+          const newArr = Array.from(target);
+          for (let i = 0; i < originArr.length; i++) {
+            if (!useDeepCompare(originArr[i], newArr[i])) {
+              return false;
+            }
+          }
+          return true;
+        }
+      } else if (typeof origin === "object" && typeof target === "object") {
+        if (Object.keys(origin).length !== Object.keys(target).length) {
+          return false;
+        } else {
+          for (const key in origin) {
+            if (!useDeepCompare(origin[key], target[key])) {
+              return false;
+            }
+          }
+          return true;
+        }
+      } else {
+        return origin === target;
+      }
     }
+  };
+  if (target) {
+    return handler(target);
+  } else {
+    return handler;
   }
-};
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度判断数组中是否包含某个值, 依赖useDeepCompare
@@ -126,18 +135,27 @@ export const useDeepCompare = (origin: any, target: any): boolean => {
  * @param target 例如 {a:1}
  * @returns
  */
-export const useDeepInclude = (origin: unknown[], target: unknown): boolean | number => {
-  if (useCheckSimpleData(target)) {
-    return origin.includes(target);
-  } else {
-    for (const item of origin) {
-      if (useDeepCompare(item, target)) {
-        return true;
+export function useDeepInclude(origin: unknown[]): (target: unknown) => boolean;
+export function useDeepInclude(origin: unknown[], target: unknown): boolean;
+export function useDeepInclude(origin: unknown[], target?: unknown) {
+  const handler = (target: unknown) => {
+    if (useCheckSimpleData(target)) {
+      return origin.includes(target);
+    } else {
+      for (const item of origin) {
+        if (useDeepCompare(item, target)) {
+          return true;
+        }
       }
+      return false;
     }
-    return false;
+  };
+  if (target) {
+    return handler(target);
+  } else {
+    return handler;
   }
-};
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度数组去重，不改变原数组, 依赖useDeepInclude
@@ -197,20 +215,30 @@ export function useRepPartStr(target: string, position: Position, count: number[
   return target;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type PositionTrim = "head" | "tail" | "between" | "global";
 /**
  * 去除字符串中的空格
  * @param target
  * @param position
  * @returns
  */
-export const useTrimStr = (target: string, position: "head" | "tail" | "between" | "global" = "global"): string => {
-  if (position === "head") {
-    return target.replace(/^\s+/g, "");
-  } else if (position === "tail") {
-    return target.replace(/\s+$/g, "");
-  } else if (position === "between") {
-    return target.replace(/^\s+|\s+$/g, "");
+export function useTrimStr(target: string): (position: PositionTrim) => string;
+export function useTrimStr(target: string, position: PositionTrim): string;
+export function useTrimStr(target: string, position: PositionTrim | undefined = undefined) {
+  const handler = (position: PositionTrim) => {
+    if (position === "head") {
+      return target.replace(/^\s+/g, "");
+    } else if (position === "tail") {
+      return target.replace(/\s+$/g, "");
+    } else if (position === "between") {
+      return target.replace(/^\s+|\s+$/g, "");
+    } else {
+      return target.replace(/\s+/g, "");
+    }
+  };
+  if (position) {
+    return handler(position);
   } else {
-    return target.replace(/\s+/g, "");
+    return handler;
   }
-};
+}

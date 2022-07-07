@@ -57,7 +57,6 @@ test("test useRepPartStr", () => {
 /**test useTrimStr */
 test("test useTrimStr", () => {
   expect(useDataOperate.useTrimStr(" 123 4567 89 ", "between")).toBe("123 4567 89");
-  expect(useDataOperate.useTrimStr(" 123 4567 89 ")).toBe("123456789");
   expect(useDataOperate.useTrimStr(" 123 4567 89 ", "head")).toBe("123 4567 89 ");
-  expect(useDataOperate.useTrimStr(" 123 4567 89 ", "tail")).toBe(" 123 4567 89");
+  expect(useDataOperate.useTrimStr(" 123 4567 89 ")("tail")).toBe(" 123 4567 89");
 });

@@ -28,70 +28,97 @@ export const useGenTimeStamp = (timeStr: string | number) => {
  * @param targetTime 目标时间戳或时间格式字符串，如果是字符串要求从年开始。
  * @param referenceTime 参照时间戳或时间格式字符串，默认为当前时间戳毫秒，如果是字符串要求从年开始。
  */
-export const useIsEarly = (targetTime: number | string, referenceTime: number | string = Date.now()) => {
-  return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
-};
+export function useIsEarly(targetTime: number | string): (referenceTime?: number | string | undefined) => boolean;
+export function useIsEarly(targetTime: number | string, referenceTime: number | string | undefined): boolean;
+export function useIsEarly(targetTime: number | string, referenceTime?: number | string | undefined) {
+  const handler = (referenceTime: number | string | undefined = Date.now()) => {
+    return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
+  };
+  if (referenceTime) {
+    return handler(referenceTime);
+  } else {
+    return handler;
+  }
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 剩余时间转化为时间格式字符串
- * @param time 剩余时间毫秒
  * @format 格式化格式，默认为"{dd}天{hh}时{mm}分{ss}秒"
+ * @param time 剩余时间毫秒
  */
-export const useCountDownFormat = (time: number | string, format: string = "{dd}天{hh}时{mm}分{ss}秒"): string => {
-  let newTime = Number(time);
-  /**解析时间 */
-  const date: ObjectType<number> = {
-    "d+": Math.floor(newTime / 1000 / 3600 / 24),
-    "h+": Math.floor((newTime % (1000 * 3600 * 24)) / 1000 / 3600),
-    "m+": Math.floor((newTime % (1000 * 60 * 60)) / 1000 / 60),
-    "s+": Math.floor((newTime % (1000 * 60)) / 1000),
-  };
-  /**替换格式化字符串 */
-  for (const key in date) {
-    const reg = new RegExp("({" + key + "})");
-    if (reg.test(format)) {
-      const regRes = reg.exec(format) || [];
-      const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
-      format = format.replace(regRes[0], String(replaceValue));
+export function useCountDownFormat(format?: string): (time: number | string | undefined) => string;
+export function useCountDownFormat(format: string, time: number | string): string;
+export function useCountDownFormat(format: string = "{dd}天{hh}时{mm}分{ss}秒", time?: number | string | undefined) {
+  const handler = (time: number | string | undefined = Date.now()) => {
+    let newTime = Number(time);
+    /**解析时间 */
+    const date: ObjectType<number> = {
+      "d+": Math.floor(newTime / 1000 / 3600 / 24),
+      "h+": Math.floor((newTime % (1000 * 3600 * 24)) / 1000 / 3600),
+      "m+": Math.floor((newTime % (1000 * 60 * 60)) / 1000 / 60),
+      "s+": Math.floor((newTime % (1000 * 60)) / 1000),
+    };
+    /**替换格式化字符串 */
+    for (const key in date) {
+      const reg = new RegExp("({" + key + "})");
+      if (reg.test(format)) {
+        const regRes = reg.exec(format) || [];
+        const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
+        format = format.replace(regRes[0], String(replaceValue));
+      }
     }
+    return format;
+  };
+  if (time) {
+    return handler(time);
+  } else {
+    return handler;
   }
-  return format;
-};
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 时间戳或时间格式字符串转化为时间格式字符串
+ * @param format 格式化格式，默认为"{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}"
  * @param time 时间戳或时间格式字符串，如果是字符串要求从年开始
- * @param format 格式化格式，默认为"{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"
  */
-export const useTimeFormat = (time: number | string, format: string = "{YYYY}-{MM}-{DD} {hh}:{mm}:{ss}"): string => {
-  let newTime = useGenTimeStamp(time);
-  const targetDate = new Date(newTime);
-  /**解析时间 */
-  const date: ObjectType = {
-    "M+": targetDate.getMonth() + 1,
-    "d+": targetDate.getDate(),
-    "h+": targetDate.getHours(),
-    "m+": targetDate.getMinutes(),
-    "s+": targetDate.getSeconds(),
-    "q+": Math.floor((targetDate.getMonth() + 3) / 3),
-    "S+": targetDate.getMilliseconds(),
-  };
-  const fullYear = targetDate.getFullYear();
+export function useTimeFormat(format?: string): (time: number | string | undefined) => string;
+export function useTimeFormat(format: string, time: number | string): string;
+export function useTimeFormat(format: string = "{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}", time?: number | string | undefined) {
+  const handler = (time: number | string | undefined = Date.now()) => {
+    let newTime = useGenTimeStamp(time);
+    const targetDate = new Date(newTime);
+    /**解析时间 */
+    const date: ObjectType = {
+      "M+": targetDate.getMonth() + 1,
+      "d+": targetDate.getDate(),
+      "h+": targetDate.getHours(),
+      "m+": targetDate.getMinutes(),
+      "s+": targetDate.getSeconds(),
+      "q+": Math.floor((targetDate.getMonth() + 3) / 3),
+      "S+": targetDate.getMilliseconds(),
+    };
+    const fullYear = targetDate.getFullYear();
 
-  /**替换格式化字符串,年和其他分开替换 */
-  if (/({y+})/i.test(format)) {
-    const reg = /({y+})/i;
-    const regRes = reg.exec(format) || [];
-    const replaceValue = fullYear.toString().slice(6 - regRes[0].length);
-    format = format.replace(regRes[0], replaceValue);
-  }
-  for (const key in date) {
-    const reg = new RegExp("({" + key + "})");
-    if (reg.test(format)) {
+    /**替换格式化字符串,年和其他分开替换 */
+    if (/({y+})/i.test(format)) {
+      const reg = /({y+})/i;
       const regRes = reg.exec(format) || [];
-      const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
+      const replaceValue = fullYear.toString().slice(6 - regRes[0].length);
       format = format.replace(regRes[0], replaceValue);
     }
+    for (const key in date) {
+      const reg = new RegExp("({" + key + "})");
+      if (reg.test(format)) {
+        const regRes = reg.exec(format) || [];
+        const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
+        format = format.replace(regRes[0], replaceValue);
+      }
+    }
+    return format;
+  };
+  if (time) {
+    return handler(time);
+  } else {
+    return handler;
   }
-  return format;
-};
+}

@@ -37,7 +37,7 @@ test("test usePromiseInsist", async () => {
 /**test useGenParamsUrl */
 test("test useGenParamsUrl", () => {
   expect(useCommon.useGenParamsUrl("http://test.com", { a: 1, b: 2 })).toBe("http://test.com?a=1&b=2");
-  expect(useCommon.useGenParamsUrl("http://test.com?", { a: 1, b: 2 })).toBe("http://test.com?a=1&b=2");
+  expect(useCommon.useGenParamsUrl("http://test.com?")({ a: 1, b: 2 })).toBe("http://test.com?a=1&b=2");
 });
 
 /**test useFileNameFromURL */

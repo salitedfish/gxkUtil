@@ -81,23 +81,29 @@ export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
  * @param params
  * @returns
  */
-export const useGenParamsUrl = (url: string, params: { [key: string]: string | number } = {}): string => {
-  if (useCheckUndefined(url, params)) {
-    throw new Error("url or params is undefined");
-  }
-  let resUrl: string;
-  if (url[url.length - 1] === "?") {
-    resUrl = url;
-  } else {
-    resUrl = url + "?";
-  }
-  if (params) {
-    for (const key in params) {
-      resUrl = `${resUrl}${key}=${params[key]}&`;
+export function useGenParamsUrl(url: string): (params?: { [key: string]: string | number }) => string;
+export function useGenParamsUrl(url: string, params: { [key: string]: string | number }): string;
+export function useGenParamsUrl(url: string, params?: { [key: string]: string | number } | undefined) {
+  const handler = (params: { [key: string]: string | number } | undefined = {}) => {
+    let resUrl: string;
+    if (url[url.length - 1] === "?") {
+      resUrl = url;
+    } else {
+      resUrl = url + "?";
     }
+    if (params) {
+      for (const key in params) {
+        resUrl = `${resUrl}${key}=${params[key]}&`;
+      }
+    }
+    return resUrl.slice(0, resUrl.length - 1);
+  };
+  if (params) {
+    return handler(params);
+  } else {
+    return handler;
   }
-  return resUrl.slice(0, resUrl.length - 1);
-};
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type UseDebounce = <V extends any[], R>(callBack: (...params: V) => R, countDown?: number) => (...params: V) => R | void;
 /**
@@ -186,16 +192,20 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
  */
 export const useClipboard = (
   text: string,
-  domID: string = "app",
-  options?: {
-    success?: () => void;
-    fail?: () => void;
+  options:
+    | {
+        domID: string;
+        success?: () => void;
+        fail?: () => void;
+      }
+    | undefined = {
+    domID: "app",
   }
 ) => {
   if (useCheckUndefined(text)) {
     return;
   }
-  let clipboard = new Clipboard(`#${domID}`, {
+  let clipboard = new Clipboard(`#${options.domID}`, {
     text: function () {
       return text;
     },
