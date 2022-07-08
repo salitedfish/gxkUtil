@@ -59,14 +59,14 @@ export const useDeepClone = <T>(oldData: T): T => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 深度比较
+ * 深度比较是否相等
  * @param origin 例如: {a: 1}
  * @param target 例如: {a: 1}
  * @returns
  */
-export function useDeepCompare(origin: any): (target: any) => boolean;
-export function useDeepCompare(origin: any, target: any): boolean;
-export function useDeepCompare(origin: any, target?: any) {
+export function useDeepEqual(origin: any): (target: any) => boolean;
+export function useDeepEqual(origin: any, target: any): boolean;
+export function useDeepEqual(origin: any, target?: any) {
   const handler = (target: any) => {
     if (useCheckSimpleData(origin, target)) {
       return origin === target;
@@ -76,7 +76,7 @@ export function useDeepCompare(origin: any, target?: any) {
           return false;
         } else {
           for (let i = 0; i < origin.length; i++) {
-            if (!useDeepCompare(origin[i], target[i])) {
+            if (!useDeepEqual(origin[i], target[i])) {
               return false;
             }
           }
@@ -88,7 +88,7 @@ export function useDeepCompare(origin: any, target?: any) {
           return false;
         } else {
           for (const [key, value] of origin) {
-            if (!useDeepCompare(value, target.get(key))) {
+            if (!useDeepEqual(value, target.get(key))) {
               return false;
             }
           }
@@ -101,7 +101,7 @@ export function useDeepCompare(origin: any, target?: any) {
           const originArr = Array.from(origin);
           const newArr = Array.from(target);
           for (let i = 0; i < originArr.length; i++) {
-            if (!useDeepCompare(originArr[i], newArr[i])) {
+            if (!useDeepEqual(originArr[i], newArr[i])) {
               return false;
             }
           }
@@ -112,7 +112,7 @@ export function useDeepCompare(origin: any, target?: any) {
           return false;
         } else {
           for (const key in origin) {
-            if (!useDeepCompare(origin[key], target[key])) {
+            if (!useDeepEqual(origin[key], target[key])) {
               return false;
             }
           }
@@ -132,7 +132,7 @@ export function useDeepCompare(origin: any, target?: any) {
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 深度判断数组中是否包含某个值, 依赖useDeepCompare
+ * 深度判断数组中是否包含某个值, 依赖useDeepEqual
  * @param origin 例如[{a:1}]
  * @param target 例如 {a:1}
  * @returns
@@ -145,7 +145,7 @@ export function useDeepInclude(origin: unknown[], target?: unknown) {
       return origin.includes(target);
     } else {
       for (const item of origin) {
-        if (useDeepCompare(item, target)) {
+        if (useDeepEqual(item, target)) {
           return true;
         }
       }

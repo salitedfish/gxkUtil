@@ -16,15 +16,15 @@ const cloneObj = useDataOperate.useDeepClone(obj);
 
 /**test useDeepClone */
 test("test useDeepClone", () => {
-  expect(useDataOperate.useDeepCompare(obj, cloneObj) && obj !== cloneObj).toBe(true);
+  expect(useDataOperate.useDeepEqual(obj, cloneObj) && obj !== cloneObj).toBe(true);
 });
 
-/**test useDeepCompare */
-test("test useDeepCompare", () => {
-  expect(useDataOperate.useDeepCompare(cloneObj, obj)).toBe(true);
-  expect(useDataOperate.useDeepCompare({ a: 1 }, { a: 1, b: 1 })).toBe(false);
-  expect(useDataOperate.useDeepCompare([1, 2], [1, 2])).toBe(true);
-  expect(useDataOperate.useDeepCompare(f, g)).toBe(true);
+/**test useDeepEqual */
+test("test useDeepEqual", () => {
+  expect(useDataOperate.useDeepEqual(cloneObj, obj)).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: 1 }, { a: 1, b: 1 })).toBe(false);
+  expect(useDataOperate.useDeepEqual([1, 2], [1, 2])).toBe(true);
+  expect(useDataOperate.useDeepEqual(f, g)).toBe(true);
 });
 
 /**test useDeepInclude */
@@ -62,6 +62,7 @@ test("test useGroupBy", () => {
     { a: 6, b: 7 },
   ];
   const resGroup = useDataOperate.useGroupBy(arr)(conditions);
+  const retGroup = useDataOperate.useGroupBy(arr, conditions);
   const resGropRef = [
     [
       { a: 3, b: 4 },
@@ -74,7 +75,8 @@ test("test useGroupBy", () => {
       { a: 2, b: 3 },
     ],
   ];
-  expect(useDataOperate.useDeepCompare(resGroup)(resGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(resGroup)(resGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(retGroup, resGropRef)).toBe(true);
 });
 
 /**test useRepPartStr */
