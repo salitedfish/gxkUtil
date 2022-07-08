@@ -46,6 +46,37 @@ test("test useShallowRmRpt", () => {
   expect(useDataOperate.useShallowRmRpt(arr).length).toBe(2);
 });
 
+/**useGroupBy */
+test("test useGroupBy", () => {
+  type Item = {
+    a: number;
+    b: number;
+  };
+  const conditions = [(item: Item) => item.a >= 3, (item: Item) => item.a < 3];
+  const arr = [
+    { a: 1, b: 2 },
+    { a: 2, b: 3 },
+    { a: 3, b: 4 },
+    { a: 4, b: 5 },
+    { a: 5, b: 6 },
+    { a: 6, b: 7 },
+  ];
+  const resGroup = useDataOperate.useGroupBy(arr)(conditions);
+  const resGropRef = [
+    [
+      { a: 3, b: 4 },
+      { a: 4, b: 5 },
+      { a: 5, b: 6 },
+      { a: 6, b: 7 },
+    ],
+    [
+      { a: 1, b: 2 },
+      { a: 2, b: 3 },
+    ],
+  ];
+  expect(useDataOperate.useDeepCompare(resGroup)(resGropRef)).toBe(true);
+});
+
 /**test useRepPartStr */
 test("test useRepPartStr", () => {
   expect(useDataOperate.useRepPartStr("123456789", "between", [1, 1])).toBe("*2345678*");

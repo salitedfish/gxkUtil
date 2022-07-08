@@ -184,6 +184,35 @@ export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
   return Array.from(new Set(oldArr));
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 数组按要求分组
+ * @param origin
+ * @param conditions 条件数组
+ */
+export function useGroupBy<T>(origin: T[]): (conditions: ((param: T) => boolean)[]) => T[][];
+export function useGroupBy<T>(origin: T[], conditions: ((param: T) => boolean)[]): T[][];
+export function useGroupBy<T>(origin: T[], conditions?: ((param: T) => boolean)[]) {
+  const handler = (conditions: ((param: T) => boolean)[]) => {
+    const resGroup: T[][] = [];
+    for (let item of conditions) {
+      const group = [];
+      for (let i of origin) {
+        if (item(i)) {
+          group.push(i);
+        }
+      }
+      resGroup.push(group);
+    }
+    return resGroup;
+  };
+  /**柯里化判断 */
+  if (conditions === undefined) {
+    return handler;
+  } else {
+    return handler(conditions);
+  }
+}
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type Position = "head" | "center" | "tail" | "between";
 /**
  * 根据提供的位置替换字符串
