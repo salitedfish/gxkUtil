@@ -1,11 +1,13 @@
 import * as useFile from ".";
 
 const randomString = "文件读写测试：" + new Date();
+const fileAddress = "./learn/fileText.sh";
+const appendString = "---追加语句";
 
 /**test useWriteFile */
 test("test useWriteFile", async () => {
   try {
-    const writeTip = await useFile.useWriteFile("./learn/fileText.sh")(randomString);
+    const writeTip = await useFile.useWriteFile(fileAddress)(randomString);
     expect(writeTip).toBe("write success");
   } catch (err) {
     expect(err).toMatch("");
@@ -15,7 +17,7 @@ test("test useWriteFile", async () => {
 /**test useAppendFile */
 test("test useAppendFile", async () => {
   try {
-    const appendTip = await useFile.useAppendFile("./learn/fileText.sh")("追加语句");
+    const appendTip = await useFile.useAppendFile(fileAddress)(appendString);
     expect(appendTip).toBe("append success");
   } catch (err) {
     expect(err).toMatch("");
@@ -25,8 +27,8 @@ test("test useAppendFile", async () => {
 /**test useReadFile */
 test("test useReadFile", async () => {
   try {
-    const fileContent = await useFile.useReadFile("./learn/fileText.sh");
-    expect(fileContent).toBe(randomString + "追加语句");
+    const fileContent = await useFile.useReadFile(fileAddress);
+    expect(fileContent).toBe(randomString + appendString);
   } catch (err) {
     expect(err).toMatch("");
   }
