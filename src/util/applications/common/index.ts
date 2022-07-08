@@ -83,8 +83,8 @@ export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
  */
 export function useGenParamsUrl(url: string): (params?: { [key: string]: string | number }) => string;
 export function useGenParamsUrl(url: string, params: { [key: string]: string | number }): string;
-export function useGenParamsUrl(url: string, params?: { [key: string]: string | number } | undefined) {
-  const handler = (params: { [key: string]: string | number } | undefined = {}) => {
+export function useGenParamsUrl(url: string, params?: { [key: string]: string | number }) {
+  const handler = (params: { [key: string]: string | number } = {}) => {
     let resUrl: string;
     if (url[url.length - 1] === "?") {
       resUrl = url;
@@ -98,10 +98,10 @@ export function useGenParamsUrl(url: string, params?: { [key: string]: string | 
     }
     return resUrl.slice(0, resUrl.length - 1);
   };
-  if (params) {
-    return handler(params);
-  } else {
+  if (params === undefined) {
     return handler;
+  } else {
+    return handler(params);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

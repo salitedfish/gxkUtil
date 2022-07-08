@@ -28,16 +28,16 @@ export const useGenTimeStamp = (timeStr: string | number) => {
  * @param targetTime 目标时间戳或时间格式字符串，如果是字符串要求从年开始。
  * @param referenceTime 参照时间戳或时间格式字符串，默认为当前时间戳毫秒，如果是字符串要求从年开始。
  */
-export function useIsEarly(targetTime: number | string): (referenceTime?: number | string | undefined) => boolean;
-export function useIsEarly(targetTime: number | string, referenceTime: number | string | undefined): boolean;
-export function useIsEarly(targetTime: number | string, referenceTime?: number | string | undefined) {
+export function useIsEarly(targetTime: number | string): (referenceTime?: number | string) => boolean;
+export function useIsEarly(targetTime: number | string, referenceTime: number | string): boolean;
+export function useIsEarly(targetTime: number | string, referenceTime?: number | string) {
   const handler = (referenceTime: number | string | undefined = Date.now()) => {
     return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
   };
-  if (referenceTime) {
-    return handler(referenceTime);
-  } else {
+  if (referenceTime === undefined) {
     return handler;
+  } else {
+    return handler(referenceTime);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -46,9 +46,9 @@ export function useIsEarly(targetTime: number | string, referenceTime?: number |
  * @format 格式化格式，默认为"{dd}天{hh}时{mm}分{ss}秒"
  * @param time 剩余时间毫秒
  */
-export function useCountDownFormat(format?: string): (time: number | string | undefined) => string;
+export function useCountDownFormat(format?: string): (time?: number | string) => string;
 export function useCountDownFormat(format: string, time: number | string): string;
-export function useCountDownFormat(format: string = "{dd}天{hh}时{mm}分{ss}秒", time?: number | string | undefined) {
+export function useCountDownFormat(format: string = "{dd}天{hh}时{mm}分{ss}秒", time?: number | string) {
   const handler = (time: number | string | undefined = Date.now()) => {
     let newTime = Number(time);
     /**解析时间 */
@@ -69,22 +69,22 @@ export function useCountDownFormat(format: string = "{dd}天{hh}时{mm}分{ss}�
     }
     return format;
   };
-  if (time) {
-    return handler(time);
-  } else {
+  if (time === undefined) {
     return handler;
+  } else {
+    return handler(time);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 时间戳或时间格式字符串转化为时间格式字符串
- * @param format 格式化格式，默认为"{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}"
- * @param time 时间戳或时间格式字符串，如果是字符串要求从年开始
+ * @param format 格式化格式,默认为"{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}"
+ * @param time 时间戳或时间格式字符串，如果是字符串要求从年开始，默认为Date.now()
  */
-export function useTimeFormat(format?: string): (time: number | string | undefined) => string;
+export function useTimeFormat(format?: string): (time?: number | string) => string;
 export function useTimeFormat(format: string, time: number | string): string;
-export function useTimeFormat(format: string = "{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}", time?: number | string | undefined) {
-  const handler = (time: number | string | undefined = Date.now()) => {
+export function useTimeFormat(format: string = "{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}", time?: number | string) {
+  const handler = (time: number | string = Date.now()) => {
     let newTime = useGenTimeStamp(time);
     const targetDate = new Date(newTime);
     /**解析时间 */
@@ -116,9 +116,9 @@ export function useTimeFormat(format: string = "{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}"
     }
     return format;
   };
-  if (time) {
-    return handler(time);
-  } else {
+  if (time === undefined) {
     return handler;
+  } else {
+    return handler(time);
   }
 }

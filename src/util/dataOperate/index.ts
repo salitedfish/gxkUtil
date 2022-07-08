@@ -122,10 +122,10 @@ export function useDeepCompare(origin: any, target?: any) {
       }
     }
   };
-  if (target) {
-    return handler(target);
-  } else {
+  if (target === undefined) {
     return handler;
+  } else {
+    return handler(target);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -150,10 +150,10 @@ export function useDeepInclude(origin: unknown[], target?: unknown) {
       return false;
     }
   };
-  if (target) {
-    return handler(target);
-  } else {
+  if (target === undefined) {
     return handler;
+  } else {
+    return handler(target);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -224,7 +224,7 @@ type PositionTrim = "head" | "tail" | "between" | "global";
  */
 export function useTrimStr(target: string): (position: PositionTrim) => string;
 export function useTrimStr(target: string, position: PositionTrim): string;
-export function useTrimStr(target: string, position: PositionTrim | undefined = undefined) {
+export function useTrimStr(target: string, position?: PositionTrim) {
   const handler = (position: PositionTrim) => {
     if (position === "head") {
       return target.replace(/^\s+/g, "");
@@ -236,9 +236,9 @@ export function useTrimStr(target: string, position: PositionTrim | undefined = 
       return target.replace(/\s+/g, "");
     }
   };
-  if (position) {
-    return handler(position);
-  } else {
+  if (position === undefined) {
     return handler;
+  } else {
+    return handler(position);
   }
 }

@@ -26,19 +26,19 @@ export const useGetDom = (target: string) => {
  */
 export function useAddDomClass(target: string): (classNames: string[]) => void;
 export function useAddDomClass(target: string, classNames: string[]): void;
-export function useAddDomClass(target: string, classNames?: string[] | undefined) {
+export function useAddDomClass(target: string, classNames?: string[]) {
   const handler = (classNames: string[]) => {
     let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
     for (let i = 0; i <= targetDom.length - 1; i++) {
       targetDom[i].classList.add(...classNames);
     }
   };
-  if (classNames) {
-    handler(classNames);
-  } else {
+  if (classNames === undefined) {
     return (classNames: string[]) => {
       handler(classNames);
     };
+  } else {
+    handler(classNames);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -50,19 +50,19 @@ export function useAddDomClass(target: string, classNames?: string[] | undefined
  */
 export function useRemoveDomClass(target: string): (classNames: string[]) => void;
 export function useRemoveDomClass(target: string, classNames: string[]): void;
-export function useRemoveDomClass(target: string, classNames?: string[] | undefined) {
+export function useRemoveDomClass(target: string, classNames?: string[]) {
   const handler = (classNames: string[]) => {
     let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
     for (let i = 0; i <= targetDom.length - 1; i++) {
       targetDom[i].classList.remove(...classNames);
     }
   };
-  if (classNames) {
-    handler(classNames);
-  } else {
+  if (classNames === undefined) {
     return (classNames: string[]) => {
       handler(classNames);
     };
+  } else {
+    handler(classNames);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -75,7 +75,7 @@ type GetStyleName = keyof CSSStyleDeclaration & string;
  */
 export function useGetDomStyle(target: string): (styleName: GetStyleName) => string[];
 export function useGetDomStyle(target: string, styleName: GetStyleName): string[];
-export function useGetDomStyle(target: string, styleName?: GetStyleName | undefined) {
+export function useGetDomStyle(target: string, styleName?: GetStyleName) {
   const handler = (styleName: GetStyleName) => {
     let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
     const styles = [];
@@ -85,12 +85,12 @@ export function useGetDomStyle(target: string, styleName?: GetStyleName | undefi
     }
     return styles;
   };
-  if (styleName) {
-    return handler(styleName);
-  } else {
+  if (styleName === undefined) {
     return (styleName: GetStyleName) => {
       return handler(styleName);
     };
+  } else {
+    return handler(styleName);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -113,11 +113,11 @@ export function useSetDomStyle<T extends SetStyleName>(target: string, styleName
       }
     };
   };
-  if (styleName && styleValue) {
-    handler(styleName)(styleValue);
-  } else if (styleName) {
-    return handler(styleName);
-  } else {
+  if (styleName === undefined && styleValue === undefined) {
     return handler;
+  } else if (styleValue === undefined && styleName) {
+    return handler(styleName);
+  } else if (styleName && styleValue) {
+    handler(styleName)(styleValue);
   }
 }

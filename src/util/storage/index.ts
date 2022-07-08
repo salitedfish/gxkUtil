@@ -20,10 +20,10 @@ export function useGetLStorage(key: string, defaultValue?: unknown) {
       return value;
     }
   };
-  if (defaultValue) {
-    return handler(defaultValue);
-  } else {
+  if (defaultValue === undefined) {
     return useGetLStorage;
+  } else {
+    return handler(defaultValue);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -39,10 +39,10 @@ export function useSetLStorage(key: string, value?: unknown) {
     const valueJSON = JSON.stringify(value);
     localStorage.setItem(key, valueJSON);
   };
-  if (value) {
-    return handler(value);
-  } else {
+  if (value === undefined) {
     return handler;
+  } else {
+    return handler(value);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
