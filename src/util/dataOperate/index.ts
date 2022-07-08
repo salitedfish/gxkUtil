@@ -83,6 +83,7 @@ export function useDeepCompare(origin: any, target?: any) {
           return true;
         }
       } else if (origin instanceof Map && target instanceof Map) {
+        /**map这里如果key为对象的时候，如果两个key深度相同，但是引用不同，会判断为不同，因为有一个会找不到 */
         if (origin.size !== target.size) {
           return false;
         } else {

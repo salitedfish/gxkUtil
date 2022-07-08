@@ -5,10 +5,7 @@ import { ObjectType } from "../../../type";
  * @param timeStr 如：2010年1月1号 10时2分4或1234567891
  */
 export const useGenTimeStamp = (timeStr: string | number): number => {
-  if (!isNaN(Number(timeStr))) {
-    /**如果是"1234567891000"或1234567891000*/
-    return Number(timeStr);
-  } else {
+  if (isNaN(Number(timeStr))) {
     /**如果是"2010年1月1号 10时2分4 */
     const timeStrFormat = String(timeStr)
       .replace(/-|年|月|日|号/g, "/")
@@ -19,6 +16,9 @@ export const useGenTimeStamp = (timeStr: string | number): number => {
     } else {
       return timeStamp;
     }
+  } else {
+    /**如果是"1234567891000"或1234567891000*/
+    return Number(timeStr);
   }
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
