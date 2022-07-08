@@ -1,32 +1,31 @@
 import { ObjectType } from "../../../type";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 将时间格式字符串或时间戳转化为时间戳毫秒
+ * 将时间格式字符串或时间戳字符串转化为时间戳毫秒
  * @param timeStr 如：2010年1月1号 10时2分4或1234567891
  */
-export const useGenTimeStamp = (timeStr: string | number) => {
+export const useGenTimeStamp = (timeStr: string | number): number => {
   if (!isNaN(Number(timeStr))) {
-    /**如果是"1234567891"或1234567891 */
-    if (String(timeStr).length === 10) {
-      return Number(timeStr) * 1000;
-    } else if (String(timeStr).length === 13) {
-      return Number(timeStr);
-    } else {
-      throw new Error("useGenTimeStamp：时间戳错误!");
-    }
+    /**如果是"1234567891000"或1234567891000*/
+    return Number(timeStr);
   } else {
     /**如果是"2010年1月1号 10时2分4 */
     const timeStrFormat = String(timeStr)
       .replace(/-|年|月|日|号/g, "/")
       .replace(/时|分|秒/g, ":");
-    return Number(new Date(timeStrFormat));
+    const timeStamp = Number(new Date(timeStrFormat));
+    if (isNaN(timeStamp)) {
+      throw new Error("useGenTimeStamp：时间格式错误!");
+    } else {
+      return timeStamp;
+    }
   }
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 判断目标时间是否比参照时间早
- * @param targetTime 目标时间戳或时间格式字符串，如果是字符串要求从年开始。
- * @param referenceTime 参照时间戳或时间格式字符串，默认为当前时间戳毫秒，如果是字符串要求从年开始。
+ * @param targetTime 目标时间戳毫秒或时间格式字符串，如果是字符串要求从年开始。
+ * @param referenceTime 参照时间戳毫秒或时间格式字符串，如果是字符串要求从年开始。
  */
 export function useIsEarly(targetTime: number | string): (referenceTime: number | string) => boolean;
 export function useIsEarly(targetTime: number | string, referenceTime: number | string): boolean;
@@ -43,7 +42,7 @@ export function useIsEarly(targetTime: number | string, referenceTime?: number |
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 剩余时间转化为时间格式字符串
+ * 剩余时间毫秒转化为时间格式字符串
  * @format 格式化格式，如："{dd}天{hh}时{mm}分{ss}秒"
  * @param time 剩余时间毫秒
  */
@@ -79,9 +78,9 @@ export function useCountDownFormat(format: string, time?: number | string) {
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 时间戳或时间格式字符串转化为时间格式字符串
+ * 时间戳毫秒或时间格式字符串转化为时间格式字符串
  * @param format 格式化格式,如："{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}"
- * @param time 时间戳或时间格式字符串，如果是字符串要求从年开始
+ * @param time 时间戳毫秒或时间格式字符串，如果是字符串要求从年开始
  */
 export function useTimeFormat(format: string): (time: number | string) => string;
 export function useTimeFormat(format: string, time: number | string): string;
