@@ -122,6 +122,7 @@ export function useDeepCompare(origin: any, target?: any) {
       }
     }
   };
+  /**柯里化判断 */
   if (target === undefined) {
     return handler;
   } else {
@@ -150,6 +151,7 @@ export function useDeepInclude(origin: unknown[], target?: unknown) {
       return false;
     }
   };
+  /**柯里化判断 */
   if (target === undefined) {
     return handler;
   } else {
@@ -236,6 +238,7 @@ export function useTrimStr(target: string, position?: PositionTrim) {
       return target.replace(/\s+/g, "");
     }
   };
+  /**柯里化判断 */
   if (position === undefined) {
     return handler;
   } else {

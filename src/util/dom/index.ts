@@ -33,6 +33,7 @@ export function useAddDomClass(target: string, classNames?: string[]) {
       targetDom[i].classList.add(...classNames);
     }
   };
+  /**柯里化判断 */
   if (classNames === undefined) {
     return (classNames: string[]) => {
       handler(classNames);
@@ -57,6 +58,7 @@ export function useRemoveDomClass(target: string, classNames?: string[]) {
       targetDom[i].classList.remove(...classNames);
     }
   };
+  /**柯里化判断 */
   if (classNames === undefined) {
     return (classNames: string[]) => {
       handler(classNames);
@@ -85,6 +87,7 @@ export function useGetDomStyle(target: string, styleName?: GetStyleName) {
     }
     return styles;
   };
+  /**柯里化判断 */
   if (styleName === undefined) {
     return (styleName: GetStyleName) => {
       return handler(styleName);
@@ -113,6 +116,7 @@ export function useSetDomStyle<T extends SetStyleName>(target: string, styleName
       }
     };
   };
+  /**柯里化判断 */
   if (styleName === undefined && styleValue === undefined) {
     return handler;
   } else if (styleValue === undefined && styleName) {

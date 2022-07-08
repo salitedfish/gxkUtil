@@ -60,7 +60,7 @@ export const useFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    */
   return async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
-    let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params);
+    let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
     /**处理config */
     let resConfig: any = { ...comConfig, ...cusConfig };

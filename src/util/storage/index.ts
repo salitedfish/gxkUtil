@@ -20,6 +20,7 @@ export function useGetLStorage(key: string, defaultValue?: unknown) {
       return value;
     }
   };
+  /**柯里化判断 */
   if (defaultValue === undefined) {
     return useGetLStorage;
   } else {
@@ -39,6 +40,7 @@ export function useSetLStorage(key: string, value?: unknown) {
     const valueJSON = JSON.stringify(value);
     localStorage.setItem(key, valueJSON);
   };
+  /**柯里化判断 */
   if (value === undefined) {
     return handler;
   } else {
