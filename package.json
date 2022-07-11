@@ -1,5 +1,5 @@
 {
-  "name": "tiga",
+  "name": "@gexk/noa",
   "version": "0.0.28",
   "description": "",
   "module": "lib/index.mjs",
