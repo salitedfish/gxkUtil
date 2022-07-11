@@ -1,8 +1,8 @@
 import * as useFile from ".";
 
-const randomString = "文件读写测试：" + new Date();
+const randomString = "文件读写测试：" + "-----------";
 const fileAddress = "./learn/fileText.sh";
-const appendString = "---追加语句";
+const appendString = "追加语句";
 
 /**test useWriteFile */
 test("test useWriteFile", async () => {
