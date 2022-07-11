@@ -1,6 +1,6 @@
 {
-  "name": "gxk",
-  "version": "0.0.2",
+  "name": "@gexk/gxk",
+  "version": "0.0.25",
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
@@ -9,7 +9,7 @@
     "test": "jest",
     "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts ",
     "build_link": "npm run build && cd ./lib && npm link",
-    "build_publish": "npm run build && cd ./lib && npm publish"
+    "publish": "npm version patch && npm run build && cd ./lib && npm publish --access public"
   },
   "author": "gxk",
   "license": "ISC",
