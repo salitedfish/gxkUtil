@@ -1,5 +1,5 @@
 {
-  "name": "@gexk/gxk",
+  "name": "@gexk/tiga",
   "version": "0.0.27",
   "description": "",
   "module": "lib/index.mjs",
@@ -8,7 +8,6 @@
     "dist": "lib"
   },
   "scripts": {
-    "test_meta": "echo %npm_package_config_dist%",
     "prepare": "husky install",
     "test": "jest",
     "build": "rm -rf ./%npm_package_config_dist% && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./%npm_package_config_dist%/rollup.config.d.ts ",
