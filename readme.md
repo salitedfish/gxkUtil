@@ -1,2 +1,2 @@
 # git address
-https://github.com/salitedfish/gxkUtil
+https://github.com/salitedfish/gxk
