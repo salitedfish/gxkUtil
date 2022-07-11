@@ -4,3 +4,8 @@ export * from "./legitimacy";
 export * from "./environment";
 export * from "./file";
 export * from "./higherFunction";
+export * from "./axios";
+export * from "./genFetch";
+export * from "./dom";
+export * from "./storage";
+export * from "./websocket";

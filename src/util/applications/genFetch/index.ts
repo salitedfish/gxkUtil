@@ -1,5 +1,5 @@
-import { ResponseType, Method, ObjectType } from "../../type";
-import { useGenParamsUrl } from "../../index";
+import { ResponseType, Method, ObjectType } from "../../../type";
+import { useGenParamsUrl } from "../../../index";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
