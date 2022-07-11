@@ -4,12 +4,18 @@
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
+  "config": {
+    "dist": "lib"
+  },
   "scripts": {
+    "test_meta": "echo %npm_package_config_dist%",
     "prepare": "husky install",
     "test": "jest",
-    "build": "rm -rf ./lib && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./lib/rollup.config.d.ts ",
-    "build_link": "npm run build && cd ./lib && npm link",
-    "publish": "npm version patch && npm run build && cd ./lib && npm publish --access public"
+    "build": "rm -rf ./%npm_package_config_dist% && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./%npm_package_config_dist%/rollup.config.d.ts ",
+    "build_link": "npm run build && cd ./%npm_package_config_dist% && npm link",
+    "publish_patch": "npm version patch && npm run build && cd ./%npm_package_config_dist% && npm publish --access public",
+    "publish_minor": "npm version minor && npm run build && cd ./%npm_package_config_dist% && npm publish --access public",
+    "publish_major": "npm version major && npm run build && cd ./%npm_package_config_dist% && npm publish --access public"
   },
   "author": "gxk",
   "license": "ISC",
