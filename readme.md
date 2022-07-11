@@ -1,4 +1,4 @@
-# git address
+# git repository
 https://github.com/salitedfish/gxk
 
 # scripts变量
