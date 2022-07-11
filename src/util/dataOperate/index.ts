@@ -123,7 +123,7 @@ export function useDeepEqual(origin: any, target?: any) {
       }
     }
   };
-  /**柯里化判断 */
+  /**Currying */
   if (target === undefined) {
     return handler;
   } else {
@@ -152,7 +152,7 @@ export function useDeepInclude(origin: unknown[], target?: unknown) {
       return false;
     }
   };
-  /**柯里化判断 */
+  /**Currying */
   if (target === undefined) {
     return handler;
   } else {
@@ -205,7 +205,7 @@ export function useGroupBy<T>(origin: T[], conditions?: ((param: T) => boolean)[
     }
     return resGroup;
   };
-  /**柯里化判断 */
+  /**Currying */
   if (conditions === undefined) {
     return handler;
   } else {
@@ -268,7 +268,7 @@ export function useTrimStr(target: string, position?: PositionTrim) {
       return target.replace(/\s+/g, "");
     }
   };
-  /**柯里化判断 */
+  /**Currying */
   if (position === undefined) {
     return handler;
   } else {

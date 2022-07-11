@@ -98,7 +98,7 @@ export function useGenParamsUrl(url: string, params?: { [key: string]: string | 
     }
     return resUrl.slice(0, resUrl.length - 1);
   };
-  /**柯里化判断 */
+  /**Currying */
   if (params === undefined) {
     return handler;
   } else {

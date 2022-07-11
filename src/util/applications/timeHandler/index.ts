@@ -33,7 +33,7 @@ export function useIsEarly(targetTime: number | string, referenceTime?: number |
   const handler = (referenceTime: number | string) => {
     return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
   };
-  /**柯里化判断 */
+  /**Currying */
   if (referenceTime === undefined) {
     return handler;
   } else {
@@ -69,7 +69,7 @@ export function useCountDownFormat(format: string, time?: number | string) {
     }
     return format;
   };
-  /**柯里化判断 */
+  /**Currying */
   if (time === undefined) {
     return handler;
   } else {
@@ -117,7 +117,7 @@ export function useTimeFormat(format: string, time?: number | string) {
     }
     return format;
   };
-  /**柯里化判断 */
+  /**Currying */
   if (time === undefined) {
     return handler;
   } else {

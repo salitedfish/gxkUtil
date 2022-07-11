@@ -33,7 +33,7 @@ export function useAddDomClass(target: string, classNames?: string[]) {
       targetDom[i].classList.add(...classNames);
     }
   };
-  /**柯里化判断 */
+  /**Currying */
   if (classNames === undefined) {
     return (classNames: string[]) => {
       handler(classNames);
@@ -58,7 +58,7 @@ export function useRemoveDomClass(target: string, classNames?: string[]) {
       targetDom[i].classList.remove(...classNames);
     }
   };
-  /**柯里化判断 */
+  /**Currying */
   if (classNames === undefined) {
     return (classNames: string[]) => {
       handler(classNames);
@@ -87,7 +87,7 @@ export function useGetDomStyle(target: string, styleName?: GetStyleName) {
     }
     return styles;
   };
-  /**柯里化判断 */
+  /**Currying */
   if (styleName === undefined) {
     return (styleName: GetStyleName) => {
       return handler(styleName);
@@ -97,7 +97,7 @@ export function useGetDomStyle(target: string, styleName?: GetStyleName) {
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type SetStyleName = keyof CSSStyleDeclaration & string;
+type SetStyleName = keyof CSSStyleDeclaration;
 /**
  * 设置dom的style各属性值
  * @param target
@@ -116,12 +116,12 @@ export function useSetDomStyle<T extends SetStyleName>(target: string, styleName
       }
     };
   };
-  /**柯里化判断 */
+  /**Currying */
   if (styleName === undefined && styleValue === undefined) {
     return handler;
-  } else if (styleValue === undefined && styleName) {
+  } else if (styleValue === undefined && styleName !== undefined) {
     return handler(styleName);
-  } else if (styleName && styleValue) {
+  } else if (styleName !== undefined && styleValue !== undefined) {
     handler(styleName)(styleValue);
   }
 }

@@ -115,7 +115,7 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
       });
     };
   };
-  /**柯里化判断 */
+  /**Currying */
   if (isCondition === undefined) {
     return handler;
   } else {
