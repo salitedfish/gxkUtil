@@ -2,7 +2,7 @@ export * from "./common";
 export * from "./timeHandler";
 export * from "./legitimacy";
 export * from "./environment";
-export * from "./file";
+export * from "../node/file";
 export * from "./higherFunction";
 export * from "./axios";
 export * from "./genFetch";
