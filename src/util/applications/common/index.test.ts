@@ -25,7 +25,7 @@ test("test useFileTypeFromURL", () => {
 /**test usePromiseInsist */
 test("test usePromiseInsist", async () => {
   try {
-    const genTarget = await useCommon.usePromiseInsist(genAsync, (res) => {
+    const genTarget = await useCommon.usePromiseInsist(genAsync)((res) => {
       return res === 3;
     })();
     expect(genTarget).toBe(3);
