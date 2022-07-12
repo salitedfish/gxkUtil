@@ -1,18 +1,18 @@
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 测试两个参数函数的柯里化(在ts中会改变形参名，不太好用)
- * @param fun
+ * 测试两个参数函数的柯里化(测试中，不太好用)
+ * @_args fun
  */
-export function useCurryTwo<T, K, V>(fun: (paramOne: T, paramTwo: K) => V) {
-  function handler(PA: T): (PB: K) => V;
-  function handler(PA: T, PB: K): V;
-  function handler(PA: T, PB?: K): V | ((PB: K) => V) {
-    if (PB === undefined) {
-      return (PB: K) => {
-        return fun(PA, PB);
+export function useCurryTwo<T extends [any], K extends [any], V>(func: (...args: [...T, ...K]) => V) {
+  function handler(...args: T): (..._args: K) => V;
+  function handler(...args: [...T, ...K]): V;
+  function handler(...args: T | [...T, ...K]) {
+    if (args.length === 1) {
+      return (..._args: K) => {
+        return func(...(args as T), ..._args);
       };
     } else {
-      return fun(PA, PB);
+      return func(...(args as [...T, ...K]));
     }
   }
 
@@ -21,26 +21,26 @@ export function useCurryTwo<T, K, V>(fun: (paramOne: T, paramTwo: K) => V) {
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 测试三个参数函数的柯里化(在ts中会改变形参名，不太好用)
- * @param fun
+ * 测试三个参数函数的柯里化(测试中，不太好用)
+ * @_args fun
  */
-export function useCurryThree<T, K, P, V>(fun: (paramOne: T, paramTwo: K, paramThree: P) => V) {
-  function handler(PA: T): (PB: K) => (PC: P) => V;
-  function handler(PA: T, PB: K): (PC: P) => V;
-  function handler(PA: T, PB: K, PC: P): V;
-  function handler(PA: T, PB?: K, PC?: P) {
-    if (PB === undefined && PC === undefined) {
-      return (PB: K) => {
-        return (PC: P) => {
-          return fun(PA, PB, PC);
+export function useCurryThree<T extends [any], K extends [any], P extends [any], V>(func: (...args: [...T, ...K, ...P]) => V) {
+  function handler(...args: T): (..._args: K) => (...__args: P) => V;
+  function handler(...args: [...T, ...K]): (...__args: P) => V;
+  function handler(...args: [...T, ...K, ...P]): V;
+  function handler(...args: T | [...T, ...K] | [...T, ...K, ...P]) {
+    if (args.length === 1) {
+      return (..._args: K) => {
+        return (...__args: P) => {
+          return func(...(args as T), ..._args, ...__args);
         };
       };
-    } else if (PC === undefined && PB !== undefined) {
-      return (PC: P) => {
-        return fun(PA, PB, PC);
+    } else if (args.length === 2) {
+      return (...__args: P) => {
+        return func(...(args as [...T, ...K]), ...__args);
       };
-    } else if (PB !== undefined && PC !== undefined) {
-      return fun(PA, PB, PC);
+    } else {
+      return func(...(args as [...T, ...K, ...P]));
     }
   }
 
