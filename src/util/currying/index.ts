@@ -1,20 +1,18 @@
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type MaybeUndefined<T> = T extends [any] ? T : [];
-type WithUndefined<T> = T | undefined;
 /**
  * 测试两个参数函数的柯里化(测试中，不太好用)
  * @_args fun
  */
-export function useCurryTwo<T extends WithUndefined<[any]>, K extends WithUndefined<[any]>, V>(func: (...args: [...MaybeUndefined<T>, ...MaybeUndefined<K>]) => V) {
-  function handler(...args: MaybeUndefined<T>): (..._args: MaybeUndefined<K>) => V;
-  function handler(...args: [...MaybeUndefined<T>, ...MaybeUndefined<K>]): V;
-  function handler(...args: MaybeUndefined<T> | [...MaybeUndefined<T>, ...MaybeUndefined<K>]) {
+export function useCurryTwo<T extends [any?], K extends [any?], V = void>(func: (...args: [...T, ...K]) => V) {
+  function handler(...args: T): (..._args: K) => V;
+  function handler(...args: [...T, ...K]): V;
+  function handler(...args: T | [...T, ...K]) {
     if (args.length === 1) {
-      return (..._args: MaybeUndefined<K>) => {
-        return func(...(args as MaybeUndefined<T>), ..._args);
+      return (..._args: K) => {
+        return func(...(args as T), ..._args);
       };
     } else {
-      return func(...(args as [...MaybeUndefined<T>, ...MaybeUndefined<K>]));
+      return func(...(args as [...T, ...K]));
     }
   }
   return handler;
@@ -25,24 +23,35 @@ export function useCurryTwo<T extends WithUndefined<[any]>, K extends WithUndefi
  * 测试三个参数函数的柯里化(测试中，不太好用)
  * @_args fun
  */
-export function useCurryThree<T extends WithUndefined<[any]>, K extends WithUndefined<[any]>, P extends WithUndefined<[any]>, V>(func: (...args: [...MaybeUndefined<T>, ...MaybeUndefined<K>, ...MaybeUndefined<P>]) => V) {
-  function handler(...args: MaybeUndefined<T>): (..._args: MaybeUndefined<K>) => (...__args: MaybeUndefined<P>) => V;
-  function handler(...args: [...MaybeUndefined<T>, ...MaybeUndefined<K>]): (...__args: MaybeUndefined<P>) => V;
-  function handler(...args: [...MaybeUndefined<T>, ...MaybeUndefined<K>, ...MaybeUndefined<P>]): V;
-  function handler(...args: MaybeUndefined<T> | [...MaybeUndefined<T>, ...MaybeUndefined<K>] | [...MaybeUndefined<T>, ...MaybeUndefined<K>, ...MaybeUndefined<P>]) {
+export function useCurryThree<T extends [any?], K extends [any?], P extends [any?], V>(func: (...args: [...T, ...K, ...P]) => V) {
+  function handler(...args: T): (..._args: K) => (...__args: P) => V;
+  function handler(...args: [...T, ...K]): (...__args: P) => V;
+  function handler(...args: [...T, ...K, ...P]): V;
+  function handler(...args: T | [...T, ...K] | [...T, ...K, ...P]) {
     if (args.length === 1) {
-      return (..._args: MaybeUndefined<K>) => {
-        return (...__args: MaybeUndefined<P>) => {
-          return func(...(args as MaybeUndefined<T>), ..._args, ...__args);
+      return (..._args: K) => {
+        return (...__args: P) => {
+          return func(...(args as T), ..._args, ...__args);
         };
       };
     } else if (args.length === 2) {
-      return (...__args: MaybeUndefined<P>) => {
-        return func(...(args as [...MaybeUndefined<T>, ...MaybeUndefined<K>]), ...__args);
+      return (...__args: P) => {
+        return func(...(args as [...T, ...K]), ...__args);
       };
     } else {
-      return func(...(args as [...MaybeUndefined<T>, ...MaybeUndefined<K>, ...MaybeUndefined<P>]));
+      return func(...(args as [...T, ...K, ...P]));
     }
   }
   return handler;
 }
+
+// const a = <T, B>(a: T, b?: B, c: number = 1): number => {
+//   return Number(a) + Number(b) + Number(c);
+// };
+
+// const b = (<T, B>() => {
+//   return useCurryThree<[a: T], [b?: B], [c?: number], number>(a);
+// })();
+
+// const test = b(1)("123");
+// test(34);
