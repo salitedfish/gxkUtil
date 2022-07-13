@@ -3,14 +3,14 @@ import * as useCommon from ".";
 
 /**test useFileNameFromURL */
 test("test useFileNameFromURL", () => {
-  expect(useCommon.useFileNameFromURL("efefer/test.jpg")).toBe("test");
-  expect(useCommon.useFileNameFromURL("efefer/test.jpg", true)).toBe("test.jpg");
+  expect(useCommon.useFileNameFromURL("efefer/test.jpg")()).toBe("test");
+  expect(useCommon.useFileNameFromURL("efefer/test.jpg")(true)).toBe("test.jpg");
 });
 
 /**test useFileTypeFromURL */
 test("test useFileTypeFromURL", () => {
-  expect(useCommon.useFileTypeFromURL("efefer/test.jpg")).toBe("jpg");
-  expect(useCommon.useFileTypeFromURL("efefer/test.jpg", true)).toBe("image");
+  expect(useCommon.useFileTypeFromURL("efefer/test.jpg")()).toBe("jpg");
+  expect(useCommon.useFileTypeFromURL("efefer/test.jpg")(true)).toBe("image");
 });
 
 /**test useGenParamsUrl */
@@ -21,7 +21,7 @@ test("test useGenParamsUrl", () => {
 
 /**test useFileNameFromURL */
 test("test useFileNameFromURL", () => {
-  expect(useCommon.useFileNameFromURL("http://test.com/home/test.jpg")).toBe("test");
+  expect(useCommon.useFileNameFromURL("http://test.com/home/test.jpg")()).toBe("test");
   expect(useCommon.useFileNameFromURL("http://test.com/home/test.jpg", true)).toBe("test.jpg");
 });
 

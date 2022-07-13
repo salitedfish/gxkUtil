@@ -2,13 +2,14 @@ import { useCheckUndefined } from "../../dataOperate";
 import SparkMD5 from "spark-md5";
 import SHA256 from "crypto-js/sha256";
 import Clipboard from "clipboard";
+import { useCurryTwo } from "../../currying";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 通过文件地址点击下载
  * @param url
  * @param name
  */
-export const useDownloadByURL = (url: string, name = "file") => {
+const useDownloadByURLShallow = (url: string, name = "file") => {
   const link = document.createElement("a");
   link.style.display = "none";
   link.href = url;
@@ -18,6 +19,7 @@ export const useDownloadByURL = (url: string, name = "file") => {
   URL.revokeObjectURL(link.href);
   document.body.removeChild(link);
 };
+export const useDownloadByURL = useCurryTwo<[url: string], [name?: string], void>(useDownloadByURLShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 从URL中获取文件名、文件名.扩展名
@@ -25,7 +27,7 @@ export const useDownloadByURL = (url: string, name = "file") => {
  * @param withExt true表示携带扩展名
  * @returns
  */
-export const useFileNameFromURL = (URL: string, withExt: boolean = false) => {
+const useFileNameFromURLShallow = (URL: string, withExt: boolean = false) => {
   const firstIndex = URL.lastIndexOf("/") + 1;
   const lastIndex = URL.lastIndexOf(".");
   if (withExt) {
@@ -34,6 +36,7 @@ export const useFileNameFromURL = (URL: string, withExt: boolean = false) => {
     return URL.slice(firstIndex, lastIndex);
   }
 };
+export const useFileNameFromURL = useCurryTwo<[URL: string], [withExt?: boolean], string>(useFileNameFromURLShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 从URL中获取文件类型
@@ -41,7 +44,7 @@ export const useFileNameFromURL = (URL: string, withExt: boolean = false) => {
  * @param format 默认为false，false则直接返回扩展名，true为格式化为image，video等
  * @returns
  */
-export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
+const useFileTypeFromURLShallow = (URL: string, format: boolean = false) => {
   const fileType = URL.slice(URL.lastIndexOf(".") + 1);
   if (!format) {
     return fileType;
@@ -74,6 +77,7 @@ export const useFileTypeFromURL = (URL: string, format: boolean = false) => {
   }
   return "other";
 };
+export const useFileTypeFromURL = useCurryTwo<[URL: string], [format?: boolean], string>(useFileTypeFromURLShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 组装url参数
@@ -111,7 +115,7 @@ export function useGenParamsUrl(url: string, params?: { [key: string]: string | 
  * @param text 复制的文字
  * @param domID 为了规范，统一传入dom的id
  */
-export const useClipboard = (text: string, domID: string) => {
+const useClipboardShallow = (text: string, domID: string) => {
   return new Promise((resolve, reject) => {
     if (useCheckUndefined(text)) {
       return;
@@ -130,6 +134,7 @@ export const useClipboard = (text: string, domID: string) => {
     });
   });
 };
+export const useClipboard = useCurryTwo<[text: string], [domID: string], Promise<unknown>>(useClipboardShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 计算文件或字符串MD5hash
