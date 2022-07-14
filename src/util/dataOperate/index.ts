@@ -1,3 +1,5 @@
+import { useCurryTwo } from "../currying";
+
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 检查参数中是否有undefined
@@ -64,72 +66,63 @@ export const useDeepClone = <T>(oldData: T): T => {
  * @param target 例如: {a: 1}
  * @returns
  */
-export function useDeepEqual(origin: any): (target: any) => boolean;
-export function useDeepEqual(origin: any, target: any): boolean;
-export function useDeepEqual(origin: any, target?: any) {
-  const handler = (target: any) => {
-    if (useCheckSimpleData(origin, target)) {
-      return origin === target;
-    } else {
-      if (Array.isArray(origin) && Array.isArray(target)) {
-        if (origin.length !== target.length) {
-          return false;
-        } else {
-          for (let i = 0; i < origin.length; i++) {
-            if (!useDeepEqual(origin[i], target[i])) {
-              return false;
-            }
-          }
-          return true;
-        }
-      } else if (origin instanceof Map && target instanceof Map) {
-        /**map这里如果key为对象的时候，如果两个key深度相同，但是引用不同，会判断为不同，因为有一个会找不到 */
-        if (origin.size !== target.size) {
-          return false;
-        } else {
-          for (const [key, value] of origin) {
-            if (!useDeepEqual(value, target.get(key))) {
-              return false;
-            }
-          }
-          return true;
-        }
-      } else if (origin instanceof Set && target instanceof Set) {
-        if (origin.size !== target.size) {
-          return false;
-        } else {
-          const originArr = Array.from(origin);
-          const newArr = Array.from(target);
-          for (let i = 0; i < originArr.length; i++) {
-            if (!useDeepEqual(originArr[i], newArr[i])) {
-              return false;
-            }
-          }
-          return true;
-        }
-      } else if (typeof origin === "object" && typeof target === "object") {
-        if (Object.keys(origin).length !== Object.keys(target).length) {
-          return false;
-        } else {
-          for (const key in origin) {
-            if (!useDeepEqual(origin[key], target[key])) {
-              return false;
-            }
-          }
-          return true;
-        }
-      } else {
-        return origin === target;
-      }
-    }
-  };
-  /**Currying */
-  if (target === undefined) {
-    return handler;
+const useDeepEqualShallow = (origin: any, target: any) => {
+  if (useCheckSimpleData(origin, target)) {
+    return origin === target;
   } else {
-    return handler(target);
+    if (Array.isArray(origin) && Array.isArray(target)) {
+      if (origin.length !== target.length) {
+        return false;
+      } else {
+        for (let i = 0; i < origin.length; i++) {
+          if (!useDeepEqual(origin[i], target[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else if (origin instanceof Map && target instanceof Map) {
+      /**map这里如果key为对象的时候，如果两个key深度相同，但是引用不同，会判断为不同，因为有一个会找不到 */
+      if (origin.size !== target.size) {
+        return false;
+      } else {
+        for (const [key, value] of origin) {
+          if (!useDeepEqual(value, target.get(key))) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else if (origin instanceof Set && target instanceof Set) {
+      if (origin.size !== target.size) {
+        return false;
+      } else {
+        const originArr = Array.from(origin);
+        const newArr = Array.from(target);
+        for (let i = 0; i < originArr.length; i++) {
+          if (!useDeepEqual(originArr[i], newArr[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else if (typeof origin === "object" && typeof target === "object") {
+      if (Object.keys(origin).length !== Object.keys(target).length) {
+        return false;
+      } else {
+        for (const key in origin) {
+          if (!useDeepEqual(origin[key], target[key])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    } else {
+      return origin === target;
+    }
   }
-}
+};
+export const useDeepEqual = useCurryTwo<[origin: any], [target: any], boolean>(useDeepEqualShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度判断数组中是否包含某个值, 依赖useDeepEqual
@@ -137,28 +130,19 @@ export function useDeepEqual(origin: any, target?: any) {
  * @param target 例如 {a:1}
  * @returns
  */
-export function useDeepInclude(origin: unknown[]): (target: unknown) => boolean;
-export function useDeepInclude(origin: unknown[], target: unknown): boolean;
-export function useDeepInclude(origin: unknown[], target?: unknown) {
-  const handler = (target: unknown) => {
-    if (useCheckSimpleData(target)) {
-      return origin.includes(target);
-    } else {
-      for (const item of origin) {
-        if (useDeepEqual(item, target)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  };
-  /**Currying */
-  if (target === undefined) {
-    return handler;
+const useDeepIncludeShallow = (origin: unknown[], target: unknown) => {
+  if (useCheckSimpleData(target)) {
+    return origin.includes(target);
   } else {
-    return handler(target);
+    for (const item of origin) {
+      if (useDeepEqual(item, target)) {
+        return true;
+      }
+    }
+    return false;
   }
-}
+};
+export const useDeepInclude = useCurryTwo<[origin: unknown[]], [target: unknown], boolean>(useDeepIncludeShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度数组去重，不改变原数组, 依赖useDeepInclude
@@ -254,24 +238,15 @@ type PositionTrim = "head" | "tail" | "between" | "global";
  * @param position
  * @returns
  */
-export function useTrimStr(target: string): (position: PositionTrim) => string;
-export function useTrimStr(target: string, position: PositionTrim): string;
-export function useTrimStr(target: string, position?: PositionTrim) {
-  const handler = (position: PositionTrim) => {
-    if (position === "head") {
-      return target.replace(/^\s+/g, "");
-    } else if (position === "tail") {
-      return target.replace(/\s+$/g, "");
-    } else if (position === "between") {
-      return target.replace(/^\s+|\s+$/g, "");
-    } else {
-      return target.replace(/\s+/g, "");
-    }
-  };
-  /**Currying */
-  if (position === undefined) {
-    return handler;
+const useTrimStrShallow = (target: string, position?: PositionTrim) => {
+  if (position === "head") {
+    return target.replace(/^\s+/g, "");
+  } else if (position === "tail") {
+    return target.replace(/\s+$/g, "");
+  } else if (position === "between") {
+    return target.replace(/^\s+|\s+$/g, "");
   } else {
-    return handler(position);
+    return target.replace(/\s+/g, "");
   }
-}
+};
+export const useTrimStr = useCurryTwo<[target: string], [position?: PositionTrim], string>(useTrimStrShallow);

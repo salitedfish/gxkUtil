@@ -85,30 +85,19 @@ export const useFileTypeFromURL = useCurryTwo<[URL: string], [format?: boolean],
  * @param params
  * @returns
  */
-export function useGenParamsUrl(url: string): (params: { [key: string]: string | number }) => string;
-export function useGenParamsUrl(url: string, params: { [key: string]: string | number }): string;
-export function useGenParamsUrl(url: string, params?: { [key: string]: string | number }) {
-  const handler = (params: { [key: string]: string | number }) => {
-    let resUrl: string;
-    if (url[url.length - 1] === "?") {
-      resUrl = url;
-    } else {
-      resUrl = url + "?";
-    }
-    if (params) {
-      for (const key in params) {
-        resUrl = `${resUrl}${key}=${params[key]}&`;
-      }
-    }
-    return resUrl.slice(0, resUrl.length - 1);
-  };
-  /**Currying */
-  if (params === undefined) {
-    return handler;
+const useGenParamsUrlShallow = (url: string, params: { [key: string]: string | number }): string => {
+  let resUrl: string;
+  if (url[url.length - 1] === "?") {
+    resUrl = url;
   } else {
-    return handler(params);
+    resUrl = url + "?";
   }
-}
+  for (const key in params) {
+    resUrl = `${resUrl}${key}=${params[key]}&`;
+  }
+  return resUrl.slice(0, resUrl.length - 1);
+};
+export const useGenParamsUrl = useCurryTwo<[url: string], [params: { [key: string]: string | number }], string>(useGenParamsUrlShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 点击复制

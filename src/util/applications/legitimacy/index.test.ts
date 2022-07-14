@@ -2,21 +2,21 @@ import * as useLegitimacy from ".";
 
 /**test usePhoneLegal */
 test("test useLegitimacy", () => {
-  expect(useLegitimacy.usePhoneLegal(12345678912)).toBe(false);
-  expect(useLegitimacy.usePhoneLegal("13666870850")).toBe(true);
+  expect(useLegitimacy.usePhoneLegal(12345678912)()).toBe(false);
+  expect(useLegitimacy.usePhoneLegal("13666870850")()).toBe(true);
 });
 
 /**test useIDCargLegal*/
 test("test useIDCargLegal", () => {
-  expect(useLegitimacy.useIDCargLegal("331023199702021811")).toBe(true);
-  expect(useLegitimacy.useIDCargLegal("123124353453452332")).toBe(false);
-  expect(useLegitimacy.useIDCargLegal("33102319970202181x")).toBe(false);
+  expect(useLegitimacy.useIDCargLegal("331023199702021811")()).toBe(true);
+  expect(useLegitimacy.useIDCargLegal("123124353453452332")()).toBe(false);
+  expect(useLegitimacy.useIDCargLegal("33102319970202181x")()).toBe(false);
 });
 
 /**test useEmailLegal */
 test("test useEmailLegal", () => {
-  expect(useLegitimacy.useEmailLegal("1525185228@qq.com")).toBe(true);
-  expect(useLegitimacy.useEmailLegal("1525185228@qq")).toBe(false);
+  expect(useLegitimacy.useEmailLegal("1525185228@qq.com")()).toBe(true);
+  expect(useLegitimacy.useEmailLegal("1525185228@qq")()).toBe(false);
 });
 
 /**test useIPV4Legal*/

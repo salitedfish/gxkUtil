@@ -1,4 +1,5 @@
 import fs from "fs";
+import { useCurryTwo } from "../../currying";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -22,47 +23,30 @@ export function useReadFile(fileAddress: string) {
  * 写入文件内容
  * @param fileAddress
  */
-export function useWriteFile(fileAddress: string): (fileContent: string) => Promise<string>;
-export function useWriteFile(fileAddress: string, fileContent: string): Promise<string>;
-export function useWriteFile(fileAddress: string, fileContent?: string) {
-  const handler = async (fileContent: string) => {
-    return new Promise((resolve, reject) => {
-      fs.writeFile(fileAddress, fileContent, (err) => {
-        if (err) {
-          reject(err);
-        }
-        resolve("write success");
-      });
+const useWriteFileShallow = (fileAddress: string, fileContent: string) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(fileAddress, fileContent, (err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve("write success");
     });
-  };
-  if (fileContent === undefined) {
-    return handler;
-  } else {
-    return handler(fileContent);
-  }
-}
-
+  });
+};
+export const useWriteFile = useCurryTwo<[fileAddress: string], [fileContent: string], Promise<unknown>>(useWriteFileShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 追加写入文件内容
  * @param fileAddress
  */
-export function useAppendFile(fileAddress: string): (fileContent: string) => Promise<string>;
-export function useAppendFile(fileAddress: string, fileContent: string): Promise<string>;
-export function useAppendFile(fileAddress: string, fileContent?: string) {
-  const handler = async (fileContent: string) => {
-    return new Promise((resolve, reject) => {
-      fs.appendFile(fileAddress, fileContent, (err) => {
-        if (err) {
-          reject(err);
-        }
-        resolve("append success");
-      });
+const useAppendFileShallow = (fileAddress: string, fileContent: string) => {
+  return new Promise((resolve, reject) => {
+    fs.appendFile(fileAddress, fileContent, (err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve("append success");
     });
-  };
-  if (fileContent === undefined) {
-    return handler;
-  } else {
-    return handler(fileContent);
-  }
-}
+  });
+};
+export const useAppendFile = useCurryTwo<[fileAddress: string], [fileContent: string], Promise<unknown>>(useAppendFileShallow);

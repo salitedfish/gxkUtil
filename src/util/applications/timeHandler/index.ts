@@ -1,4 +1,6 @@
 import { ObjectType } from "../../../type";
+import { useCurryTwo } from "../../currying";
+
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 将时间格式字符串或时间戳字符串转化为时间戳毫秒
@@ -27,100 +29,73 @@ export const useGenTimeStamp = (timeStr: string | number): number => {
  * @param targetTime 目标时间戳毫秒或时间格式字符串，如果是字符串要求从年开始。
  * @param referenceTime 参照时间戳毫秒或时间格式字符串，如果是字符串要求从年开始。
  */
-export function useIsEarly(targetTime: number | string): (referenceTime: number | string) => boolean;
-export function useIsEarly(targetTime: number | string, referenceTime: number | string): boolean;
-export function useIsEarly(targetTime: number | string, referenceTime?: number | string) {
-  const handler = (referenceTime: number | string) => {
-    return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
-  };
-  /**Currying */
-  if (referenceTime === undefined) {
-    return handler;
-  } else {
-    return handler(referenceTime);
-  }
-}
+const useIsEarlyShallow = (targetTime: number | string, referenceTime: number | string) => {
+  return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
+};
+export const useIsEarly = useCurryTwo<[targetTime: number | string], [referenceTime: number | string], boolean>(useIsEarlyShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 剩余时间毫秒转化为时间格式字符串
  * @format 格式化格式，如："{dd}天{hh}时{mm}分{ss}秒"
  * @param time 剩余时间毫秒
  */
-export function useCountDownFormat(format: string): (time: number | string) => string;
-export function useCountDownFormat(format: string, time: number | string): string;
-export function useCountDownFormat(format: string, time?: number | string) {
-  const handler = (time: number | string) => {
-    let newTime = Number(time);
-    /**解析时间 */
-    const date: ObjectType<number> = {
-      "d+": Math.floor(newTime / 1000 / 3600 / 24),
-      "h+": Math.floor((newTime % (1000 * 3600 * 24)) / 1000 / 3600),
-      "m+": Math.floor((newTime % (1000 * 60 * 60)) / 1000 / 60),
-      "s+": Math.floor((newTime % (1000 * 60)) / 1000),
-    };
-    /**替换格式化字符串 */
-    for (const key in date) {
-      const reg = new RegExp("({" + key + "})");
-      if (reg.test(format)) {
-        const regRes = reg.exec(format) || [];
-        const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
-        format = format.replace(regRes[0], String(replaceValue));
-      }
-    }
-    return format;
+const useCountDownFormatShallow = (format: string, time: number | string) => {
+  let newTime = Number(time);
+  /**解析时间 */
+  const date: ObjectType<number> = {
+    "d+": Math.floor(newTime / 1000 / 3600 / 24),
+    "h+": Math.floor((newTime % (1000 * 3600 * 24)) / 1000 / 3600),
+    "m+": Math.floor((newTime % (1000 * 60 * 60)) / 1000 / 60),
+    "s+": Math.floor((newTime % (1000 * 60)) / 1000),
   };
-  /**Currying */
-  if (time === undefined) {
-    return handler;
-  } else {
-    return handler(time);
+  /**替换格式化字符串 */
+  for (const key in date) {
+    const reg = new RegExp("({" + key + "})");
+    if (reg.test(format)) {
+      const regRes = reg.exec(format) || [];
+      const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
+      format = format.replace(regRes[0], String(replaceValue));
+    }
   }
-}
+  return format;
+};
+export const useCountDownFormat = useCurryTwo<[format: string], [time: number | string], string>(useCountDownFormatShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 时间戳毫秒或时间格式字符串转化为时间格式字符串
  * @param format 格式化格式,如："{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}"
  * @param time 时间戳毫秒或时间格式字符串，如果是字符串要求从年开始
  */
-export function useTimeFormat(format: string): (time: number | string) => string;
-export function useTimeFormat(format: string, time: number | string): string;
-export function useTimeFormat(format: string, time?: number | string) {
-  const handler = (time: number | string) => {
-    let newTime = useGenTimeStamp(time);
-    const targetDate = new Date(newTime);
-    /**解析时间 */
-    const date: ObjectType = {
-      "M+": targetDate.getMonth() + 1,
-      "d+": targetDate.getDate(),
-      "h+": targetDate.getHours(),
-      "m+": targetDate.getMinutes(),
-      "s+": targetDate.getSeconds(),
-      "q+": Math.floor((targetDate.getMonth() + 3) / 3),
-      "S+": targetDate.getMilliseconds(),
-    };
-    const fullYear = targetDate.getFullYear();
+const useTimeFormatShallow = (format: string, time: number | string) => {
+  let newTime = useGenTimeStamp(time);
+  const targetDate = new Date(newTime);
+  /**解析时间 */
+  const date: ObjectType = {
+    "M+": targetDate.getMonth() + 1,
+    "d+": targetDate.getDate(),
+    "h+": targetDate.getHours(),
+    "m+": targetDate.getMinutes(),
+    "s+": targetDate.getSeconds(),
+    "q+": Math.floor((targetDate.getMonth() + 3) / 3),
+    "S+": targetDate.getMilliseconds(),
+  };
+  const fullYear = targetDate.getFullYear();
 
-    /**替换格式化字符串,年和其他分开替换 */
-    if (/({y+})/i.test(format)) {
-      const reg = /({y+})/i;
+  /**替换格式化字符串,年和其他分开替换 */
+  if (/({y+})/i.test(format)) {
+    const reg = /({y+})/i;
+    const regRes = reg.exec(format) || [];
+    const replaceValue = fullYear.toString().slice(6 - regRes[0].length);
+    format = format.replace(regRes[0], replaceValue);
+  }
+  for (const key in date) {
+    const reg = new RegExp("({" + key + "})");
+    if (reg.test(format)) {
       const regRes = reg.exec(format) || [];
-      const replaceValue = fullYear.toString().slice(6 - regRes[0].length);
+      const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], replaceValue);
     }
-    for (const key in date) {
-      const reg = new RegExp("({" + key + "})");
-      if (reg.test(format)) {
-        const regRes = reg.exec(format) || [];
-        const replaceValue = regRes[0].length == 3 ? date[key] : date[key].toString().padStart(2, "0");
-        format = format.replace(regRes[0], replaceValue);
-      }
-    }
-    return format;
-  };
-  /**Currying */
-  if (time === undefined) {
-    return handler;
-  } else {
-    return handler(time);
   }
-}
+  return format;
+};
+export const useTimeFormat = useCurryTwo<[format: string], [time: number | string], string>(useTimeFormatShallow);

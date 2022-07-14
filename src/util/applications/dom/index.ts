@@ -1,3 +1,4 @@
+import { useCurryTwo } from "../../currying";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 设置页面的title
@@ -24,24 +25,13 @@ export const useGetDom = (target: string) => {
  * @param classNames 类名数组
  * @returns
  */
-export function useAddDomClass(target: string): (classNames: string[]) => void;
-export function useAddDomClass(target: string, classNames: string[]): void;
-export function useAddDomClass(target: string, classNames?: string[]) {
-  const handler = (classNames: string[]) => {
-    let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
-    for (let i = 0; i <= targetDom.length - 1; i++) {
-      targetDom[i].classList.add(...classNames);
-    }
-  };
-  /**Currying */
-  if (classNames === undefined) {
-    return (classNames: string[]) => {
-      handler(classNames);
-    };
-  } else {
-    handler(classNames);
+const useAddDomClassShallow = (target: string, classNames: string[]) => {
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    targetDom[i].classList.add(...classNames);
   }
-}
+};
+export const useAddDomClass = useCurryTwo<[target: string], [classNames: string[]], void>(useAddDomClassShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 移除目标dom的class
@@ -49,24 +39,14 @@ export function useAddDomClass(target: string, classNames?: string[]) {
  * @param classNames 类名数组
  * @returns
  */
-export function useRemoveDomClass(target: string): (classNames: string[]) => void;
-export function useRemoveDomClass(target: string, classNames: string[]): void;
-export function useRemoveDomClass(target: string, classNames?: string[]) {
-  const handler = (classNames: string[]) => {
-    let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
-    for (let i = 0; i <= targetDom.length - 1; i++) {
-      targetDom[i].classList.remove(...classNames);
-    }
-  };
-  /**Currying */
-  if (classNames === undefined) {
-    return (classNames: string[]) => {
-      handler(classNames);
-    };
-  } else {
-    handler(classNames);
+const useRemoveDomClassShallow = (target: string, classNames: string[]) => {
+  // const handler = (classNames: string[]) => {
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    targetDom[i].classList.remove(...classNames);
   }
-}
+};
+export const useRemoveDomClass = useCurryTwo<[target: string], [classNames: string[]], void>(useRemoveDomClassShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type GetStyleName = keyof CSSStyleDeclaration & string;
 /**
@@ -75,27 +55,17 @@ type GetStyleName = keyof CSSStyleDeclaration & string;
  * @param styleName 如：width
  * @returns
  */
-export function useGetDomStyle(target: string): (styleName: GetStyleName) => string[];
-export function useGetDomStyle(target: string, styleName: GetStyleName): string[];
-export function useGetDomStyle(target: string, styleName?: GetStyleName) {
-  const handler = (styleName: GetStyleName) => {
-    let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
-    const styles = [];
-    for (let i = 0; i <= targetDom.length - 1; i++) {
-      /**dom.style只能获取到内联style的属性值，所以用这种方式获取 */
-      styles.push(window.getComputedStyle(targetDom[i]).getPropertyValue(styleName));
-    }
-    return styles;
-  };
-  /**Currying */
-  if (styleName === undefined) {
-    return (styleName: GetStyleName) => {
-      return handler(styleName);
-    };
-  } else {
-    return handler(styleName);
+const useGetDomStyleShallow = (target: string, styleName: GetStyleName): string[] => {
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  const styles = [];
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    /**dom.style只能获取到内联style的属性值，所以用这种方式获取 */
+    styles.push(window.getComputedStyle(targetDom[i]).getPropertyValue(styleName));
   }
-}
+  return styles;
+};
+export const useGetDomStyle = useCurryTwo<[target: string], [styleName: GetStyleName], void>(useGetDomStyleShallow);
+
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type SetStyleName = keyof CSSStyleDeclaration;
 /**
