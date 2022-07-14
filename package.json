@@ -1,6 +1,6 @@
 {
   "name": "@gexk/gxk",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
