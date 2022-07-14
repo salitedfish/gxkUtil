@@ -22,7 +22,7 @@ export function useGetLStorage(key: string, defaultValue?: unknown) {
   };
   /**Currying */
   if (defaultValue === undefined) {
-    return useGetLStorage;
+    return handler;
   } else {
     return handler(defaultValue);
   }
