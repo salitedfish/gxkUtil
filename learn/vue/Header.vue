@@ -16,29 +16,19 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 /**框架*/
-import { defineComponent } from "vue";
 /**工具库*/
 /**类型*/
 /**网络请求*/
 /**自定义方法*/
 /**组件*/
 
-export default defineComponent({
-  name: "commonHeader",
-  props: {
-    title: {
-      type: String,
-    },
-  },
-  setup() {
-    const handleBack = () => {};
-    return {
-      handleBack,
-    };
-  },
-});
+defineProps<{
+  title: string;
+}>();
+
+const handleBack = () => {};
 </script>
 
 <style scoped lang="less">
