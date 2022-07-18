@@ -1,9 +1,9 @@
 import SparkMD5 from "spark-md5";
 import SHA256 from "crypto-js/sha256";
 import Clipboard from "clipboard";
-import { useCurryTwo } from "../../currying";
-import { useCheckUndefined } from "../../dataOperate";
-import { useConsoleWarn } from "../../../useInside";
+import { useCheckUndefined } from "src/util";
+import { useCurryTwo } from "src/util/currying";
+import { useConsoleWarn } from "src/useInside";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 通过文件地址点击下载

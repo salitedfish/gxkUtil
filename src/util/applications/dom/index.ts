@@ -1,5 +1,5 @@
-import { useCurryTwo } from "../../currying";
-import { useConsoleWarn } from "../../../useInside";
+import { useCurryTwo } from "src/util/currying";
+import { useConsoleWarn } from "src/useInside";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 设置页面的title

@@ -1,6 +1,6 @@
-import { ObjectType } from "../../../type";
-import { useCurryTwo } from "../../currying";
-import { useConsoleError } from "../../../useInside";
+import { ObjectType } from "src/type";
+import { useCurryTwo } from "src/util/currying";
+import { useConsoleError } from "src/useInside";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
