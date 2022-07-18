@@ -82,5 +82,10 @@ export default () => {
       { file: packageJSON.module, format: "esm", name: packageJSON.name },
       { file: packageJSON.main, format: "cjs", name: packageJSON.name },
     ],
+    resolve: {
+      alias: {
+        src: getPath("src"),
+      },
+    },
   };
 };

@@ -21,3 +21,14 @@ test("test useCurryThree", () => {
   expect(sumCurry(1, 2, 1)).toBe(4);
   expect(sumCurry(1, 2)(1)).toBe(4);
 });
+
+/**test useCurryFour */
+test("test useCurryFour", () => {
+  const sum = (a: number, b: number, c: number, d: string) => {
+    return a + b + c + d;
+  };
+  const sumCurry = useCurry.useCurryFour<[a: number], [b: number], [c: number], [d: string], string>(sum);
+  expect(sumCurry(1)(2)(3)("4")).toBe("64");
+  expect(sumCurry(1, 2, 1)("2")).toBe("42");
+  expect(sumCurry(1, 2)(1)("2")).toBe("42");
+});

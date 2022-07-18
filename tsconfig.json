@@ -17,7 +17,10 @@
     "removeComments": true, //删除注释
     "declaration": true, //生成定义文件
     "declarationMap": false,
-    "types": ["node", "jest"] //导入类型包
+    "types": ["node", "jest"], //导入类型包
+    "paths": {
+      "src/*": ["src/*"],
+    },
   },
   "include": [
     "src/**/*.ts",

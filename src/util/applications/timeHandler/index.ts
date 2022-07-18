@@ -1,5 +1,6 @@
 import { ObjectType } from "../../../type";
 import { useCurryTwo } from "../../currying";
+import { useConsoleError } from "../../../useInside";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -14,10 +15,9 @@ export const useGenTimeStamp = (timeStr: string | number): number => {
       .replace(/时|分|秒/g, ":");
     const timeStamp = Number(new Date(timeStrFormat));
     if (isNaN(timeStamp)) {
-      throw new Error("useGenTimeStamp：时间格式错误!");
-    } else {
-      return timeStamp;
+      useConsoleError("useGenTimeStamp: 时间格式错误!");
     }
+    return timeStamp;
   } else {
     /**如果是"1234567891000"或1234567891000*/
     return Number(timeStr);

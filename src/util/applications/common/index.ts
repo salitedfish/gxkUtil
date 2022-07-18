@@ -1,8 +1,9 @@
-import { useCheckUndefined } from "../../dataOperate";
 import SparkMD5 from "spark-md5";
 import SHA256 from "crypto-js/sha256";
 import Clipboard from "clipboard";
 import { useCurryTwo } from "../../currying";
+import { useCheckUndefined } from "../../dataOperate";
+import { useConsoleWarn } from "../../../useInside";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 通过文件地址点击下载
@@ -107,6 +108,7 @@ export const useGenParamsUrl = useCurryTwo<[url: string], [params: { [key: strin
 const useClipboardShallow = (text: string, domID: string) => {
   return new Promise((resolve, reject) => {
     if (useCheckUndefined(text)) {
+      useConsoleWarn("useClipboardShallow: 参数为undefined!");
       return;
     }
     let clipboard = new Clipboard(domID, {

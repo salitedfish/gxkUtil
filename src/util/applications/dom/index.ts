@@ -1,4 +1,5 @@
 import { useCurryTwo } from "../../currying";
+import { useConsoleWarn } from "../../../useInside";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 设置页面的title
@@ -16,6 +17,9 @@ export const useSetHTMLTitle = (title: string): void => {
  */
 export const useGetDom = (target: string) => {
   let targetDom: NodeListOf<HTMLElement> = document.querySelectorAll(target);
+  if (targetDom.length === 0) {
+    useConsoleWarn("useGetDom: 没获取到dom!");
+  }
   return targetDom;
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
