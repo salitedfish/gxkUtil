@@ -99,8 +99,8 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     }
 
     /**请求前先执行，类似于请求拦截器 */
-    const retConfig = cusOptions.reqHandler ? cusOptions.reqHandler(resConfig) : resConfig;
-    const regConfig = comOptions.reqHandler ? comOptions.reqHandler(retConfig) : retConfig;
+    const retConfig = comOptions.reqHandler ? comOptions.reqHandler(resConfig) : resConfig;
+    const regConfig = cusOptions.reqHandler ? cusOptions.reqHandler(retConfig) : retConfig;
 
     /**返回请求结果 */
     return fetch(url, regConfig)
@@ -108,15 +108,15 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         const reg = await handerResponse(res);
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件，处理返回值 */
-        const ret = cusOptions.resHandler ? cusOptions.resHandler(reg) : reg;
-        const rex = comOptions.resHandler ? comOptions.resHandler(ret) : ret;
+        const ret = comOptions.resHandler ? comOptions.resHandler(reg) : reg;
+        const rex = cusOptions.resHandler ? cusOptions.resHandler(ret) : ret;
         return rex;
       })
       .catch((err) => {
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件 */
-        const ret = cusOptions.errHandler ? cusOptions.errHandler(err) : err;
-        const rex = comOptions.errHandler ? comOptions.errHandler(ret) : ret;
+        const ret = comOptions.errHandler ? comOptions.errHandler(err) : err;
+        const rex = cusOptions.errHandler ? cusOptions.errHandler(ret) : ret;
         return Promise.reject(rex);
       });
   };
