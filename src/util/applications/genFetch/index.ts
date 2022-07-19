@@ -1,4 +1,4 @@
-import { Method, ObjectType } from "src/type";
+import { ResponseType, Method, ObjectType } from "src/type";
 import { useGenParamsUrl } from "src/util";
 import { useCurryTwo } from "src/util/currying";
 
@@ -14,7 +14,7 @@ type ComFetchConfig = {
 };
 type ComFetchOptions = {
   reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: Response) => Response;
+  resHandler?: (params: ResponseType | Blob) => ResponseType | Blob;
   errHandler?: (params: any) => any;
   timeOut?: number;
 };
@@ -30,7 +30,7 @@ type CusFetchConfig = {
 };
 type CusFetchOptions = {
   reqHandler?: ((params: CusFetchConfig) => CusFetchConfig) | false;
-  resHandler?: ((params: Response) => Response) | false;
+  resHandler?: ((params: ResponseType | Blob) => ResponseType | Blob) | false;
   errHandler?: ((params: any) => any) | false;
   abortController?: AbortController[];
   timeOut?: number;
@@ -48,6 +48,18 @@ const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchO
   }
 };
 
+/**处理返回值 */
+const handerResponse = (shallowResponse: Response): Promise<ResponseType | Blob> => {
+  const contentType = shallowResponse.headers.get("Content-Type");
+  if (contentType && contentType.match(/application\/json/i)) {
+    return shallowResponse.json();
+  } else if (contentType && contentType.match(/application\/csv/i)) {
+    return shallowResponse.blob();
+  } else {
+    return shallowResponse.json();
+  }
+};
+
 /**
  * @param comConfig baseURL headers responseType mode credentials
  * @param comOptions reqHandler resHandler errHandler timeOut
@@ -59,7 +71,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<Response> => {
+  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType | Blob> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -96,10 +108,11 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
 
     /**返回请求结果 */
     return fetch(url, retConfig)
-      .then((res: Response) => {
+      .then(async (res: Response) => {
+        const reg = await handerResponse(res);
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件，处理返回值 */
-        const ret = resHandler ? resHandler(res) : res;
+        const ret = resHandler ? resHandler(reg) : reg;
         return ret;
       })
       .catch((err) => {
@@ -109,9 +122,9 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         return Promise.reject(err);
       });
   };
-  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<Response>>(handler);
+  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<ResponseType | Blob>>(handler);
 };
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<Response>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<Response> };
+type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<ResponseType | Blob>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<ResponseType | Blob> };
 export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
 
 /**useage */
