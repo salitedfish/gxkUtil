@@ -13,9 +13,9 @@ type ComFetchConfig = {
   credentials?: FetchCredentials;
 };
 type ComFetchOptions = {
-  reqHandler?: ((params: CusFetchConfig) => CusFetchConfig) | false;
-  resHandler?: ((params: ResponseType) => ResponseType) | false;
-  errHandler?: ((params: any) => any) | false;
+  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
+  resHandler?: (params: ResponseType) => ResponseType;
+  errHandler?: (params: any) => any;
   timeOut?: number;
 };
 type CusFetchConfig = {

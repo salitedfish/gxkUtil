@@ -33,8 +33,8 @@ export const useThrottling: UseThrottling = (callBack, countDown = 1000) => {
       lock = true;
       setTimeout(() => {
         lock = false;
-        return callBack(...params);
       }, countDown);
+      return callBack(...params);
     }
   };
 };

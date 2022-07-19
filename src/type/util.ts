@@ -15,6 +15,8 @@ export type ResponseType<T = any> = {
   readonly data: T;
   readonly status?: number;
   readonly message?: string;
+  readonly success?: any;
+  readonly error?: any;
 };
 
 export type Method = "GET" | "DELETE" | "POST" | "PUT";
