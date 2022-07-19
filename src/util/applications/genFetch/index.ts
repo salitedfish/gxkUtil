@@ -1,6 +1,6 @@
 import { ResponseType, Method, ObjectType } from "src/type";
 import { useGenParamsUrl } from "src/util";
-import { useCurryTwo } from "src/util/currying";
+// import { useCurryTwo } from "src/util/currying";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
@@ -14,7 +14,7 @@ type ComFetchConfig = {
 };
 type ComFetchOptions = {
   reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: ResponseType | Blob) => ResponseType | Blob;
+  resHandler?: (params: ResponseType | Blob) => any;
   errHandler?: (params: any) => any;
   timeOut?: number;
 };
@@ -30,7 +30,7 @@ type CusFetchConfig = {
 };
 type CusFetchOptions = {
   reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: ResponseType | Blob) => any;
+  resHandler?: (params: any) => any;
   errHandler?: (params: any) => any;
   abortController?: AbortController[];
   timeOut?: number;
@@ -65,13 +65,13 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType | Blob>
  * @param comOptions reqHandler resHandler errHandler timeOut
  * @returns 自定义fetch
  */
-const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
+export const useFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   /**
    * @param cusConfig URL method headers params body responseType mode credentails
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<any> => {
+  return async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<any> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -120,10 +120,11 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         return Promise.reject(rex);
       });
   };
-  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
+  // return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
 };
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
-export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
+
+// type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
+// export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
 
 /**useage */
 // function useage() {
@@ -154,7 +155,7 @@ export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: 
 //     reqHandler: (resConfig) => {
 //       return resConfig;
 //     },
-//     resHandler: false,
+//     resHandler: () => {},
 //     errHandler: () => {
 //       console.log("err");
 //     },
@@ -176,7 +177,7 @@ export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: 
 //       reqHandler: (resConfig) => {
 //         return resConfig;
 //       },
-//       resHandler: false,
+//       resHandler: () => {},
 //       errHandler: () => {
 //         console.log("err");
 //       },
