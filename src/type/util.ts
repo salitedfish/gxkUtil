@@ -10,13 +10,16 @@ export type ObjectReadonlyType<T = any> = {
 
 export type PromiseWithVoid<T> = Promise<void | T>;
 
-export type ResponseType<T = any> = {
-  readonly code: number;
-  readonly data: T;
-  readonly status?: number;
-  readonly message?: string;
-  readonly success?: any;
-  readonly error?: any;
+export type ResponseType = {
+  readonly body: ReadableStream;
+  readonly bodyUsed: boolean;
+  readonly headers: Headers;
+  readonly ok: boolean;
+  readonly redirected: boolean;
+  readonly status: boolean;
+  readonly statusText: string;
+  readonly type: string;
+  readonly url: string;
 };
 
 export type Method = "GET" | "DELETE" | "POST" | "PUT";

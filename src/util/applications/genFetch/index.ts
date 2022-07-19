@@ -1,4 +1,4 @@
-import { ResponseType, Method, ObjectType } from "src/type";
+import { Method, ObjectType } from "src/type";
 import { useGenParamsUrl } from "src/util";
 import { useCurryTwo } from "src/util/currying";
 
@@ -14,7 +14,7 @@ type ComFetchConfig = {
 };
 type ComFetchOptions = {
   reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: ResponseType) => ResponseType;
+  resHandler?: (params: Response) => Response;
   errHandler?: (params: any) => any;
   timeOut?: number;
 };
@@ -30,7 +30,7 @@ type CusFetchConfig = {
 };
 type CusFetchOptions = {
   reqHandler?: ((params: CusFetchConfig) => CusFetchConfig) | false;
-  resHandler?: ((params: ResponseType) => ResponseType) | false;
+  resHandler?: ((params: Response) => Response) | false;
   errHandler?: ((params: any) => any) | false;
   abortController?: AbortController[];
   timeOut?: number;
@@ -59,7 +59,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
+  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<Response> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -96,16 +96,11 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
 
     /**返回请求结果 */
     return fetch(url, retConfig)
-      .then((res: any) => {
+      .then((res: Response) => {
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件，处理返回值 */
         const ret = resHandler ? resHandler(res) : res;
-        /**fetch结果如果是4**或5**也不会进入catch,需要手动处理 */
-        if (ret.status >= 200 && ret.status < 300) {
-          return ret;
-        } else {
-          return Promise.reject(ret);
-        }
+        return ret;
       })
       .catch((err) => {
         clearAbortController(comOptions, cusOptions, abortControllerId);
@@ -114,69 +109,69 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         return Promise.reject(err);
       });
   };
-  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<ResponseType>>(handler);
+  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<Response>>(handler);
 };
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<ResponseType>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<ResponseType> };
+type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<Response>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<Response> };
 export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
 
 /**useage */
-function useage() {
-  const apiFetch = useFetch({
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })({
-    reqHandler: (resConfig) => {
-      return { ...resConfig, token: "123" };
-    },
-    resHandler: (res) => {
-      return res;
-    },
-    errHandler: () => {},
-    timeOut: 10000,
-  });
-  apiFetch({
-    URL: "/api",
-    method: "GET",
-    params: { a: 1 },
-    body: { a: 1 },
-    headers: {
-      "Content-type": "text",
-    },
-    responseType: "blob",
-  })({
-    reqHandler: (resConfig) => {
-      return resConfig;
-    },
-    resHandler: false,
-    errHandler: () => {
-      console.log("err");
-    },
-    abortController: [],
-    timeOut: 5000,
-  }).then();
-  apiFetch(
-    {
-      URL: "/api",
-      method: "GET",
-      params: { a: 1 },
-      body: { a: 1 },
-      headers: {
-        "Content-type": "text",
-      },
-      responseType: "blob",
-    },
-    {
-      reqHandler: (resConfig) => {
-        return resConfig;
-      },
-      resHandler: false,
-      errHandler: () => {
-        console.log("err");
-      },
-      abortController: [],
-      timeOut: 5000,
-    }
-  ).then();
-}
-useage;
+// function useage() {
+//   const apiFetch = useFetch({
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   })({
+//     reqHandler: (resConfig) => {
+//       return { ...resConfig, token: "123" };
+//     },
+//     resHandler: (res) => {
+//       return res;
+//     },
+//     errHandler: () => {},
+//     timeOut: 10000,
+//   });
+//   apiFetch({
+//     URL: "/api",
+//     method: "GET",
+//     params: { a: 1 },
+//     body: { a: 1 },
+//     headers: {
+//       "Content-type": "text",
+//     },
+//     responseType: "blob",
+//   })({
+//     reqHandler: (resConfig) => {
+//       return resConfig;
+//     },
+//     resHandler: false,
+//     errHandler: () => {
+//       console.log("err");
+//     },
+//     abortController: [],
+//     timeOut: 5000,
+//   }).then();
+//   apiFetch(
+//     {
+//       URL: "/api",
+//       method: "GET",
+//       params: { a: 1 },
+//       body: { a: 1 },
+//       headers: {
+//         "Content-type": "text",
+//       },
+//       responseType: "blob",
+//     },
+//     {
+//       reqHandler: (resConfig) => {
+//         return resConfig;
+//       },
+//       resHandler: false,
+//       errHandler: () => {
+//         console.log("err");
+//       },
+//       abortController: [],
+//       timeOut: 5000,
+//     }
+//   ).then();
+// }
+// useage;
