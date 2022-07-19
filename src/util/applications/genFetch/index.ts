@@ -14,8 +14,8 @@ type ComFetchConfig = {
 };
 type ComFetchOptions = {
   reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: ResponseType | Blob) => unknown;
-  errHandler?: (params: unknown) => unknown;
+  resHandler?: (params: any) => any;
+  errHandler?: (params: any) => any;
   timeOut?: number;
 };
 type CusFetchConfig = {
@@ -30,8 +30,8 @@ type CusFetchConfig = {
 };
 type CusFetchOptions = {
   reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: unknown) => unknown;
-  errHandler?: (params: unknown) => unknown;
+  resHandler?: (params: any) => any;
+  errHandler?: (params: any) => any;
   abortController?: AbortController[];
   timeOut?: number;
 };
@@ -71,7 +71,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<unknown> => {
+  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<any> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -120,10 +120,10 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         return Promise.reject(rex);
       });
   };
-  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<unknown>>(handler);
+  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
 };
 
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<unknown>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<unknown> };
+type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
 export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
 
 /**useage */
