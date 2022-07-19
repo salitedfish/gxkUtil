@@ -29,9 +29,9 @@ type CusFetchConfig = {
   credentials?: FetchCredentials;
 };
 type CusFetchOptions = {
-  reqHandler?: ((params: CusFetchConfig) => CusFetchConfig) | false;
-  resHandler?: ((params: ResponseType | Blob) => ResponseType | Blob) | false;
-  errHandler?: ((params: any) => any) | false;
+  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
+  resHandler?: (params: ResponseType | Blob) => any;
+  errHandler?: (params: any) => any;
   abortController?: AbortController[];
   timeOut?: number;
 };
@@ -71,7 +71,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType | Blob> => {
+  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<any> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -79,11 +79,6 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     let resConfig: any = { ...comConfig, ...cusConfig };
     resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
     resConfig.body = JSON.stringify(cusConfig.body);
-
-    /**处理中间件 */
-    const reqHandler = cusOptions.reqHandler === false ? null : cusOptions.reqHandler || comOptions.reqHandler;
-    const resHandler = cusOptions.resHandler === false ? null : cusOptions.resHandler || comOptions.resHandler;
-    const errHandler = cusOptions.errHandler === false ? null : cusOptions.errHandler || comOptions.errHandler;
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusOptions.timeOut || comOptions.timeOut;
@@ -104,27 +99,30 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     }
 
     /**请求前先执行，类似于请求拦截器 */
-    const retConfig = reqHandler ? reqHandler(resConfig) : resConfig;
+    const retConfig = cusOptions.reqHandler ? cusOptions.reqHandler(resConfig) : resConfig;
+    const regConfig = comOptions.reqHandler ? comOptions.reqHandler(retConfig) : retConfig;
 
     /**返回请求结果 */
-    return fetch(url, retConfig)
+    return fetch(url, regConfig)
       .then(async (res: Response) => {
         const reg = await handerResponse(res);
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件，处理返回值 */
-        const ret = resHandler ? resHandler(reg) : reg;
-        return ret;
+        const ret = cusOptions.resHandler ? cusOptions.resHandler(reg) : reg;
+        const rex = comOptions.resHandler ? comOptions.resHandler(ret) : ret;
+        return rex;
       })
       .catch((err) => {
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件 */
-        errHandler ? errHandler(err) : null;
-        return Promise.reject(err);
+        const ret = cusOptions.errHandler ? cusOptions.errHandler(err) : err;
+        const rex = comOptions.errHandler ? comOptions.errHandler(ret) : ret;
+        return Promise.reject(rex);
       });
   };
-  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<ResponseType | Blob>>(handler);
+  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
 };
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<ResponseType | Blob>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<ResponseType | Blob> };
+type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
 export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
 
 /**useage */
