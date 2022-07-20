@@ -1,4 +1,5 @@
 import { useCurryTwo } from "src/util/currying";
+import { ObjectType } from "src/type";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -22,6 +23,25 @@ export const useCheckSimpleData = (...argument: any[]) => {
   }
   return false;
 };
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 检查对象或数组中是否包含空值
+ * @param target
+ * @param exclude 排除的值
+ * @returns
+ */
+export const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: any[]) => {
+  let hasEmpty = false;
+  for (let key in target) {
+    if (!target[key]) {
+      if (!exclude || !exclude.includes(target[key])) {
+        hasEmpty = true;
+      }
+    }
+  }
+  return hasEmpty;
+};
+export const useCheckEmptyInObj = useCurryTwo<[target: ObjectType], [exclude?: any[]], boolean>(useCheckEmptyInObjShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深拷贝

@@ -14,6 +14,15 @@ const obj = {
 };
 const cloneObj = useDataOperate.useDeepClone(obj);
 
+/**test useCheckEmptyInObj */
+test("test useCheckEmptyInObj", () => {
+  expect(useDataOperate.useCheckEmptyInObj(obj)()).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })([0, null])).toBe(false);
+  expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })()).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj([0, null])([0, null])).toBe(false);
+  expect(useDataOperate.useCheckEmptyInObj([0, null, undefined])([0, null])).toBe(true);
+});
+
 /**test useDeepClone */
 test("test useDeepClone", () => {
   expect(useDataOperate.useDeepEqual(obj, cloneObj) && obj !== cloneObj).toBe(true);
