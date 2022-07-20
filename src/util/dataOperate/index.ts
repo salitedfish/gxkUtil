@@ -30,7 +30,7 @@ export const useCheckSimpleData = (...argument: any[]) => {
  * @param exclude 排除的值
  * @returns
  */
-export const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: any[]) => {
+const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: any[]) => {
   let hasEmpty = false;
   for (let key in target) {
     if (!target[key]) {
