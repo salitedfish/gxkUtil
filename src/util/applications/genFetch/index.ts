@@ -105,7 +105,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     /**返回请求结果 */
     return fetch(url, regConfig)
       .then(async (res: Response) => {
-        const reg = await handerResponse(res);
+        const reg = await handerResponse(res.clone());
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传过去，用户自行选择返回哪个
