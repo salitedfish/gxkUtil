@@ -7,10 +7,11 @@ type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
 type FetchCredentials = "omit" | "same-origin" | "include";
 type ComFetchConfig = {
   baseURL?: string;
-  headers?: ObjectType<string | number>;
+  headers?: HeadersInit;
   responseType?: string;
   mode?: FetchMode;
   credentials?: FetchCredentials;
+  signal?: any;
 };
 type ComFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
@@ -22,11 +23,12 @@ type CusFetchConfig = {
   URL: string;
   method: Method;
   params?: ObjectType<string | number>;
-  body?: ObjectType | any[] | string;
-  headers?: ObjectType<string | number>;
+  body?: BodyInit | null | undefined;
+  headers?: HeadersInit;
   responseType?: string;
   mode?: FetchMode;
   credentials?: FetchCredentials;
+  signal?: any;
 };
 type CusFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
@@ -76,9 +78,8 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
     /**处理config */
-    let resConfig: any = { ...comConfig, ...cusConfig };
+    let resConfig = { ...comConfig, ...cusConfig };
     resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
-    resConfig.body = JSON.stringify(cusConfig.body);
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusOptions.timeOut || comOptions.timeOut;
@@ -108,7 +109,8 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         const reg = await handerResponse(res.clone());
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件，处理返回值。
-         * comOptions.resHandler会把默认处理后的response和原始的resposne都传过去，用户自行选择返回哪个
+         * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
+         * cusOptions.resHandler则只传入comOptions.resHandler返回的结果。
          * */
         const ret = comOptions.resHandler ? comOptions.resHandler(reg, res) : reg;
         const rex = cusOptions.resHandler ? cusOptions.resHandler(ret) : ret;

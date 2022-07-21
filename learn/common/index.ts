@@ -115,3 +115,23 @@ const barRes = bar(123)("coderwhy")()(false)
 console.log("fooRes:\n", fooRes)
 console.log("barRes:\n", barRes)
 
+
+
+//普通文件上传
+// async fileUpload(
+//   file: File,
+//   callBack?: (p: number) => void
+// ): Promise<string> {
+//   const fd = new FormData();
+//   fd.append("file", file);
+//   return await this.service.post(this.router.fileUpload.path, fd, {
+//     headers: {
+//       Authorization: this.getAuth(),
+//       "Content-Type": this.router.fileUpload.dataType,
+//     },
+//     onUploadProgress: (p) => {
+//       if (callBack) callBack(p);
+//     },
+//   });
+// }
+
