@@ -69,7 +69,6 @@ const useGetDomStyleShallow = (target: string, styleName: GetStyleName): string[
   return styles;
 };
 export const useGetDomStyle = useCurryTwo<[target: string], [styleName: GetStyleName], void>(useGetDomStyleShallow);
-
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type SetStyleName = keyof CSSStyleDeclaration;
 /**
@@ -99,3 +98,31 @@ export function useSetDomStyle<T extends SetStyleName>(target: string, styleName
     handler(styleName)(styleValue);
   }
 }
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 获取dom的scrollTop值
+ * @param target
+ * @returns
+ */
+export const useGetDomScrollTop = (target: string) => {
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  const scrollTops = [];
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    scrollTops.push(targetDom[i].scrollTop);
+  }
+  return scrollTops;
+};
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 设置dom的scrollTop值
+ * @param target
+ * @param scrollTop
+ * @returns
+ */
+const useSetDomScrollTopShallow = (target: string, scrollTop: number) => {
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  for (let i = 0; i <= targetDom.length - 1; i++) {
+    targetDom[i].scrollTop = scrollTop;
+  }
+};
+export const useSetDomScrollTop = useCurryTwo<[target: string], [scrollTop: number], void>(useSetDomScrollTopShallow);

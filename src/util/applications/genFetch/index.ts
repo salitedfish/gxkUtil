@@ -5,13 +5,15 @@ import { useCurryTwo } from "../../../util/currying";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
 type FetchCredentials = "omit" | "same-origin" | "include";
+type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
+/**基础请求参数的类型 */
 type ComFetchConfig = {
   baseURL?: string;
   headers?: HeadersInit;
   responseType?: string;
   mode?: FetchMode;
   credentials?: FetchCredentials;
-  signal?: any;
+  keepalive?: boolean;
 };
 type ComFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
@@ -19,6 +21,7 @@ type ComFetchOptions = {
   errHandler?: (err: any) => any;
   timeOut?: number;
 };
+/**单个请求参数的类型 */
 type CusFetchConfig = {
   URL: string;
   method: Method;
@@ -28,7 +31,8 @@ type CusFetchConfig = {
   responseType?: string;
   mode?: FetchMode;
   credentials?: FetchCredentials;
-  signal?: any;
+  signal?: AbortSignal;
+  keepalive?: boolean;
 };
 type CusFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
@@ -37,31 +41,41 @@ type CusFetchOptions = {
   abortController?: AbortController[];
   timeOut?: number;
 };
-
-/**构造清空终止控制器函数，以便请求完成后清空终止控制器 */
-const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, abortControllerId: NodeJS.Timeout) => {
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**构造清空终止控制器函数，以便请求完成后删除终止控制器 */
+const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, abortControllerId: NodeJS.Timeout, signal: AbortSignal) => {
   /**清空终止控制器延时器 */
   if (cusOptions.timeOut || comOptions.timeOut) {
     clearTimeout(abortControllerId);
   }
-  /**清空收集终止控制器数组*/
+  /**删除终止控制器数组内对应的控制器*/
   if (Array.isArray(cusOptions.abortController)) {
-    cusOptions.abortController.shift();
+    for (let key = 0; key < cusOptions.abortController.length; key++) {
+      if (cusOptions.abortController[key].signal === signal) {
+        cusOptions.abortController.splice(key, 1);
+      }
+    }
   }
 };
 
-/**处理返回值 */
-const handerResponse = (shallowResponse: Response): Promise<ResponseType | Blob> => {
+/**处理返回值(还不完善，待后续情况添加解析类型) */
+const handerResponse = (shallowResponse: Response): Promise<ResponseType | Blob | FormData | string> => {
+  // arrayBuffer();
   const contentType = shallowResponse.headers.get("Content-Type");
   if (contentType && contentType.match(/application\/json/i)) {
     return shallowResponse.json();
-  } else if (contentType && contentType.match(/application\/csv/i)) {
+  } else if (contentType && contentType.match(/form-data/i)) {
+    return shallowResponse.formData();
+  } else if (contentType && (contentType.match(/blob/i) || contentType.match(/application\/vnd/i))) {
     return shallowResponse.blob();
+  } else if (contentType && contentType.match(/text/i)) {
+    return shallowResponse.text();
   } else {
     return shallowResponse.json();
   }
 };
 
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param comConfig baseURL headers responseType mode credentials
  * @param comOptions reqHandler resHandler errHandler timeOut
@@ -107,7 +121,9 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     return fetch(url, regConfig)
       .then(async (res: Response) => {
         const reg = await handerResponse(res.clone());
-        clearAbortController(comOptions, cusOptions, abortControllerId);
+        if (regConfig.signal) {
+          clearAbortController(comOptions, cusOptions, abortControllerId, regConfig.signal);
+        }
         /**如果有中间件，则先处理中间件，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
          * cusOptions.resHandler则只传入comOptions.resHandler返回的结果。
@@ -117,7 +133,9 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         return rex;
       })
       .catch((err) => {
-        clearAbortController(comOptions, cusOptions, abortControllerId);
+        if (regConfig.signal) {
+          clearAbortController(comOptions, cusOptions, abortControllerId, regConfig.signal);
+        }
         /**如果有中间件，则先处理中间件 */
         const ert = comOptions.errHandler ? comOptions.errHandler(err) : err;
         const erx = cusOptions.errHandler ? cusOptions.errHandler(ert) : ert;
@@ -127,9 +145,9 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
   return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
 };
 
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
 export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
 
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**useage */
 // function useage() {
 //   const apiFetch = useFetch({
@@ -150,7 +168,7 @@ export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: 
 //     URL: "/api",
 //     method: "GET",
 //     params: { a: 1 },
-//     body: { a: 1 },
+//     body: JSON.stringify({ a: 1 }),
 //     headers: {
 //       "Content-type": "text",
 //     },
@@ -171,7 +189,7 @@ export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: 
 //       URL: "/api",
 //       method: "GET",
 //       params: { a: 1 },
-//       body: { a: 1 },
+//       body: JSON.stringify({ a: 1 }),
 //       headers: {
 //         "Content-type": "text",
 //       },
