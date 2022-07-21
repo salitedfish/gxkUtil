@@ -1,6 +1,6 @@
-import { ResponseType, Method, ObjectType } from "src/type";
-import { useGenParamsUrl } from "src/util";
-import { useCurryTwo } from "src/util/currying";
+import { ResponseType, Method, ObjectType } from "../../../type";
+import { useGenParamsUrl } from "../../../util";
+import { useCurryTwo } from "../../../util/currying";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";

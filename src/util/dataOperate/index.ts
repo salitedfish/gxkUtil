@@ -1,5 +1,5 @@
-import { useCurryTwo } from "src/util/currying";
-import { ObjectType } from "src/type";
+import { useCurryTwo } from "../../util/currying";
+import { ObjectType } from "../../type";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
