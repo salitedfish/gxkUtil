@@ -13,9 +13,9 @@ type ComFetchConfig = {
   credentials?: FetchCredentials;
 };
 type ComFetchOptions = {
-  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: any) => any;
-  errHandler?: (params: any) => any;
+  reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
+  resHandler?: (response: any, shallowResponse: Response) => any;
+  errHandler?: (err: any) => any;
   timeOut?: number;
 };
 type CusFetchConfig = {
@@ -29,9 +29,9 @@ type CusFetchConfig = {
   credentials?: FetchCredentials;
 };
 type CusFetchOptions = {
-  reqHandler?: (params: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (params: any) => any;
-  errHandler?: (params: any) => any;
+  reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
+  resHandler?: (response: any) => any;
+  errHandler?: (err: any) => any;
   abortController?: AbortController[];
   timeOut?: number;
 };
@@ -107,17 +107,19 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
       .then(async (res: Response) => {
         const reg = await handerResponse(res);
         clearAbortController(comOptions, cusOptions, abortControllerId);
-        /**如果有中间件，则先处理中间件，处理返回值 */
-        const ret = comOptions.resHandler ? comOptions.resHandler(reg) : reg;
+        /**如果有中间件，则先处理中间件，处理返回值。
+         * comOptions.resHandler会把默认处理后的response和原始的resposne都传过去，用户自行选择返回哪个
+         * */
+        const ret = comOptions.resHandler ? comOptions.resHandler(reg, res) : reg;
         const rex = cusOptions.resHandler ? cusOptions.resHandler(ret) : ret;
         return rex;
       })
       .catch((err) => {
         clearAbortController(comOptions, cusOptions, abortControllerId);
         /**如果有中间件，则先处理中间件 */
-        const ret = comOptions.errHandler ? comOptions.errHandler(err) : err;
-        const rex = cusOptions.errHandler ? cusOptions.errHandler(ret) : ret;
-        return Promise.reject(rex);
+        const ert = comOptions.errHandler ? comOptions.errHandler(err) : err;
+        const erx = cusOptions.errHandler ? cusOptions.errHandler(ert) : ert;
+        return Promise.reject(erx);
       });
   };
   return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
