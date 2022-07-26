@@ -59,9 +59,9 @@ export type Tail<L extends Params> = L extends readonly [] ? L : L extends reado
  * 参数数组拆分后类型
  */
 export type SplitParams<P extends Params, PSplit extends Params[] = [], PRest extends Params = Tail<P>> = {
-  0: P extends [...infer A, ...PRest] ? SplitParams<Tail<P>, [...PSplit, A], Tail<PRest>> : never;
-  1: PSplit;
-  2: P[number][][];
-}[number extends Length<P> ? 2 : P extends [] ? 1 : 0];
+  recur: P extends [...infer A, ...PRest] ? SplitParams<Tail<P>, [...PSplit, A], Tail<PRest>> : never;
+  result: PSplit;
+  inner: P[number][][];
+}[number extends Length<P> ? "inner" : P extends [] ? "result" : "recur"];
 
 // 把类型 [age: number, name: string, ...] 变成类型 [[age: number,], [name: string], ...]
