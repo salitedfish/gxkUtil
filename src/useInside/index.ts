@@ -10,7 +10,7 @@ export const useConsoleWarn = (warnMessage: string) => {
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 控制台错误信息
- * @param warnMessage
+ * @param errMessage
  */
 export const useConsoleError = (errMessage: string) => {
   console.error(`@gexk/gxk: ${errMessage}`);

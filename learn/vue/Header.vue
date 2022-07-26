@@ -1,5 +1,5 @@
 <template>
-  <div class="common-header">
+  <div class="common-header" :style="headerStyle">
     <div class="left">
       <slot name="left">
         <m-global-icon icon="icon-v2-arrow-left" @click="handleBack" />
@@ -26,6 +26,7 @@
 
 defineProps<{
   title: string;
+  headerStyle: string;
 }>();
 
 const handleBack = () => {};
@@ -49,6 +50,11 @@ const handleBack = () => {};
     transform: translate(-50%, -50%);
     font-size: 16px;
     font-weight: 600;
+    text-align: center;
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 </style>

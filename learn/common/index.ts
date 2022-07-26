@@ -61,6 +61,8 @@ const D: d = {
 /**Extract高级类型 */
 /**ReturnType高级类型 */
 
+
+/**柯里化试验 */
 type Param = [any?]
 
 type Params = [paramType: Param, nextIndex: number][]
@@ -135,3 +137,14 @@ console.log("barRes:\n", barRes)
 //   });
 // }
 
+/**柯里化试验 */
+type Cast<X, Y> = X extends Y ? X : Y;
+type Drop<N extends number, T extends any[], I extends any[] = []> = {
+  0: Drop<N, Tail<T>, Prepend<any, I>>;
+  1: T;
+}[Length<I> extends N ? 1 : 0];
+type Prepend<E, T extends any[]> = ((arg: E, ...args: T) => any) extends (...args: infer U) => any ? U : T;
+type Length<T extends any[]> = T["length"];
+type Tail<T extends any[]> = ((...args: T) => any) extends (arg1: any, ...tail: infer A) => any ? A : [];
+type Curry<P extends any[], R> = <T extends any[]>(...args: Cast<T, Partial<P>>) => Drop<Length<T>, P> extends [any, ...any[]] ? Curry<Drop<Length<T>, P> extends infer DT ? Cast<DT, any[]> : never, R> : R;
+declare function CurryV5<P extends any[], R>(f: (...args: P) => R): Curry<P, R>;
