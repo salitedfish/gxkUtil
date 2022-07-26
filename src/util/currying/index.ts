@@ -47,7 +47,7 @@ export function useCurryThree<F extends Function>(func: F) {
   type L = P[2] extends [any?] ? P[2] : [];
   function handler(...args: T): (..._args: K) => (...__args: L) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => V;
-  function handler(...args: [...T, ...K, ...L]): V;
+  function handler(...args: [...T, ...K, ...L, ...[]]): V;
   function handler(...args: T | [...T, ...K] | [...T, ...K, ...L]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
@@ -79,7 +79,7 @@ export function useCurryFour<F extends Function>(func: F) {
   type G = P[3] extends [any?] ? P[3] : [];
   function handler(...args: T): (..._args: K) => (...__args: L) => (...___args: G) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => (...___args: G) => V;
-  function handler(...args: [...T, ...K, ...L]): (...___args: G) => V;
+  function handler(...args: [...T, ...K, ...L, ...[]]): (...___args: G) => V;
   function handler(...args: [...T, ...K, ...L, ...G]): V;
   function handler(...args: T | [...T, ...K] | [...T, ...K, ...L] | [...T, ...K, ...L, ...G]) {
     if ([0, 1].includes(args.length)) {
