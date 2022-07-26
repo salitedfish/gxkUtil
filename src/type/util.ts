@@ -64,4 +64,4 @@ export type SplitParams<P extends Params, PSplit extends Params[] = [], PRest ex
   2: P[number][][];
 }[number extends Length<P> ? 2 : P extends [] ? 1 : 0];
 
-// 把类型 [age: number, name: string] 变成类型 [[age: number,], [name: string]]
+// 把类型 [age: number, name: string, ...] 变成类型 [[age: number,], [name: string], ...]
