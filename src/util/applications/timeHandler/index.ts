@@ -32,7 +32,7 @@ export const useGenTimeStamp = (timeStr: string | number): number => {
 const useIsEarlyShallow = (targetTime: number | string, referenceTime: number | string) => {
   return useGenTimeStamp(targetTime) < useGenTimeStamp(referenceTime);
 };
-export const useIsEarly = useCurryTwo<[targetTime: number | string], [referenceTime: number | string], boolean>(useIsEarlyShallow);
+export const useIsEarly = useCurryTwo(useIsEarlyShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 剩余时间毫秒转化为时间格式字符串
@@ -59,7 +59,7 @@ const useCountDownFormatShallow = (format: string, time: number | string) => {
   }
   return format;
 };
-export const useCountDownFormat = useCurryTwo<[format: string], [time: number | string], string>(useCountDownFormatShallow);
+export const useCountDownFormat = useCurryTwo(useCountDownFormatShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 时间戳毫秒或时间格式字符串转化为时间格式字符串
@@ -98,4 +98,4 @@ const useTimeFormatShallow = (format: string, time: number | string) => {
   }
   return format;
 };
-export const useTimeFormat = useCurryTwo<[format: string], [time: number | string], string>(useTimeFormatShallow);
+export const useTimeFormat = useCurryTwo(useTimeFormatShallow);

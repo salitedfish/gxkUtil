@@ -13,7 +13,7 @@ const usePhoneLegalShallow = (phone: number | string, legal: RegExp = /^[1][3,4,
     return false;
   }
 };
-export const usePhoneLegal = useCurryTwo<[phone: number | string], [legal?: RegExp], boolean>(usePhoneLegalShallow);
+export const usePhoneLegal = useCurryTwo(usePhoneLegalShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 判断身份证是否合法
@@ -50,7 +50,7 @@ const useIDCargLegalShallow = (idCard: string, regIdCard: RegExp = /^(^[1-9]\d{7
     return false;
   }
 };
-export const useIDCargLegal = useCurryTwo<[idCard: string], [regIdCard?: RegExp], boolean>(useIDCargLegalShallow);
+export const useIDCargLegal = useCurryTwo(useIDCargLegalShallow);
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -65,7 +65,7 @@ const useEmailLegalShallow = (email: string, legal: RegExp = /^[A-Za-z\d]+([-_.]
     return false;
   }
 };
-export const useEmailLegal = useCurryTwo<[email: string], [legal?: RegExp], boolean>(useEmailLegalShallow);
+export const useEmailLegal = useCurryTwo(useEmailLegalShallow);
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**

@@ -33,7 +33,7 @@ const useWriteFileShallow = (fileAddress: string, fileContent: string) => {
     });
   });
 };
-export const useWriteFile = useCurryTwo<[fileAddress: string], [fileContent: string], Promise<unknown>>(useWriteFileShallow);
+export const useWriteFile = useCurryTwo(useWriteFileShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 追加写入文件内容
@@ -49,4 +49,4 @@ const useAppendFileShallow = (fileAddress: string, fileContent: string) => {
     });
   });
 };
-export const useAppendFile = useCurryTwo<[fileAddress: string], [fileContent: string], Promise<unknown>>(useAppendFileShallow);
+export const useAppendFile = useCurryTwo(useAppendFileShallow);

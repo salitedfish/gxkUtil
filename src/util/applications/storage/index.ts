@@ -19,7 +19,7 @@ const useGetLStorageShallow = (key: string, defaultValue: unknown) => {
     return value;
   }
 };
-export const useGetLStorage = useCurryTwo<[key: string], [defaultValue: unknown], unknown>(useGetLStorageShallow);
+export const useGetLStorage = useCurryTwo(useGetLStorageShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 简化localStorage的使用
@@ -30,7 +30,7 @@ const useSetLStorageShallow = (key: string, value: unknown) => {
   const valueJSON = JSON.stringify(value);
   localStorage.setItem(key, valueJSON);
 };
-export const useSetLStorage = useCurryTwo<[key: string], [value: unknown], void>(useSetLStorageShallow);
+export const useSetLStorage = useCurryTwo(useSetLStorageShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 简化localStorage的使用
