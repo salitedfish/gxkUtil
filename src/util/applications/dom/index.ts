@@ -35,7 +35,7 @@ const useAddDomClassShallow = (target: string, classNames: string[]) => {
     targetDom[i].classList.add(...classNames);
   }
 };
-export const useAddDomClass = useCurryTwo<[target: string], [classNames: string[]], void>(useAddDomClassShallow);
+export const useAddDomClass = useCurryTwo(useAddDomClassShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 移除目标dom的class
@@ -50,7 +50,7 @@ const useRemoveDomClassShallow = (target: string, classNames: string[]) => {
     targetDom[i].classList.remove(...classNames);
   }
 };
-export const useRemoveDomClass = useCurryTwo<[target: string], [classNames: string[]], void>(useRemoveDomClassShallow);
+export const useRemoveDomClass = useCurryTwo(useRemoveDomClassShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type GetStyleName = keyof CSSStyleDeclaration & string;
 /**
@@ -68,7 +68,7 @@ const useGetDomStyleShallow = (target: string, styleName: GetStyleName): string[
   }
   return styles;
 };
-export const useGetDomStyle = useCurryTwo<[target: string], [styleName: GetStyleName], void>(useGetDomStyleShallow);
+export const useGetDomStyle = useCurryTwo(useGetDomStyleShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type SetStyleName = keyof CSSStyleDeclaration;
 /**
@@ -125,4 +125,4 @@ const useSetDomScrollTopShallow = (target: string, scrollTop: number) => {
     targetDom[i].scrollTop = scrollTop;
   }
 };
-export const useSetDomScrollTop = useCurryTwo<[target: string], [scrollTop: number], void>(useSetDomScrollTopShallow);
+export const useSetDomScrollTop = useCurryTwo(useSetDomScrollTopShallow);

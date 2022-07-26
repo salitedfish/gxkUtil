@@ -25,23 +25,23 @@ export const useCheckSimpleData = (...argument: any[]) => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 检查对象或数组中是否包含空值
+ * 检查对象或数组中是否包含null、0、NaN、undefined、空数组、空对象、""
  * @param target
  * @param exclude 排除的值
  * @returns
  */
-const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: any[]) => {
+const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   let hasEmpty = false;
   for (let key in target) {
-    if (!target[key]) {
-      if (!exclude || !exclude.includes(target[key])) {
+    if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {})) {
+      if (!exclude || !useDeepInclude(exclude, target[key])) {
         hasEmpty = true;
       }
     }
   }
   return hasEmpty;
 };
-export const useCheckEmptyInObj = useCurryTwo<[target: ObjectType], [exclude?: any[]], boolean>(useCheckEmptyInObjShallow);
+export const useCheckEmptyInObj = useCurryTwo(useCheckEmptyInObjShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深拷贝
@@ -142,7 +142,7 @@ const useDeepEqualShallow = (origin: any, target: any) => {
     }
   }
 };
-export const useDeepEqual = useCurryTwo<[origin: any], [target: any], boolean>(useDeepEqualShallow);
+export const useDeepEqual = useCurryTwo(useDeepEqualShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度判断数组中是否包含某个值, 依赖useDeepEqual
@@ -162,7 +162,7 @@ const useDeepIncludeShallow = (origin: unknown[], target: unknown) => {
     return false;
   }
 };
-export const useDeepInclude = useCurryTwo<[origin: unknown[]], [target: unknown], boolean>(useDeepIncludeShallow);
+export const useDeepInclude = useCurryTwo(useDeepIncludeShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度数组去重，不改变原数组, 依赖useDeepInclude
@@ -269,4 +269,4 @@ const useTrimStrShallow = (target: string, position?: PositionTrim) => {
     return target.replace(/\s+/g, "");
   }
 };
-export const useTrimStr = useCurryTwo<[target: string], [position?: PositionTrim], string>(useTrimStrShallow);
+export const useTrimStr = useCurryTwo(useTrimStrShallow);

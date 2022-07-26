@@ -1,11 +1,10 @@
-import { ResponseType, Method, ObjectType } from "../../../type";
+import { Method, ObjectType } from "../../../type";
 import { useGenParamsUrl } from "../../../util";
 import { useCurryTwo } from "../../../util/currying";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
 type FetchCredentials = "omit" | "same-origin" | "include";
-type FetchOverload = { (cusConfig: CusFetchConfig): (cusOptions?: CusFetchOptions) => Promise<any>; (cusConfig: CusFetchConfig, cusOptions?: CusFetchOptions): Promise<any> };
 /**基础请求参数的类型 */
 type ComFetchConfig = {
   baseURL?: string;
@@ -41,6 +40,8 @@ type CusFetchOptions = {
   abortController?: AbortController[];
   timeOut?: number;
 };
+/**处理后返回值类型 */
+type ResponseType = any | Blob | FormData | string | FormData;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**构造清空终止控制器函数，以便请求完成后删除终止控制器 */
 const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, abortControllerId: NodeJS.Timeout, signal: AbortSignal) => {
@@ -59,7 +60,7 @@ const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchO
 };
 
 /**处理返回值(还不完善，待后续情况添加解析类型) */
-const handerResponse = (shallowResponse: Response): Promise<ResponseType | Blob | FormData | string> => {
+const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
   // arrayBuffer();
   const contentType = shallowResponse.headers.get("Content-Type");
   if (contentType && contentType.match(/application\/json/i)) {
@@ -87,7 +88,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<any> => {
+  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -142,10 +143,10 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         return Promise.reject(erx);
       });
   };
-  return useCurryTwo<[cusConfig: CusFetchConfig], [cusOptions?: CusFetchOptions], Promise<any>>(handler);
+  return useCurryTwo(handler);
 };
 
-export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: ComFetchOptions], FetchOverload>(useFetchShallow);
+export const useFetch = useCurryTwo(useFetchShallow);
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**useage */
@@ -184,28 +185,25 @@ export const useFetch = useCurryTwo<[comConfig?: ComFetchConfig], [comOptions?: 
 //     abortController: [],
 //     timeOut: 5000,
 //   }).then();
-//   apiFetch(
-//     {
-//       URL: "/api",
-//       method: "GET",
-//       params: { a: 1 },
-//       body: JSON.stringify({ a: 1 }),
-//       headers: {
-//         "Content-type": "text",
-//       },
-//       responseType: "blob",
+//   apiFetch({
+//     URL: "/api",
+//     method: "GET",
+//     params: { a: 1 },
+//     body: JSON.stringify({ a: 1 }),
+//     headers: {
+//       "Content-type": "text",
 //     },
-//     {
-//       reqHandler: (resConfig) => {
-//         return resConfig;
-//       },
-//       resHandler: () => {},
-//       errHandler: () => {
-//         console.log("err");
-//       },
-//       abortController: [],
-//       timeOut: 5000,
-//     }
-//   ).then();
+//     responseType: "blob",
+//   })({
+//     reqHandler: (resConfig) => {
+//       return resConfig;
+//     },
+//     resHandler: () => {},
+//     errHandler: () => {
+//       console.log("err");
+//     },
+//     abortController: [],
+//     timeOut: 5000,
+//   }).then();
 // }
 // useage;

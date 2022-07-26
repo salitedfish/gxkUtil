@@ -20,7 +20,7 @@ const useDownloadByURLShallow = (url: string, name = "file") => {
   URL.revokeObjectURL(link.href);
   document.body.removeChild(link);
 };
-export const useDownloadByURL = useCurryTwo<[url: string], [name?: string], void>(useDownloadByURLShallow);
+export const useDownloadByURL = useCurryTwo(useDownloadByURLShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 从URL中获取文件名、文件名.扩展名
@@ -37,7 +37,7 @@ const useFileNameFromURLShallow = (URL: string, withExt: boolean = false) => {
     return URL.slice(firstIndex, lastIndex);
   }
 };
-export const useFileNameFromURL = useCurryTwo<[URL: string], [withExt?: boolean], string>(useFileNameFromURLShallow);
+export const useFileNameFromURL = useCurryTwo(useFileNameFromURLShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 从URL中获取文件类型
@@ -78,7 +78,7 @@ const useFileTypeFromURLShallow = (URL: string, format: boolean = false) => {
   }
   return "other";
 };
-export const useFileTypeFromURL = useCurryTwo<[URL: string], [format?: boolean], string>(useFileTypeFromURLShallow);
+export const useFileTypeFromURL = useCurryTwo(useFileTypeFromURLShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 组装url参数
@@ -98,7 +98,7 @@ const useGenParamsUrlShallow = (url: string, params: { [key: string]: string | n
   }
   return resUrl.slice(0, resUrl.length - 1);
 };
-export const useGenParamsUrl = useCurryTwo<[url: string], [params: { [key: string]: string | number }], string>(useGenParamsUrlShallow);
+export const useGenParamsUrl = useCurryTwo(useGenParamsUrlShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 点击复制
@@ -125,7 +125,7 @@ const useClipboardShallow = (text: string, domID: string) => {
     });
   });
 };
-export const useClipboard = useCurryTwo<[text: string], [domID: string], Promise<unknown>>(useClipboardShallow);
+export const useClipboard = useCurryTwo(useClipboardShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 计算文件或字符串MD5hash

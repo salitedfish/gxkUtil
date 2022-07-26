@@ -1,11 +1,15 @@
+import { GetParams, GetReturn, Function, SplitParams } from "../../type";
+
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 两个参数函数的柯里化(如果原始函数包含泛型，则不推荐使用，泛型会失效)
  * @_args func
  */
-export function useCurryTwo<T extends [any?], K extends [any?], V = any>(func: (...args: [...T, ...K]) => V) {
-  function handler(...args: T): (..._args: K) => V;
-  function handler(...args: [...T, ...K]): V;
+export function useCurryTwo<F extends Function>(func: F) {
+  type T = SplitParams<GetParams<F>>[0] extends [any?] ? SplitParams<GetParams<F>>[0] : [];
+  type K = SplitParams<GetParams<F>>[1] extends [any?] ? SplitParams<GetParams<F>>[1] : [];
+  function handler(...args: T): (..._args: K) => GetReturn<F>;
+  function handler(...args: [...T, ...K]): GetReturn<F>;
   function handler(...args: T | [...T, ...K]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
@@ -17,65 +21,82 @@ export function useCurryTwo<T extends [any?], K extends [any?], V = any>(func: (
   }
   return handler;
 }
-
+// const a = <T extends any[], V>(a: (...params: T) => V, count: number) => {
+//   return (...params: T) => {
+//     console.log(count);
+//     return a(...params);
+//   };
+// };
+// const b = useCurryTwo(a);
+// const c = b((name: string, age: number) => {
+//   return name + age;
+// })(123);
+// c
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 三个参数函数的柯里化(如果原始函数包含泛型，则不推荐使用，泛型会失效)
  * @_args func
  */
-export function useCurryThree<T extends [any?], K extends [any?], P extends [any?], V>(func: (...args: [...T, ...K, ...P]) => V) {
-  function handler(...args: T): (..._args: K) => (...__args: P) => V;
-  function handler(...args: [...T, ...K]): (...__args: P) => V;
-  function handler(...args: [...T, ...K, ...P]): V;
-  function handler(...args: T | [...T, ...K] | [...T, ...K, ...P]) {
+export function useCurryThree<F extends Function>(func: F) {
+  type T = SplitParams<GetParams<F>>[0] extends [any?] ? SplitParams<GetParams<F>>[0] : [];
+  type K = SplitParams<GetParams<F>>[1] extends [any?] ? SplitParams<GetParams<F>>[1] : [];
+  type L = SplitParams<GetParams<F>>[2] extends [any?] ? SplitParams<GetParams<F>>[2] : [];
+  function handler(...args: T): (..._args: K) => (...__args: L) => GetReturn<F>;
+  function handler(...args: [...T, ...K]): (...__args: L) => GetReturn<F>;
+  function handler(...args: [...T, ...K, ...L]): GetReturn<F>;
+  function handler(...args: T | [...T, ...K] | [...T, ...K, ...L]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
-        return (...__args: P) => {
+        return (...__args: L) => {
           return func(...(args as T), ..._args, ...__args);
         };
       };
     } else if (args.length === 2) {
-      return (...__args: P) => {
+      return (...__args: L) => {
         return func(...(args as [...T, ...K]), ...__args);
       };
     } else {
-      return func(...(args as [...T, ...K, ...P]));
+      return func(...(args as [...T, ...K, ...L]));
     }
   }
   return handler;
 }
-
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 四个参数函数的柯里化(如果原始函数包含泛型，则不推荐使用，泛型会失效)
  * @_args func
  */
-export function useCurryFour<T extends [any?], K extends [any?], P extends [any?], G extends [any?], V>(func: (...args: [...T, ...K, ...P, ...G]) => V) {
-  function handler(...args: T): (..._args: K) => (...__args: P) => (...___args: G) => V;
-  function handler(...args: [...T, ...K]): (...__args: P) => (...___args: G) => V;
-  function handler(...args: [...T, ...K, ...P]): (...___args: G) => V;
-  function handler(...args: [...T, ...K, ...P, ...G]): V;
-  function handler(...args: T | [...T, ...K] | [...T, ...K, ...P] | [...T, ...K, ...P, ...G]) {
+export function useCurryFour<F extends Function>(func: F) {
+  type T = SplitParams<GetParams<F>>[0] extends [any?] ? SplitParams<GetParams<F>>[0] : [];
+  type K = SplitParams<GetParams<F>>[1] extends [any?] ? SplitParams<GetParams<F>>[1] : [];
+  type L = SplitParams<GetParams<F>>[2] extends [any?] ? SplitParams<GetParams<F>>[2] : [];
+  type G = SplitParams<GetParams<F>>[3] extends [any?] ? SplitParams<GetParams<F>>[3] : [];
+  type V = GetReturn<F>;
+  function handler(...args: T): (..._args: K) => (...__args: L) => (...___args: G) => V;
+  function handler(...args: [...T, ...K]): (...__args: L) => (...___args: G) => V;
+  function handler(...args: [...T, ...K, ...L]): (...___args: G) => V;
+  function handler(...args: [...T, ...K, ...L, ...G]): V;
+  function handler(...args: T | [...T, ...K] | [...T, ...K, ...L] | [...T, ...K, ...L, ...G]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
-        return (...__args: P) => {
+        return (...__args: L) => {
           return (...___args: G) => {
             return func(...(args as T), ..._args, ...__args, ...___args);
           };
         };
       };
     } else if (args.length === 2) {
-      return (...__args: P) => {
+      return (...__args: L) => {
         return (...___args: G) => {
           return func(...(args as [...T, ...K]), ...__args, ...___args);
         };
       };
     } else if (args.length === 3) {
       return (...___args: G) => {
-        return func(...(args as [...T, ...K, ...P]), ...___args);
+        return func(...(args as [...T, ...K, ...L]), ...___args);
       };
     } else {
-      return func(...(args as [...T, ...K, ...P, ...G]));
+      return func(...(args as [...T, ...K, ...L, ...G]));
     }
   }
   return handler;
