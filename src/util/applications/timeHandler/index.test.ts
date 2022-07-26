@@ -18,7 +18,7 @@ test("test useCountDownFormat", () => {
 /**test useTimeFormat */
 test("test useTimeFormat", () => {
   expect(useTimeHandler.useTimeFormat("{YYYY}-{MM}-{dd} {hh}-{mm}-{ss}")(1670818332000)).toBe("2022-12-12 12-12-12");
-  expect(useTimeHandler.useTimeFormat("{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}")(1670818332000)).toBe("2022-12-12 12:12:12");
+  expect(useTimeHandler.useTimeFormat("{YYYY}-{MM}-{dd} {hh}:{mm}:{ss}", 1670818332000)).toBe("2022-12-12 12:12:12");
   expect(useTimeHandler.useTimeFormat("{hh}-{mm}-{ss}")(1670817732000)).toBe("12-02-12");
   expect(useTimeHandler.useTimeFormat("{YY}-{MM}-{dd} {h}-{mm}-{ss}")("2022-12-12 2:2:12")).toBe("22-12-12 2-02-12");
   expect(useTimeHandler.useTimeFormat("{YY}年{MM}月{dd}日 {h}h{mm}m{ss}s", "2022-12-12 12:2:12")).toBe("22年12月12日 12h02m12s");

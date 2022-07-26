@@ -10,6 +10,7 @@ export function useCurryTwo<F extends Function>(func: F) {
   type V = GetReturn<F>;
   type T = P[0] extends [any?] ? P[0] : [];
   type K = P[1] extends [any?] ? P[1] : [];
+
   function handler(...args: T): (..._args: K) => V;
   function handler(...args: [...T, ...K]): V;
   function handler(...args: T | [...T, ...K]) {
@@ -45,6 +46,7 @@ export function useCurryThree<F extends Function>(func: F) {
   type T = P[0] extends [any?] ? P[0] : [];
   type K = P[1] extends [any?] ? P[1] : [];
   type L = P[2] extends [any?] ? P[2] : [];
+
   function handler(...args: T): (..._args: K) => (...__args: L) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => V;
   function handler(...args: [...T, ...K, ...L]): V;
@@ -77,6 +79,7 @@ export function useCurryFour<F extends Function>(func: F) {
   type K = P[1] extends [any?] ? P[1] : [];
   type L = P[2] extends [any?] ? P[2] : [];
   type G = P[3] extends [any?] ? P[3] : [];
+
   function handler(...args: T): (..._args: K) => (...__args: L) => (...___args: G) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => (...___args: G) => V;
   function handler(...args: [...T, ...K, ...L]): (...___args: G) => V;
