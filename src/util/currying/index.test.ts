@@ -29,8 +29,8 @@ test("test useCurryFour", () => {
   };
   const sumCurry = useCurry.useCurryFour(sum);
   expect(sumCurry(1)(2)(3)("4")).toBe("64");
-  expect(sumCurry(1, 2, 1)("2")).toBe("42");
-  // expect(sumCurry(1, 2)(1)("2")).toBe("42");
+  // expect(sumCurry(1, 2, 1)("2")).toBe("42");
+  expect(sumCurry(1, 2)(1)("2")).toBe("42");
   expect(sumCurry(1, 2, 1, "2")).toBe("42");
   expect(sumCurry(1, 2)(1)("2")).toBe("42");
 });
