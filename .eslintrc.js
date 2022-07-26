@@ -8,7 +8,7 @@ module.exports = {
   },
   parser: "@typescript-eslint/parser", // 配置ts解析器
   parserOptions: {
-    parser: "babel-eslint",
+    parser: "@babel/eslint-parser",
   },
   plugins: ["@typescript-eslint"], // s使用插件对ts文件进行lint
   rules: {
