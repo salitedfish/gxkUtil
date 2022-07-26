@@ -6,10 +6,12 @@ import { GetParams, GetReturn, Function, SplitParams } from "../../type";
  * @_args func
  */
 export function useCurryTwo<F extends Function>(func: F) {
-  type T = SplitParams<GetParams<F>>[0] extends [any?] ? SplitParams<GetParams<F>>[0] : [];
-  type K = SplitParams<GetParams<F>>[1] extends [any?] ? SplitParams<GetParams<F>>[1] : [];
-  function handler(...args: T): (..._args: K) => GetReturn<F>;
-  function handler(...args: [...T, ...K]): GetReturn<F>;
+  type P = SplitParams<GetParams<F>>;
+  type V = GetReturn<F>;
+  type T = P[0] extends [any?] ? P[0] : [];
+  type K = P[1] extends [any?] ? P[1] : [];
+  function handler(...args: T): (..._args: K) => V;
+  function handler(...args: [...T, ...K]): V;
   function handler(...args: T | [...T, ...K]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
@@ -38,12 +40,14 @@ export function useCurryTwo<F extends Function>(func: F) {
  * @_args func
  */
 export function useCurryThree<F extends Function>(func: F) {
-  type T = SplitParams<GetParams<F>>[0] extends [any?] ? SplitParams<GetParams<F>>[0] : [];
-  type K = SplitParams<GetParams<F>>[1] extends [any?] ? SplitParams<GetParams<F>>[1] : [];
-  type L = SplitParams<GetParams<F>>[2] extends [any?] ? SplitParams<GetParams<F>>[2] : [];
-  function handler(...args: T): (..._args: K) => (...__args: L) => GetReturn<F>;
-  function handler(...args: [...T, ...K]): (...__args: L) => GetReturn<F>;
-  function handler(...args: [...T, ...K, ...L]): GetReturn<F>;
+  type P = SplitParams<GetParams<F>>;
+  type V = GetReturn<F>;
+  type T = P[0] extends [any?] ? P[0] : [];
+  type K = P[1] extends [any?] ? P[1] : [];
+  type L = P[2] extends [any?] ? P[2] : [];
+  function handler(...args: T): (..._args: K) => (...__args: L) => V;
+  function handler(...args: [...T, ...K]): (...__args: L) => V;
+  function handler(...args: [...T, ...K, ...L]): V;
   function handler(...args: T | [...T, ...K] | [...T, ...K, ...L]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
@@ -67,11 +71,12 @@ export function useCurryThree<F extends Function>(func: F) {
  * @_args func
  */
 export function useCurryFour<F extends Function>(func: F) {
-  type T = SplitParams<GetParams<F>>[0] extends [any?] ? SplitParams<GetParams<F>>[0] : [];
-  type K = SplitParams<GetParams<F>>[1] extends [any?] ? SplitParams<GetParams<F>>[1] : [];
-  type L = SplitParams<GetParams<F>>[2] extends [any?] ? SplitParams<GetParams<F>>[2] : [];
-  type G = SplitParams<GetParams<F>>[3] extends [any?] ? SplitParams<GetParams<F>>[3] : [];
+  type P = SplitParams<GetParams<F>>;
   type V = GetReturn<F>;
+  type T = P[0] extends [any?] ? P[0] : [];
+  type K = P[1] extends [any?] ? P[1] : [];
+  type L = P[2] extends [any?] ? P[2] : [];
+  type G = P[3] extends [any?] ? P[3] : [];
   function handler(...args: T): (..._args: K) => (...__args: L) => (...___args: G) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => (...___args: G) => V;
   function handler(...args: [...T, ...K, ...L]): (...___args: G) => V;
