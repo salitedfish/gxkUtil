@@ -1,4 +1,4 @@
-import { GetParams, GetReturn, Function, SplitParams } from "../../type";
+import { GetReturn, Function, SplitParams } from "../../type";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -6,7 +6,7 @@ import { GetParams, GetReturn, Function, SplitParams } from "../../type";
  * @_args func
  */
 export function useCurryTwo<F extends Function>(func: F) {
-  type P = SplitParams<GetParams<F>>;
+  type P = SplitParams<Parameters<F>>;
   type V = GetReturn<F>;
   type T = P[0] extends [any?] ? P[0] : [];
   type K = P[1] extends [any?] ? P[1] : [];
@@ -41,7 +41,7 @@ export function useCurryTwo<F extends Function>(func: F) {
  * @_args func
  */
 export function useCurryThree<F extends Function>(func: F) {
-  type P = SplitParams<GetParams<F>>;
+  type P = SplitParams<Parameters<F>>;
   type V = GetReturn<F>;
   type T = P[0] extends [any?] ? P[0] : [];
   type K = P[1] extends [any?] ? P[1] : [];
@@ -73,7 +73,7 @@ export function useCurryThree<F extends Function>(func: F) {
  * @_args func
  */
 export function useCurryFour<F extends Function>(func: F) {
-  type P = SplitParams<GetParams<F>>;
+  type P = SplitParams<Parameters<F>>;
   type V = GetReturn<F>;
   type T = P[0] extends [any?] ? P[0] : [];
   type K = P[1] extends [any?] ? P[1] : [];

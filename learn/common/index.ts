@@ -41,25 +41,7 @@ export const myPromiseAll = (promiseArray: Promise<unknown>[]): Promise<unknown[
 
 Promise.all = myPromiseAll;
 
-/**Omit高级类型 */
-type a = { a: 1; b: 2 };
-type b = Omit<a, "a">;
 
-const B: b = {
-  b: 2,
-};
-
-/**Pick高级类型 */
-type d = Pick<a, "a">;
-
-const D: d = {
-  a: 1,
-};
-
-/**Record高级类型 */
-/**Exclude高级类型 */
-/**Extract高级类型 */
-/**ReturnType高级类型 */
 
 
 /**柯里化试验 */
