@@ -1,18 +1,18 @@
 import { exec } from "child_process";
-import consola from "consola";
+// import console from "console";
 import { PACKAGE_NAME } from "./data";
 
 const build = async () => {
-  consola.info("Test");
+  console.info("Test");
   exec("pnpm run test");
 
-  consola.info("Clean up");
+  console.info("Clean up");
   exec(`rm -rf ./${PACKAGE_NAME}`);
 
-  consola.info("Rollup");
+  console.info("Rollup");
   exec("rollup -c rollup.config.ts --configPlugin typescript");
 
-  consola.info("Clean up");
+  console.info("Clean up");
   exec(`rm -rf ./${PACKAGE_NAME}/rollup.config.d.ts`);
 };
 
