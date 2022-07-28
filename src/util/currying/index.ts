@@ -117,7 +117,7 @@ type Curry<F extends Fn> = F extends (...args: infer Args) => infer Ret ? Curryi
  * 无限参数柯里化(1:如果原始函数包含泛型，则不推荐使用，泛型会失效;2:原始函数不能包含默认参数;3:柯里化函数必须一次调用完(防止闭包带来的参数列表复用问题))
  * @params fn
  */
-function useCurry<F extends Fn>(fn: F): Curry<F> {
+export function useCurry<F extends Fn>(fn: F): Curry<F> {
   const _args: unknown[] = [];
 
   function _curry(...args: unknown[]) {
