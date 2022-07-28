@@ -17,6 +17,9 @@ test("test useCurryThree", () => {
     return a + b + d;
   };
   const sumCurry = useCurry.useCurryThree(sum);
+  const aumCurry = sumCurry(1);
+  expect(aumCurry(1)(2)).toBe(4);
+  expect(aumCurry(1)()).toBe(3);
   expect(sumCurry(1)(2)()).toBe(4);
   expect(sumCurry(1, 2, 1)).toBe(4); //不明原因ts会报错
   expect(sumCurry(1, 2)(1)).toBe(4);
@@ -28,8 +31,23 @@ test("test useCurryFour", () => {
     return a + b + e + d;
   };
   const sumCurry = useCurry.useCurryFour(sum);
+  const aumCurry = sumCurry(1, 2);
+  expect(aumCurry(3)("4")).toBe("64");
+  expect(aumCurry(2)("2")).toBe("52");
   expect(sumCurry(1)(2)(3)("4")).toBe("64");
   expect(sumCurry(1, 2, 1)("2")).toBe("42"); //不明原因ts会报错
+  expect(sumCurry(1, 2)(1)("2")).toBe("42");
+  expect(sumCurry(1, 2, 1, "2")).toBe("42");
+});
+
+/**test useCurry*/
+test("test useCurry", () => {
+  const sum = (a: number, b: number, e: number, d: string) => {
+    return a + b + e + d;
+  };
+  const sumCurry = useCurry.useCurry(sum);
+  expect(sumCurry(1)(2)(3)("4")).toBe("64");
+  expect(sumCurry(1, 2, 1)("2")).toBe("42");
   expect(sumCurry(1, 2)(1)("2")).toBe("42");
   expect(sumCurry(1, 2, 1, "2")).toBe("42");
   expect(sumCurry(1, 2)(1)("2")).toBe("42");

@@ -44,7 +44,12 @@ type CusFetchOptions = {
 type ResponseType = any | Blob | FormData | string | FormData;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**构造清空终止控制器函数，以便请求完成后删除终止控制器 */
-const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, abortControllerId: NodeJS.Timeout, signal: AbortSignal) => {
+const clearAbortController = (
+  comOptions: ComFetchOptions,
+  cusOptions: CusFetchOptions,
+  abortControllerId: NodeJS.Timeout,
+  signal: AbortSignal
+) => {
   /**清空终止控制器延时器 */
   if (cusOptions.timeOut || comOptions.timeOut) {
     clearTimeout(abortControllerId);
@@ -67,7 +72,10 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
     return shallowResponse.json();
   } else if (contentType && contentType.match(/form-data/i)) {
     return shallowResponse.formData();
-  } else if (contentType && (contentType.match(/blob/i) || contentType.match(/application\/vnd/i))) {
+  } else if (
+    contentType &&
+    (contentType.match(/blob/i) || contentType.match(/application\/vnd/i))
+  ) {
     return shallowResponse.blob();
   } else if (contentType && contentType.match(/text/i)) {
     return shallowResponse.text();
@@ -75,7 +83,6 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
     return shallowResponse.json();
   }
 };
-
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param comConfig baseURL headers responseType mode credentials
@@ -88,7 +95,10 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
    * @param cusOptions reqHandler resHandler errHandler timeOut abortController
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
+  const handler = async (
+    cusConfig: CusFetchConfig,
+    cusOptions: CusFetchOptions = {}
+  ): Promise<ResponseType> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 

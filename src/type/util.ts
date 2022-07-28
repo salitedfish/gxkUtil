@@ -40,11 +40,6 @@ export type Method = "GET" | "DELETE" | "POST" | "PUT";
 export type Function<P extends Params = any, R extends any = any> = (...args: P) => R;
 
 /**
- * 函数返回值类型
- */
-export type GetReturn<F extends Function> = F extends (...args: Params) => infer R ? R : never;
-
-/**
  * 只读参数类型
  */
 export type Params<A = any> = ReadonlyArray<A>;
