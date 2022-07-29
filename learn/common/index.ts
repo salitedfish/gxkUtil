@@ -130,3 +130,13 @@ type Length<T extends any[]> = T["length"];
 type Tail<T extends any[]> = ((...args: T) => any) extends (arg1: any, ...tail: infer A) => any ? A : [];
 type Curry<P extends any[], R> = <T extends any[]>(...args: Cast<T, Partial<P>>) => Drop<Length<T>, P> extends [any, ...any[]] ? Curry<Drop<Length<T>, P> extends infer DT ? Cast<DT, any[]> : never, R> : R;
 declare function CurryV5<P extends any[], R>(f: (...args: P) => R): Curry<P, R>;
+
+/**函数类型交叉试验,重载 */
+type FooOne = (a: number, b: string) => string;
+type FooTwo = (a: number, b: string, c: string) => string;
+type FooThree = FooOne & FooTwo;
+
+const test: FooThree = (a: number, b: string) => {
+  return a + b;
+};
+test;
