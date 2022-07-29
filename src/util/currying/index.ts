@@ -105,34 +105,41 @@ export function useCurryFour<F extends Function>(func: F) {
 
 // type RemoveLastArgs<Args extends unknown[]> = Args extends [] | [unknown?] ? Args : Args extends [...infer Rest, unknown?] ? Rest : never;
 
-// type UnPassedArgs<Args extends unknown[], Passed extends unknown[]> = Args extends [...Passed, ...infer Rest] ? Rest : Args;
+// type NextArgs<Args extends unknown[], CurrentArgs extends unknown[]> = Args extends [...CurrentArgs, ...infer Rest] ? Rest : Args;
 
-// type Currying<Args extends unknown[], Ret, PassedArgs extends unknown[] = Args, PassedRet = Ret> = number extends PassedArgs["length"]
-//   ? Func<PassedArgs, PassedRet>
-//   : PassedArgs extends [] | [unknown?]
-//   ? Func<PassedArgs, PassedRet>
-//   : Currying<Args, Ret, RemoveLastArgs<PassedArgs>, Currying<UnPassedArgs<Args, RemoveLastArgs<PassedArgs>>, Ret>> & Func<PassedArgs, PassedRet>;
+// type Currying<Args extends unknown[], Ret, CurrentArgs extends unknown[] = Args, CurrentRet = Ret> = number extends CurrentArgs["length"]
+//   ? Func<CurrentArgs, CurrentRet>
+//   : CurrentArgs extends [] | [unknown?]
+//   ? Func<CurrentArgs, CurrentRet>
+//   : Currying<Args, Ret, RemoveLastArgs<CurrentArgs>, Currying<NextArgs<Args, RemoveLastArgs<CurrentArgs>>, Ret>> & Func<CurrentArgs, CurrentRet>;
 
 // type Curry<F extends Fn> = F extends (...args: infer Args) => infer Ret ? Currying<Args, Ret> : F;
 
-// /**
-//  * 无限参数柯里化(1:如果原始函数包含泛型，则不推荐使用，泛型会失效;2:原始函数不能包含默认参数;3:柯里化函数必须一次调用完(防止闭包带来的参数列表复用问题))
-//  * @params fn
-//  */
-// export function useCurry<F extends Fn>(fn: F): Curry<F> {
+// export function useCurry<F extends Fn>(fn: F, invokeCount = 1): Curry<F> {
 //   const _args: unknown[] = [];
 
+//   let _invokeCount = 0;
+//   let _passedCount = 0;
+
 //   function _curry(...args: unknown[]) {
-//     args.length ? _args.push(...args) : _args.push(undefined);
+//     if (args.length) {
+//       _args.push(...args);
+//     } else {
+//       _args.push(undefined);
+//     }
+
+//     if (invokeCount >= ++_invokeCount) {
+//       _passedCount = _args.length;
+//     }
+
 //     if (_args.length < fn.length) {
 //       return _curry;
 //     } else {
 //       const res = fn(..._args);
-//       _args.length = 0;
+//       _args.length = _passedCount;
 //       return res;
 //     }
 //   }
 
-//   return _curry as Curry<F>;
+//   return _curry as unknown as Curry<F>;
 // }
-// useCurry;
