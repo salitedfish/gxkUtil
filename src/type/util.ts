@@ -2,7 +2,7 @@
  * 对象类型
  */
 export type ObjectType<T = any> = {
-  [key: string]: T;
+  [key: keyof any]: T;
 };
 
 /**

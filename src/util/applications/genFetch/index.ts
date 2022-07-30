@@ -37,30 +37,22 @@ type CusFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   resHandler?: (response: any) => any;
   errHandler?: (err: any) => any;
-  abortController?: AbortController[];
+  reqestId?: keyof any;
   timeOut?: number;
 };
 /**处理后返回值类型 */
-type ResponseType = any | Blob | FormData | string | FormData;
+type ResponseType = ObjectType | Blob | FormData | string;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
 /**构造清空终止控制器函数，以便请求完成后删除终止控制器 */
-const clearAbortController = (
-  comOptions: ComFetchOptions,
-  cusOptions: CusFetchOptions,
-  abortControllerId: NodeJS.Timeout,
-  signal: AbortSignal
-) => {
+const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, timeoutId: NodeJS.Timeout, abortId: keyof any | undefined) => {
   /**清空终止控制器延时器 */
   if (cusOptions.timeOut || comOptions.timeOut) {
-    clearTimeout(abortControllerId);
+    clearTimeout(timeoutId);
   }
-  /**删除终止控制器数组内对应的控制器*/
-  if (Array.isArray(cusOptions.abortController)) {
-    for (let key = 0; key < cusOptions.abortController.length; key++) {
-      if (cusOptions.abortController[key].signal === signal) {
-        cusOptions.abortController.splice(key, 1);
-      }
-    }
+  /**删除终止控制器map内对应的控制器*/
+  if (abortId) {
+    abortControllers.delete(abortId);
   }
 };
 
@@ -72,10 +64,7 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
     return shallowResponse.json();
   } else if (contentType && contentType.match(/form-data/i)) {
     return shallowResponse.formData();
-  } else if (
-    contentType &&
-    (contentType.match(/blob/i) || contentType.match(/application\/vnd/i))
-  ) {
+  } else if (contentType && (contentType.match(/blob/i) || contentType.match(/application\/vnd/i))) {
     return shallowResponse.blob();
   } else if (contentType && contentType.match(/text/i)) {
     return shallowResponse.text();
@@ -83,6 +72,10 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
     return shallowResponse.json();
   }
 };
+
+/**收集终止控制器的map */
+const abortControllers: Map<keyof any, AbortController> = new Map();
+
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param comConfig baseURL headers responseType mode credentials
@@ -92,13 +85,10 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
 const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   /**
    * @param cusConfig URL method headers params body responseType mode credentails
-   * @param cusOptions reqHandler resHandler errHandler timeOut abortController
+   * @param cusOptions reqHandler resHandler errHandler timeOut requestId
    * @returns 原生fetch
    */
-  const handler = async (
-    cusConfig: CusFetchConfig,
-    cusOptions: CusFetchOptions = {}
-  ): Promise<ResponseType> => {
+  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -108,19 +98,22 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
 
     /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
     const timeOut = cusOptions.timeOut || comOptions.timeOut;
-    let abortControllerId: NodeJS.Timeout;
-    if (timeOut || Array.isArray(cusOptions.abortController)) {
+    const abortId = cusOptions.reqestId;
+    let timeoutId: NodeJS.Timeout;
+    if (timeOut || abortId) {
       const abortController = new AbortController();
       resConfig.signal = abortController.signal;
       /**设置过期时间，以便自动调用 */
       if (timeOut) {
-        abortControllerId = setTimeout(() => {
+        timeoutId = setTimeout(() => {
           abortController.abort();
         }, timeOut);
       }
       /**收集终止控制器，以便手动调用 */
-      if (Array.isArray(cusOptions.abortController)) {
-        cusOptions.abortController.push(abortController);
+      if (abortId) {
+        /** 先取消之前相同id的请求（如果有的话）*/
+        useAbortFetch(abortId);
+        abortControllers.set(abortId, abortController);
       }
     }
 
@@ -133,7 +126,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
       .then(async (res: Response) => {
         const reg = await handerResponse(res.clone());
         if (regConfig.signal) {
-          clearAbortController(comOptions, cusOptions, abortControllerId, regConfig.signal);
+          clearAbortController(comOptions, cusOptions, timeoutId, abortId);
         }
         /**如果有中间件，则先处理中间件，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
@@ -145,7 +138,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
       })
       .catch((err) => {
         if (regConfig.signal) {
-          clearAbortController(comOptions, cusOptions, abortControllerId, regConfig.signal);
+          clearAbortController(comOptions, cusOptions, timeoutId, abortId);
         }
         /**如果有中间件，则先处理中间件 */
         const ert = comOptions.errHandler ? comOptions.errHandler(err) : err;
@@ -157,6 +150,15 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
 };
 
 export const useFetch = useCurryTwo(useFetchShallow);
+
+/**导出个方法给用户调用取消请求 */
+export const useAbortFetch = (requestId: keyof any) => {
+  const oldAbortController = abortControllers.get(requestId);
+  if (oldAbortController) {
+    oldAbortController.abort();
+    abortControllers.delete(requestId);
+  }
+};
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**useage */
