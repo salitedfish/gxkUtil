@@ -98,3 +98,4 @@ export function useCurryFour<F extends Function>(func: F) {
   }
   return handler;
 }
+

@@ -1,19 +1,14 @@
 import { Method, ObjectType } from "../../../type";
 import { useGenParamsUrl } from "../../../util";
+import { useConsoleWarn } from "../../../useInside";
 import { useCurryTwo } from "../../../util/currying";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type FetchMode = "cors" | "no-cors" | "same-origin" | "navigate";
-type FetchCredentials = "omit" | "same-origin" | "include";
 /**基础请求参数的类型 */
-type ComFetchConfig = {
-  baseURL?: string;
-  headers?: HeadersInit;
-  responseType?: string;
-  mode?: FetchMode;
-  credentials?: FetchCredentials;
-  keepalive?: boolean;
-};
+interface ComFetchConfig extends RequestInit {
+  baseURL: string;
+  method?: Method;
+}
 type ComFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   resHandler?: (response: any, shallowResponse: Response) => any;
@@ -21,18 +16,11 @@ type ComFetchOptions = {
   timeOut?: number;
 };
 /**单个请求参数的类型 */
-type CusFetchConfig = {
-  URL: string;
-  method: Method;
+interface CusFetchConfig extends RequestInit {
+  URL?: string;
+  method?: Method;
   params?: ObjectType<string | number>;
-  body?: BodyInit | null | undefined;
-  headers?: HeadersInit;
-  responseType?: string;
-  mode?: FetchMode;
-  credentials?: FetchCredentials;
-  signal?: AbortSignal;
-  keepalive?: boolean;
-};
+}
 type CusFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   resHandler?: (response: any) => any;
@@ -41,54 +29,87 @@ type CusFetchOptions = {
   timeOut?: number;
 };
 /**处理后返回值类型 */
+type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
 type ResponseType = ObjectType | Blob | FormData | string;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**设置取消控制器 */
+const abortControllerHandler = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: CusFetchConfig) => {
+  const timeOut = cusOptions.timeOut || comOptions.timeOut;
+  const abortId = cusOptions.reqestId;
+  let timeoutId: NodeJS.Timeout | undefined = undefined;
+  if (timeOut || abortId) {
+    const abortController = new AbortController();
+    resConfig.signal = abortController.signal;
+    /**设置过期时间，以便自动调用 */
+    if (timeOut) {
+      timeoutId = setTimeout(() => {
+        abortController.abort();
+      }, timeOut);
+    }
+    /**收集取消控制器，以便手动调用 */
+    if (abortId) {
+      /**先取消之前相同id的请求（如果有的话）*/
+      useAbortFetch(abortId);
+      /**再设置新的取消控制器*/
+      abortControllers.set(abortId, abortController);
+    }
+  }
+  return {
+    timeoutId,
+    abortId,
+  };
+};
 
-/**构造清空终止控制器函数，以便请求完成后删除终止控制器 */
-const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, timeoutId: NodeJS.Timeout, abortId: keyof any | undefined) => {
-  /**清空终止控制器延时器 */
-  if (cusOptions.timeOut || comOptions.timeOut) {
+/**构造清空取消控制器函数，以便请求完成后删除取消控制器 */
+const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, timeoutId: NodeJS.Timeout | undefined, abortId: keyof any | undefined) => {
+  /**清空取消控制器延时器 */
+  if ((cusOptions.timeOut || comOptions.timeOut) && timeoutId) {
     clearTimeout(timeoutId);
   }
-  /**删除终止控制器map内对应的控制器*/
+  /**删除取消控制器map内对应的控制器*/
   if (abortId) {
     abortControllers.delete(abortId);
   }
 };
 
-/**处理返回值(还不完善，待后续情况添加解析类型) */
-const handerResponse = (shallowResponse: Response): Promise<ResponseType> => {
-  // arrayBuffer();
-  const contentType = shallowResponse.headers.get("Content-Type");
-  if (contentType && contentType.match(/application\/json/i)) {
-    return shallowResponse.json();
-  } else if (contentType && contentType.match(/form-data/i)) {
-    return shallowResponse.formData();
-  } else if (contentType && (contentType.match(/blob/i) || contentType.match(/application\/vnd/i))) {
-    return shallowResponse.blob();
-  } else if (contentType && contentType.match(/text/i)) {
-    return shallowResponse.text();
-  } else {
-    return shallowResponse.json();
-  }
+/**返回值类型和方法映射*/
+const responseTypeMap: ObjectType<ResponseTypeMethod> = {
+  json: "json",
+  form: "formData",
+  blob: "blob",
+  vnd: "blob",
+  text: "text",
+  arrayBuffer: "arrayBuffer",
 };
 
-/**收集终止控制器的map */
+/**根据类型处理返回值 */
+const handerResponse = (shallowResponse: Response): Promise<ResponseType> | undefined => {
+  const contentType = shallowResponse.headers.get("Content-Type");
+  for (let key in responseTypeMap) {
+    if (contentType && contentType.includes(key)) {
+      return shallowResponse[responseTypeMap[key]]();
+    }
+  }
+  useConsoleWarn("handerResponse: 未匹配到返回值类型!");
+  return undefined;
+};
+
+/**收集取消控制器的map */
 const abortControllers: Map<keyof any, AbortController> = new Map();
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * @param comConfig baseURL headers responseType mode credentials
+ * @param comConfig
  * @param comOptions reqHandler resHandler errHandler timeOut
  * @returns 自定义fetch
  */
-const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
+const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) => {
   /**
-   * @param cusConfig URL method headers params body responseType mode credentails
+   * @param cusConfig
    * @param cusOptions reqHandler resHandler errHandler timeOut requestId
    * @returns 原生fetch
    */
-  const handler = async (cusConfig: CusFetchConfig, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
+  const handler = async (cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
     let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
 
@@ -96,26 +117,8 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     let resConfig = { ...comConfig, ...cusConfig };
     resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
 
-    /**如果传过来过期时间或收集终止控制器的数组则需要生成终止控制器 */
-    const timeOut = cusOptions.timeOut || comOptions.timeOut;
-    const abortId = cusOptions.reqestId;
-    let timeoutId: NodeJS.Timeout;
-    if (timeOut || abortId) {
-      const abortController = new AbortController();
-      resConfig.signal = abortController.signal;
-      /**设置过期时间，以便自动调用 */
-      if (timeOut) {
-        timeoutId = setTimeout(() => {
-          abortController.abort();
-        }, timeOut);
-      }
-      /**收集终止控制器，以便手动调用 */
-      if (abortId) {
-        /** 先取消之前相同id的请求（如果有的话）*/
-        useAbortFetch(abortId);
-        abortControllers.set(abortId, abortController);
-      }
-    }
+    /**如果传过来过期时间或收集取消控制器的数组则需要生成取消控制器 */
+    const { timeoutId, abortId } = abortControllerHandler(comOptions, cusOptions, resConfig);
 
     /**请求前先执行，类似于请求拦截器 */
     const retConfig = comOptions.reqHandler ? comOptions.reqHandler(resConfig) : resConfig;
@@ -124,11 +127,12 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
     /**返回请求结果 */
     return fetch(url, regConfig)
       .then(async (res: Response) => {
+        /**处理返回结果 */
         const reg = await handerResponse(res.clone());
         if (regConfig.signal) {
           clearAbortController(comOptions, cusOptions, timeoutId, abortId);
         }
-        /**如果有中间件，则先处理中间件，处理返回值。
+        /**如果有拦截器，则先处理拦截器，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
          * cusOptions.resHandler则只传入comOptions.resHandler返回的结果。
          * */
@@ -140,7 +144,7 @@ const useFetchShallow = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOpt
         if (regConfig.signal) {
           clearAbortController(comOptions, cusOptions, timeoutId, abortId);
         }
-        /**如果有中间件，则先处理中间件 */
+        /**如果有拦截器，则先处理拦截器 */
         const ert = comOptions.errHandler ? comOptions.errHandler(err) : err;
         const erx = cusOptions.errHandler ? cusOptions.errHandler(ert) : ert;
         return Promise.reject(erx);
@@ -157,6 +161,9 @@ export const useAbortFetch = (requestId: keyof any) => {
   if (oldAbortController) {
     oldAbortController.abort();
     abortControllers.delete(requestId);
+    return true;
+  } else {
+    return false;
   }
 };
 
@@ -164,6 +171,7 @@ export const useAbortFetch = (requestId: keyof any) => {
 /**useage */
 // function useage() {
 //   const apiFetch = useFetch({
+//     baseURL: "/",
 //     headers: {
 //       "Content-Type": "application/json",
 //     },
@@ -177,15 +185,13 @@ export const useAbortFetch = (requestId: keyof any) => {
 //     errHandler: () => {},
 //     timeOut: 10000,
 //   });
+
 //   apiFetch({
-//     URL: "/api",
-//     method: "GET",
 //     params: { a: 1 },
 //     body: JSON.stringify({ a: 1 }),
 //     headers: {
 //       "Content-type": "text",
 //     },
-//     responseType: "blob",
 //   })({
 //     reqHandler: (resConfig) => {
 //       return resConfig;
@@ -194,9 +200,9 @@ export const useAbortFetch = (requestId: keyof any) => {
 //     errHandler: () => {
 //       console.log("err");
 //     },
-//     abortController: [],
 //     timeOut: 5000,
 //   }).then();
+
 //   apiFetch({
 //     URL: "/api",
 //     method: "GET",
@@ -205,7 +211,6 @@ export const useAbortFetch = (requestId: keyof any) => {
 //     headers: {
 //       "Content-type": "text",
 //     },
-//     responseType: "blob",
 //   })({
 //     reqHandler: (resConfig) => {
 //       return resConfig;
@@ -214,8 +219,8 @@ export const useAbortFetch = (requestId: keyof any) => {
 //     errHandler: () => {
 //       console.log("err");
 //     },
-//     abortController: [],
 //     timeOut: 5000,
+//     reqestId: "34",
 //   }).then();
 // }
 // useage;
