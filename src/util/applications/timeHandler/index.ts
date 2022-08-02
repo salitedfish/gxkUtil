@@ -69,11 +69,13 @@ export const useCountDownFormat = useCurryTwo(useCountDownFormatShallow);
 const useTimeFormatShallow = (format: string, time: number | string) => {
   let newTime = useGenTimeStamp(time);
   const targetDate = new Date(newTime);
+  const hours = targetDate.getHours();
   /**解析时间 */
   const date: ObjectType = {
     "M+": targetDate.getMonth() + 1,
     "d+": targetDate.getDate(),
-    "h+": targetDate.getHours(),
+    "H+": targetDate.getHours(),
+    "h+": hours > 12 ? hours - 12 : hours,
     "m+": targetDate.getMinutes(),
     "s+": targetDate.getSeconds(),
     "q+": Math.floor((targetDate.getMonth() + 3) / 3),
