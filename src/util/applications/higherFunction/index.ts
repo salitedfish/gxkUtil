@@ -82,20 +82,20 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
  * promise返回结果后，如果满足条件则返回，否则继续执行，直到最终满足条件或达到最大次数
  * @param asyncCallBack
  * @param options count 最大请求次数，默认3， countDown 请求返回后间隔多少时间请求一次，默认500
- * @param isCondition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
+ * @param condition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
  * @returns 返回一个直到结果为true才返回promise的函数
  */
 export function usePromiseInsist<V extends any[], T>(
   asyncCallBack: (...params: V) => Promise<T>,
   options?: { count?: number; countDown?: number }
-): (isCondition: (params: T) => boolean) => (...params: V) => Promise<T>;
+): (condition: (params: T) => boolean) => (...params: V) => Promise<T>;
 export function usePromiseInsist<V extends any[], T>(
   asyncCallBack: (...params: V) => Promise<T>,
   options: { count?: number; countDown?: number },
-  isCondition: (params: T) => boolean
+  condition: (params: T) => boolean
 ): (...params: V) => Promise<T>;
-export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; countDown?: number } = {}, isCondition?: (params: T) => boolean): any {
-  const handler = (isCondition: (params: T) => boolean): ((...params: V) => Promise<T>) => {
+export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; countDown?: number } = {}, condition?: (params: T) => boolean): any {
+  const handler = (condition: (params: T) => boolean): ((...params: V) => Promise<T>) => {
     const resOptions = { count: 3, countDown: 500, ...options };
     let count = 0;
     return (...params) => {
@@ -104,7 +104,7 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
           count = count + 1;
           try {
             const result = await asyncCallBack(...params);
-            if (isCondition(result)) {
+            if (condition(result)) {
               /**满足条件返回 */
               resolve(result);
             } else if (count > resOptions.count) {
@@ -123,10 +123,10 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
     };
   };
   /**Currying */
-  if (isCondition === undefined) {
+  if (condition === undefined) {
     return handler;
   } else {
-    return handler(isCondition);
+    return handler(condition);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

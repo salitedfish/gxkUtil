@@ -1,5 +1,6 @@
 import { useCurryTwo } from "../../util/currying";
 import { ObjectType } from "../../type";
+import { useConsoleWarn } from "src/useInside";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -34,7 +35,7 @@ const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   let hasEmpty = false;
   for (let key in target) {
     if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {})) {
-      if (!exclude || !useDeepInclude(exclude, target[key])) {
+      if (!exclude || useDeepInclude(exclude)(target[key]) === false) {
         hasEmpty = true;
       }
     }
@@ -42,6 +43,24 @@ const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   return hasEmpty;
 };
 export const useCheckEmptyInObj = useCurryTwo(useCheckEmptyInObjShallow);
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 判断是不是正整数
+ * @param num
+ * @returns
+ */
+export const useIsPositiveInt = (num: number) => {
+  /**排除0和NaN */
+  if (!num) {
+    return false;
+  }
+  /**向下取整加取绝对值 */
+  if (Math.abs(Math.floor(num)) === num) {
+    return true;
+  } else {
+    return false;
+  }
+};
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深拷贝
@@ -145,24 +164,47 @@ const useDeepEqualShallow = (origin: any, target: any) => {
 export const useDeepEqual = useCurryTwo(useDeepEqualShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 深度判断数组中是否包含某个值, 依赖useDeepEqual
+ * 深度判断数组中是否包含某个值或满足某个条件的值, 依赖useDeepEqual
  * @param origin 例如[{a:1}]
- * @param target 例如 {a:1}
+ * @param conditions 例如 {a:1} 或 (item) => true
  * @returns
  */
-const useDeepIncludeShallow = (origin: unknown[], target: unknown) => {
-  if (useCheckSimpleData(target)) {
-    return origin.includes(target);
-  } else {
-    for (const item of origin) {
-      if (useDeepEqual(item, target)) {
-        return true;
+export function useDeepInclude<T>(origin: T[]): (conditions: T | ((item: T) => boolean)) => false | string;
+export function useDeepInclude<T>(origin: T[], conditions: T | ((item: T) => boolean)): false | string;
+export function useDeepInclude<T>(origin: T[], conditions?: T | ((item: T) => boolean)) {
+  const handler = (conditions: T | ((item: T) => boolean)) => {
+    if (useCheckSimpleData(conditions)) {
+      /**原始值 */
+      for (const key in origin) {
+        if (origin.includes(origin[key])) {
+          return key;
+        }
       }
+      return false;
+    } else if (conditions instanceof Function) {
+      /**函数条件 */
+      for (const key in origin) {
+        if (conditions(origin[key])) {
+          return key;
+        }
+      }
+      return false;
+    } else {
+      /**引用值 */
+      for (const key in origin) {
+        if (useDeepEqual(origin[key], conditions)) {
+          return key;
+        }
+      }
+      return false;
     }
-    return false;
+  };
+  if (conditions === undefined) {
+    return handler;
+  } else {
+    return handler(conditions);
   }
-};
-export const useDeepInclude = useCurryTwo(useDeepIncludeShallow);
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深度数组去重，不改变原数组, 依赖useDeepInclude
@@ -172,7 +214,7 @@ export const useDeepInclude = useCurryTwo(useDeepIncludeShallow);
 export const useDeepRmRpt = <V>(oldArr: V[]): V[] => {
   const newArr: V[] = [];
   for (const item of oldArr) {
-    if (!useDeepInclude(newArr, item)) {
+    if (useDeepInclude(newArr, item) === false) {
       newArr.push(item);
     }
   }
@@ -188,32 +230,68 @@ export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
   return Array.from(new Set(oldArr));
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type GroupOptions<T> = {
+  conditions?: ((param: T) => boolean)[];
+  arrayCount?: number;
+  eatchCount?: number;
+};
 /**
  * 数组按要求分组
  * @param origin
- * @param conditions 条件数组
+ * @param options 条件数组或者每组几个或几个数组
  */
-export function useGroupBy<T>(origin: T[]): (conditions: ((param: T) => boolean)[]) => T[][];
-export function useGroupBy<T>(origin: T[], conditions: ((param: T) => boolean)[]): T[][];
-export function useGroupBy<T>(origin: T[], conditions?: ((param: T) => boolean)[]) {
-  const handler = (conditions: ((param: T) => boolean)[]) => {
+export function useGroupBy<T>(origin: T[]): (options: GroupOptions<T>) => T[][];
+export function useGroupBy<T>(origin: T[], options: GroupOptions<T>): T[][];
+export function useGroupBy<T>(origin: T[], options?: GroupOptions<T>) {
+  const handler = (options: GroupOptions<T>) => {
     const resGroup: T[][] = [];
-    for (let item of conditions) {
-      const group = [];
-      for (let i of origin) {
-        if (item(i)) {
-          group.push(i);
+    const countGroupHandler = (arr: T[], num: number): T[][] => {
+      if (arr.length <= num) {
+        resGroup.push(arr);
+        return resGroup;
+      } else {
+        const res: T[] = [];
+        let count = 0;
+        for (let item of arr) {
+          res.push(item);
+          count++;
+          if (count >= num) {
+            resGroup.push(res);
+            break;
+          }
         }
+        return countGroupHandler(arr.slice(num), num);
       }
-      resGroup.push(group);
+    };
+    if (Array.isArray(options.conditions)) {
+      for (let item of options.conditions) {
+        const group = [];
+        for (let i of origin) {
+          if (item(i)) {
+            group.push(i);
+          }
+        }
+        resGroup.push(group);
+      }
+      return resGroup;
+    } else if (options.eatchCount) {
+      return countGroupHandler(origin, options.eatchCount);
+    } else if (options.arrayCount) {
+      const arrayCount = Math.floor(origin.length / options.arrayCount);
+      return countGroupHandler(origin, arrayCount);
+    } else {
+      return resGroup;
     }
-    return resGroup;
   };
   /**Currying */
-  if (conditions === undefined) {
+  if (options === undefined) {
     return handler;
   } else {
-    return handler(conditions);
+    if (options?.arrayCount && !useIsPositiveInt(options?.arrayCount) && options?.eatchCount && !useIsPositiveInt(options?.eatchCount)) {
+      useConsoleWarn("useGroupBy: 分组条件不正确!");
+      return [];
+    }
+    return handler(options);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

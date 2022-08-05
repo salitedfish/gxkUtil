@@ -20,7 +20,16 @@ test("test useCheckEmptyInObj", () => {
   expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })([0, null])).toBe(false);
   expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })()).toBe(true);
   expect(useDataOperate.useCheckEmptyInObj([0, null], [0, null])).toBe(false);
-  expect(useDataOperate.useCheckEmptyInObj([0, null, undefined])([0, null])).toBe(true);
+  // expect(useDataOperate.useCheckEmptyInObj([0, null, undefined])([0, null])).toBe(true);
+});
+
+/**test useIsPositiveInt */
+test("test useIsPositiveInt", () => {
+  expect(useDataOperate.useIsPositiveInt(1)).toBe(true);
+  expect(useDataOperate.useIsPositiveInt(0)).toBe(false);
+  expect(useDataOperate.useIsPositiveInt(1.1)).toBe(false);
+  expect(useDataOperate.useIsPositiveInt(-1)).toBe(false);
+  expect(useDataOperate.useIsPositiveInt(-1.1)).toBe(false);
 });
 
 /**test useDeepClone */
@@ -38,9 +47,12 @@ test("test useDeepEqual", () => {
 
 /**test useDeepInclude */
 test("test useDeepInclude", () => {
-  expect(useDataOperate.useDeepInclude([obj], cloneObj)).toBe(true);
-  expect(useDataOperate.useDeepInclude([f], g)).toBe(true);
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { a: 1 })).toBe(false);
+  expect(useDataOperate.useDeepInclude([obj], cloneObj)).toBe("0");
+  expect(useDataOperate.useDeepInclude([f], g)).toBe("0");
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { a: 1, b: 2 })).toBe(false);
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.a === 1)).toBe("0");
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.a > 1)).toBe(false);
+  // expect(useDataOperate.useDeepInclude([0, null])(undefined)).toBe(false);
 });
 
 /**useDeepRmRpt */
@@ -70,8 +82,17 @@ test("test useGroupBy", () => {
     { a: 5, b: 6 },
     { a: 6, b: 7 },
   ];
-  const resGroup = useDataOperate.useGroupBy(arr)(conditions);
-  const retGroup = useDataOperate.useGroupBy(arr, conditions);
+  const arrNew = [
+    { a: 1, b: 2 },
+    { a: 2, b: 3 },
+    { a: 3, b: 4 },
+    { a: 4, b: 5 },
+    { a: 5, b: 6 },
+  ];
+  const resGroup = useDataOperate.useGroupBy(arr)({ conditions });
+  const retGroup = useDataOperate.useGroupBy(arr, { conditions });
+  const regGroup = useDataOperate.useGroupBy(arrNew, { arrayCount: 2 });
+  const rexGroup = useDataOperate.useGroupBy(arrNew)({ eatchCount: 4 });
   const resGropRef = [
     [
       { a: 3, b: 4 },
@@ -84,8 +105,30 @@ test("test useGroupBy", () => {
       { a: 2, b: 3 },
     ],
   ];
+  const regGropRef = [
+    [
+      { a: 1, b: 2 },
+      { a: 2, b: 3 },
+    ],
+    [
+      { a: 3, b: 4 },
+      { a: 4, b: 5 },
+    ],
+    [{ a: 5, b: 6 }],
+  ];
+  const rexGropRef = [
+    [
+      { a: 1, b: 2 },
+      { a: 2, b: 3 },
+      { a: 3, b: 4 },
+      { a: 4, b: 5 },
+    ],
+    [{ a: 5, b: 6 }],
+  ];
   expect(useDataOperate.useDeepEqual(resGroup)(resGropRef)).toBe(true);
   expect(useDataOperate.useDeepEqual(retGroup, resGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(regGroup, regGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(rexGroup, rexGropRef)).toBe(true);
 });
 
 /**test useRepPartStr */
