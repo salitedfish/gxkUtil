@@ -38,7 +38,7 @@ export function useCurryThree<F extends Function>(func: F) {
 
   function handler(...args: T): (..._args: K) => (...__args: L) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => V;
-  function handler(...args: [...T, ...K, ...L]): V;
+  // function handler(...args: [...T, ...K, ...L]): V; /**不明原因ts打包时,无法展开第三个参数会报错 */
   function handler(...args: T | [...T, ...K] | [...T, ...K, ...L]) {
     if ([0, 1].includes(args.length)) {
       return (..._args: K) => {
@@ -71,7 +71,7 @@ export function useCurryFour<F extends Function>(func: F) {
 
   function handler(...args: T): (..._args: K) => (...__args: L) => (...___args: G) => V;
   function handler(...args: [...T, ...K]): (...__args: L) => (...___args: G) => V;
-  function handler(...args: [...T, ...K, ...L]): (...___args: G) => V;
+  // function handler(...args: [...T, ...K, ...L]): (...___args: G) => V; /**不明原因ts打包时,无法展开第三个参数会报错 */
   function handler(...args: [...T, ...K, ...L, ...G]): V;
   function handler(...args: T | [...T, ...K] | [...T, ...K, ...L] | [...T, ...K, ...L, ...G]) {
     if ([0, 1].includes(args.length)) {
@@ -98,4 +98,3 @@ export function useCurryFour<F extends Function>(func: F) {
   }
   return handler;
 }
-
