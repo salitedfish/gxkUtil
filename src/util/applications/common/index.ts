@@ -1,7 +1,5 @@
 import SparkMD5 from "spark-md5";
 import SHA256 from "crypto-js/sha256";
-import Clipboard from "clipboard";
-import { useCheckUndefined } from "src/util";
 import { useCurryTwo } from "../../../util/currying";
 import { useConsoleWarn } from "../../../useInside";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -102,30 +100,21 @@ export const useGenParamsUrl = useCurryTwo(useGenParamsUrlShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 点击复制
- * @param text 复制的文字
- * @param domID 为了规范，统一传入dom的id
+ * @param text 复制的文本
  */
-const useClipboardShallow = (text: string, domID: string) => {
-  return new Promise((resolve, reject) => {
-    if (useCheckUndefined(text)) {
-      useConsoleWarn("useClipboardShallow: 参数为undefined!");
-      return;
-    }
-    let clipboard = new Clipboard(domID, {
-      text: function () {
-        return text;
-      },
-    });
-    clipboard.on("success", (e) => {
-      e.clearSelection();
-      resolve(e);
-    });
-    clipboard.on("error", () => {
-      reject();
-    });
-  });
+export const useClipboard = async (text: string | number) => {
+  if (!navigator.clipboard) {
+    useConsoleWarn("useClipboard: 你的浏览器当前环境不支持复制!");
+    return false;
+  }
+  try {
+    await navigator.clipboard.writeText(text.toString());
+    return true;
+  } catch (err) {
+    useConsoleWarn(`useClipboard: ${err}`);
+    return false;
+  }
 };
-export const useClipboard = useCurryTwo(useClipboardShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 计算文件或字符串MD5hash
