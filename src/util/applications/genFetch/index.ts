@@ -32,6 +32,18 @@ type CusFetchOptions = {
 type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
 type ResponseType = ObjectType | Blob | FormData | string;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**导出个方法给用户调用取消请求 */
+export const useAbortFetch = (requestId: keyof any) => {
+  const oldAbortController = abortControllers.get(requestId);
+  if (oldAbortController) {
+    oldAbortController.abort();
+    abortControllers.delete(requestId);
+    return true;
+  } else {
+    return false;
+  }
+};
+
 /**设置取消控制器 */
 const abortControllerHandler = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: CusFetchConfig) => {
   const timeOut = cusOptions.timeOut || comOptions.timeOut;
@@ -154,19 +166,6 @@ const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions 
 };
 
 export const useFetch = useCurryTwo(useFetchShallow);
-
-/**导出个方法给用户调用取消请求 */
-export const useAbortFetch = (requestId: keyof any) => {
-  const oldAbortController = abortControllers.get(requestId);
-  if (oldAbortController) {
-    oldAbortController.abort();
-    abortControllers.delete(requestId);
-    return true;
-  } else {
-    return false;
-  }
-};
-
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**useage */
 // function useage() {
