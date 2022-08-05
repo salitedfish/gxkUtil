@@ -6,7 +6,7 @@ import { useCurryTwo } from "../../../util/currying";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**基础请求参数的类型 */
 interface ComFetchConfig extends RequestInit {
-  baseURL: string;
+  baseURL?: string;
   method?: Method;
 }
 type ComFetchOptions = {
@@ -111,7 +111,7 @@ const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions 
    */
   const handler = async (cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<ResponseType> => {
     /**处理url */
-    let url = useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params || {});
+    let url = useGenParamsUrl(comConfig.baseURL || "" + cusConfig.URL)(cusConfig.params || {});
 
     /**处理config */
     let resConfig = { ...comConfig, ...cusConfig };
