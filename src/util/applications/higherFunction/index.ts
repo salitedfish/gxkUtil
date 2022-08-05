@@ -85,8 +85,15 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
  * @param isCondition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
  * @returns 返回一个直到结果为true才返回promise的函数
  */
-export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options?: { count?: number; countDown?: number }): (isCondition: (params: T) => boolean) => (...params: V) => Promise<T>;
-export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; countDown?: number }, isCondition: (params: T) => boolean): (...params: V) => Promise<T>;
+export function usePromiseInsist<V extends any[], T>(
+  asyncCallBack: (...params: V) => Promise<T>,
+  options?: { count?: number; countDown?: number }
+): (isCondition: (params: T) => boolean) => (...params: V) => Promise<T>;
+export function usePromiseInsist<V extends any[], T>(
+  asyncCallBack: (...params: V) => Promise<T>,
+  options: { count?: number; countDown?: number },
+  isCondition: (params: T) => boolean
+): (...params: V) => Promise<T>;
 export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; countDown?: number } = {}, isCondition?: (params: T) => boolean): any {
   const handler = (isCondition: (params: T) => boolean): ((...params: V) => Promise<T>) => {
     const resOptions = { count: 3, countDown: 500, ...options };
