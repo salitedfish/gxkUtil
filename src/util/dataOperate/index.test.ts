@@ -20,7 +20,7 @@ test("test useCheckEmptyInObj", () => {
   expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })([0, null])).toBe(false);
   expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })()).toBe(true);
   expect(useDataOperate.useCheckEmptyInObj([0, null], [0, null])).toBe(false);
-  // expect(useDataOperate.useCheckEmptyInObj([0, null, undefined])([0, null])).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj([0, null, undefined])([0, null])).toBe(true);
 });
 
 /**test useIsPositiveInt */
@@ -45,14 +45,13 @@ test("test useDeepEqual", () => {
   expect(useDataOperate.useDeepEqual(f, g)).toBe(true);
 });
 
-/**test useDeepInclude */
-test("test useDeepInclude", () => {
-  expect(useDataOperate.useDeepInclude([obj], cloneObj)).toBe("0");
-  expect(useDataOperate.useDeepInclude([f], g)).toBe("0");
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { a: 1, b: 2 })).toBe(false);
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.a === 1)).toBe("0");
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.a > 1)).toBe(false);
-  // expect(useDataOperate.useDeepInclude([0, null])(undefined)).toBe(false);
+/**test useDeepFindIndex */
+test("test useDeepFindIndex", () => {
+  expect(useDataOperate.useDeepFindIndex([obj], cloneObj)).toBe("0");
+  expect(useDataOperate.useDeepFindIndex([f], g)).toBe("0");
+  expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }], { a: 1, b: 2 })).toBe(false);
+  expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }])((item) => item.a === 1)).toBe("0");
+  expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }])((item) => item.a > 1)).toBe(false);
 });
 
 /**useDeepRmRpt */

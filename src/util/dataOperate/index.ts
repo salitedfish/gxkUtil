@@ -35,7 +35,7 @@ const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   let hasEmpty = false;
   for (let key in target) {
     if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {})) {
-      if (!exclude || useDeepInclude(exclude)(target[key]) === false) {
+      if (!exclude || useDeepFindIndex(exclude)(target[key]) === false) {
         hasEmpty = true;
       }
     }
@@ -164,19 +164,19 @@ const useDeepEqualShallow = (origin: any, target: any) => {
 export const useDeepEqual = useCurryTwo(useDeepEqualShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 深度判断数组中是否包含某个值或满足某个条件的值, 依赖useDeepEqual
+ * 深度判断数组中是否包含某个值或满足某个条件的值,无返回false,有则返回下标, 依赖useDeepEqual
  * @param origin 例如[{a:1}]
  * @param conditions 例如 {a:1} 或 (item) => true
  * @returns
  */
-export function useDeepInclude<T>(origin: T[]): (conditions: T | ((item: T) => boolean)) => false | string;
-export function useDeepInclude<T>(origin: T[], conditions: T | ((item: T) => boolean)): false | string;
-export function useDeepInclude<T>(origin: T[], conditions?: T | ((item: T) => boolean)) {
+export function useDeepFindIndex<T>(origin: T[]): (conditions: T | ((item: T) => boolean)) => false | string;
+export function useDeepFindIndex<T>(origin: T[], conditions: T | ((item: T) => boolean)): false | string;
+export function useDeepFindIndex<T>(origin: T[], conditions?: T | ((item: T) => boolean)) {
   const handler = (conditions: T | ((item: T) => boolean)) => {
     if (useCheckSimpleData(conditions)) {
       /**原始值 */
       for (const key in origin) {
-        if (origin.includes(origin[key])) {
+        if (origin.includes(conditions as any)) {
           return key;
         }
       }
@@ -207,14 +207,14 @@ export function useDeepInclude<T>(origin: T[], conditions?: T | ((item: T) => bo
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 深度数组去重，不改变原数组, 依赖useDeepInclude
+ * 深度数组去重，不改变原数组, 依赖useDeepFindIndex
  * @param oldArr
  * @returns
  */
 export const useDeepRmRpt = <V>(oldArr: V[]): V[] => {
   const newArr: V[] = [];
   for (const item of oldArr) {
-    if (useDeepInclude(newArr, item) === false) {
+    if (useDeepFindIndex(newArr, item) === false) {
       newArr.push(item);
     }
   }
