@@ -48,10 +48,13 @@ test("test useDeepEqual", () => {
 /**test useDeepFindIndex */
 test("test useDeepFindIndex", () => {
   expect(useDataOperate.useDeepFindIndex([obj], cloneObj)).toBe("0");
-  expect(useDataOperate.useDeepFindIndex([f], g)).toBe("0");
+  expect(useDataOperate.useDeepFindIndex([1, f], g)).toBe("1");
   expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }], { a: 1, b: 2 })).toBe(false);
   expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }])((item) => item.a === 1)).toBe("0");
   expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }])((item) => item.a > 1)).toBe(false);
+  expect(useDataOperate.useDeepFindIndex([obj, { a: 1, b: 1 }])((item) => item.b === 1)).toBe("1");
+  expect(useDataOperate.useDeepFindIndex([0, 1, 2, 3, 4, 5, 6])(2)).toBe("2");
+  expect(useDataOperate.useDeepFindIndex([0, 1, 2, 3, 4, 5, 6])((item) => item === 2)).toBe("2");
 });
 
 /**useDeepRmRpt */
@@ -72,7 +75,7 @@ test("test useGroupBy", () => {
     a: number;
     b: number;
   };
-  const conditions = [(item: Item) => item.a >= 3, (item: Item) => item.a < 3];
+  const condition = [(item: Item) => item.a >= 3, (item: Item) => item.a < 3];
   const arr = [
     { a: 1, b: 2 },
     { a: 2, b: 3 },
@@ -88,8 +91,8 @@ test("test useGroupBy", () => {
     { a: 4, b: 5 },
     { a: 5, b: 6 },
   ];
-  const resGroup = useDataOperate.useGroupBy(arr)({ conditions });
-  const retGroup = useDataOperate.useGroupBy(arr, { conditions });
+  const resGroup = useDataOperate.useGroupBy(arr)({ condition });
+  const retGroup = useDataOperate.useGroupBy(arr, { condition });
   const regGroup = useDataOperate.useGroupBy(arrNew, { arrayCount: 2 });
   const rexGroup = useDataOperate.useGroupBy(arrNew)({ eatchCount: 4 });
   const resGropRef = [
@@ -143,4 +146,16 @@ test("test useTrimStr", () => {
   expect(useDataOperate.useTrimStr(" 123 4567 89 ", "between")).toBe("123 4567 89");
   expect(useDataOperate.useTrimStr(" 123 4567 89 ", "head")).toBe("123 4567 89 ");
   expect(useDataOperate.useTrimStr(" 123 4567 89 ")("tail")).toBe(" 123 4567 89");
+});
+
+/**test useSetFirstSign */
+test("test useSetFirstSign", () => {
+  const resOne = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }])({ targetKey: "a", condition: (item) => Number(item) + 1 });
+  const resTwo = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 1 }, { b: 1 }])({ targetKey: "b" });
+  const resThree = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }, { a: 1 }], { targetKey: "a" });
+  const resFour = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }], { targetKey: "a", condition: (item) => typeof item });
+  expect(useDataOperate.useDeepEqual(resOne, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1 }])).toBe(true);
+  expect(useDataOperate.useDeepEqual(resTwo, [{ a: 1 }, { a: 1 }, { b: 1, firstSign: true }])).toBe(true);
+  expect(useDataOperate.useDeepEqual(resThree, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1 }, { a: 1 }])).toBe(true);
+  expect(useDataOperate.useDeepEqual(resFour, [{ a: 1, firstSign: true }, { a: 2 }, { b: 1 }])).toBe(true);
 });

@@ -166,43 +166,31 @@ export const useDeepEqual = useCurryTwo(useDeepEqualShallow);
 /**
  * 深度判断数组中是否包含某个值或满足某个条件的值,无返回false,有则返回下标, 依赖useDeepEqual
  * @param origin 例如[{a:1}]
- * @param conditions 例如 {a:1} 或 (item) => true
+ * @param condition 例如 {a:1} 或 (item) => true
  * @returns
  */
-export function useDeepFindIndex<T>(origin: T[]): (conditions: T | ((item: T) => boolean)) => false | string;
-export function useDeepFindIndex<T>(origin: T[], conditions: T | ((item: T) => boolean)): false | string;
-export function useDeepFindIndex<T>(origin: T[], conditions?: T | ((item: T) => boolean)) {
-  const handler = (conditions: T | ((item: T) => boolean)) => {
-    if (useCheckSimpleData(conditions)) {
-      /**原始值 */
-      for (const key in origin) {
-        if (origin.includes(conditions as any)) {
-          return key;
-        }
+export function useDeepFindIndex<T>(origin: T[]): (condition: T | ((item: T) => boolean)) => false | string;
+export function useDeepFindIndex<T>(origin: T[], condition: T | ((item: T) => boolean)): false | string;
+export function useDeepFindIndex<T>(origin: T[], condition?: T | ((item: T) => boolean)) {
+  const handler = (condition: T | ((item: T) => boolean)) => {
+    for (const key in origin) {
+      if (useCheckSimpleData(condition) && origin[key] === condition) {
+        /**原始值 */
+        return key;
+      } else if (condition instanceof Function && condition(origin[key])) {
+        /**函数条件 */
+        return key;
+      } else if (useDeepEqual(origin[key], condition)) {
+        /**引用值 */
+        return key;
       }
-      return false;
-    } else if (conditions instanceof Function) {
-      /**函数条件 */
-      for (const key in origin) {
-        if (conditions(origin[key])) {
-          return key;
-        }
-      }
-      return false;
-    } else {
-      /**引用值 */
-      for (const key in origin) {
-        if (useDeepEqual(origin[key], conditions)) {
-          return key;
-        }
-      }
-      return false;
     }
+    return false;
   };
-  if (conditions === undefined) {
+  if (condition === undefined) {
     return handler;
   } else {
-    return handler(conditions);
+    return handler(condition);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -230,8 +218,8 @@ export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
   return Array.from(new Set(oldArr));
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type GroupOptions<T> = {
-  conditions?: ((param: T) => boolean)[];
+type GroupOption<T> = {
+  condition?: ((param: T) => boolean)[];
   arrayCount?: number;
   eatchCount?: number;
 };
@@ -240,10 +228,10 @@ type GroupOptions<T> = {
  * @param origin
  * @param options 条件数组或者每组几个或几个数组
  */
-export function useGroupBy<T>(origin: T[]): (options: GroupOptions<T>) => T[][];
-export function useGroupBy<T>(origin: T[], options: GroupOptions<T>): T[][];
-export function useGroupBy<T>(origin: T[], options?: GroupOptions<T>) {
-  const handler = (options: GroupOptions<T>) => {
+export function useGroupBy<T>(origin: T[]): (options: GroupOption<T>) => T[][];
+export function useGroupBy<T>(origin: T[], options: GroupOption<T>): T[][];
+export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
+  const handler = (options: GroupOption<T>) => {
     const resGroup: T[][] = [];
     const countGroupHandler = (arr: T[], num: number): T[][] => {
       if (arr.length <= num) {
@@ -263,8 +251,8 @@ export function useGroupBy<T>(origin: T[], options?: GroupOptions<T>) {
         return countGroupHandler(arr.slice(num), num);
       }
     };
-    if (Array.isArray(options.conditions)) {
-      for (let item of options.conditions) {
+    if (Array.isArray(options.condition)) {
+      for (let item of options.condition) {
         const group = [];
         for (let i of origin) {
           if (item(i)) {
@@ -291,6 +279,42 @@ export function useGroupBy<T>(origin: T[], options?: GroupOptions<T>) {
       useConsoleWarn("useGroupBy: 分组条件不正确!");
       return [];
     }
+    return handler(options);
+  }
+}
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+type SetFirstSignOption<T, K extends keyof T> = {
+  targetKey: K;
+  condition?: (item: T[K]) => any;
+};
+/**
+ * 根据给定的键和条件,给数组中第一次满足的对象做标记
+ * @param target
+ * @param options
+ */
+export function useSetFirstSign<T extends any, K extends keyof T>(target: T[]): (options: SetFirstSignOption<T, K>) => T & { firstSign?: true };
+export function useSetFirstSign<T extends any, K extends keyof T>(target: T[], options: SetFirstSignOption<T, K>): T & { firstSign?: true };
+export function useSetFirstSign<T extends any, K extends keyof T>(target: T[], options?: SetFirstSignOption<T, K>) {
+  type X = T & {
+    firstSign?: true;
+  };
+  const _target = useDeepClone(target);
+  const handler = (options: SetFirstSignOption<T, K>) => {
+    const signMap = new Map();
+    for (let key in target) {
+      const targetValue = target[key][options.targetKey];
+      const _targetValue = options.condition ? options.condition(target[key][options.targetKey]) : targetValue;
+      /**如果signMap中不存在_targetValue,则设置标记 */
+      if (!signMap.get(_targetValue) && targetValue) {
+        signMap.set(_targetValue, key);
+        (_target[key] as X).firstSign = true;
+      }
+    }
+    return _target as X[];
+  };
+  if (options === undefined) {
+    return handler;
+  } else {
     return handler(options);
   }
 }
