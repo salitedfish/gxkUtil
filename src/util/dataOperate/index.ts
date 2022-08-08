@@ -51,7 +51,7 @@ export const useCheckEmptyInObj = useCurryTwo(useCheckEmptyInObjShallow);
  */
 export const useIsPositiveInt = (num: number) => {
   /**排除0和NaN */
-  if (!num) {
+  if (!num || typeof num !== "number") {
     return false;
   }
   /**向下取整加取绝对值 */
@@ -121,7 +121,7 @@ const useDeepEqualShallow = (origin: any, target: any) => {
         return true;
       }
     } else if (origin instanceof Map && target instanceof Map) {
-      /**map这里如果key为对象的时候，如果两个key深度相同，但是引用不同，会判断为不同，因为有一个会找不到 */
+      /**map这里如果key为对象的时候，如果两个key深度相同，但是引用不同，会判断为不同，因为有一个会找不到, 除非遍历套遍历,复杂度太高,还是算了 */
       if (origin.size !== target.size) {
         return false;
       } else {
@@ -187,6 +187,7 @@ export function useDeepFindIndex<T>(origin: T[], condition?: T | ((item: T) => b
     }
     return false;
   };
+  /**Currying */
   if (condition === undefined) {
     return handler;
   } else {
@@ -219,20 +220,22 @@ export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type GroupOption<T> = {
-  condition?: ((param: T) => boolean)[];
+  conditions?: ((param: T) => boolean)[];
   arrayCount?: number;
   eatchCount?: number;
+  condition?: (item: T) => any;
 };
 /**
  * 数组按要求分组
  * @param origin
- * @param options 条件数组或者每组几个或几个数组
+ * @param options 条件数组,每组几个,几个数组,整体条件
  */
 export function useGroupBy<T>(origin: T[]): (options: GroupOption<T>) => T[][];
 export function useGroupBy<T>(origin: T[], options: GroupOption<T>): T[][];
 export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
     const resGroup: T[][] = [];
+
     const countGroupHandler = (arr: T[], num: number): T[][] => {
       if (arr.length <= num) {
         resGroup.push(arr);
@@ -251,8 +254,9 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
         return countGroupHandler(arr.slice(num), num);
       }
     };
-    if (Array.isArray(options.condition)) {
-      for (let item of options.condition) {
+
+    if (Array.isArray(options.conditions)) {
+      for (let item of options.conditions) {
         const group = [];
         for (let i of origin) {
           if (item(i)) {
@@ -265,12 +269,29 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     } else if (options.eatchCount) {
       return countGroupHandler(origin, options.eatchCount);
     } else if (options.arrayCount) {
-      const arrayCount = Math.floor(origin.length / options.arrayCount);
-      return countGroupHandler(origin, arrayCount);
+      const eatchCount = Math.floor(origin.length / options.arrayCount);
+      return countGroupHandler(origin, eatchCount);
+    } else if (options.condition) {
+      const signSet = new Set(
+        origin.map((item) => {
+          return (options.condition as (item: T) => any)(item);
+        })
+      );
+      for (let item of signSet) {
+        const arr = [];
+        for (let i of origin) {
+          if (options.condition(i) === item) {
+            arr.push(i);
+          }
+        }
+        resGroup.push(arr);
+      }
+      return resGroup;
     } else {
       return resGroup;
     }
   };
+
   /**Currying */
   if (options === undefined) {
     return handler;
@@ -283,39 +304,35 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type SetFirstSignOption<T, K extends keyof T> = {
-  targetKey: K;
-  condition?: (item: T[K]) => any;
-};
 /**
  * 根据给定的键和条件,给数组中第一次满足的对象做标记
  * @param target
- * @param options
+ * @param condition 条件
  */
-export function useSetFirstSign<T extends any, K extends keyof T>(target: T[]): (options: SetFirstSignOption<T, K>) => T & { firstSign?: true };
-export function useSetFirstSign<T extends any, K extends keyof T>(target: T[], options: SetFirstSignOption<T, K>): T & { firstSign?: true };
-export function useSetFirstSign<T extends any, K extends keyof T>(target: T[], options?: SetFirstSignOption<T, K>) {
+export function useSetFirstSign<T extends ObjectType>(target: T[]): (condition: (item: T) => any) => T & { firstSign?: true };
+export function useSetFirstSign<T extends ObjectType>(target: T[], condition: (item: T) => any): T & { firstSign?: true };
+export function useSetFirstSign<T extends ObjectType>(target: T[], condition?: (item: T) => any) {
   type X = T & {
     firstSign?: true;
   };
   const _target = useDeepClone(target);
-  const handler = (options: SetFirstSignOption<T, K>) => {
+  const handler = (condition: (item: T) => any) => {
     const signMap = new Map();
     for (let key in target) {
-      const targetValue = target[key][options.targetKey];
-      const _targetValue = options.condition ? options.condition(target[key][options.targetKey]) : targetValue;
+      const targetValue = condition(target[key]);
       /**如果signMap中不存在_targetValue,则设置标记 */
-      if (!signMap.get(_targetValue) && targetValue) {
-        signMap.set(_targetValue, key);
+      if (!signMap.get(targetValue)) {
+        signMap.set(targetValue, key);
         (_target[key] as X).firstSign = true;
       }
     }
     return _target as X[];
   };
-  if (options === undefined) {
+  /**Currying */
+  if (condition === undefined) {
     return handler;
   } else {
-    return handler(options);
+    return handler(condition);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

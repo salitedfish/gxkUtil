@@ -30,6 +30,7 @@ test("test useIsPositiveInt", () => {
   expect(useDataOperate.useIsPositiveInt(1.1)).toBe(false);
   expect(useDataOperate.useIsPositiveInt(-1)).toBe(false);
   expect(useDataOperate.useIsPositiveInt(-1.1)).toBe(false);
+  expect(useDataOperate.useIsPositiveInt(NaN)).toBe(false);
 });
 
 /**test useDeepClone */
@@ -75,7 +76,7 @@ test("test useGroupBy", () => {
     a: number;
     b: number;
   };
-  const condition = [(item: Item) => item.a >= 3, (item: Item) => item.a < 3];
+  const conditions = [(item: Item) => item.a >= 3, (item: Item) => item.a < 3];
   const arr = [
     { a: 1, b: 2 },
     { a: 2, b: 3 },
@@ -91,10 +92,13 @@ test("test useGroupBy", () => {
     { a: 4, b: 5 },
     { a: 5, b: 6 },
   ];
-  const resGroup = useDataOperate.useGroupBy(arr)({ condition });
-  const retGroup = useDataOperate.useGroupBy(arr, { condition });
+  const resGroup = useDataOperate.useGroupBy(arr)({ conditions });
+  const retGroup = useDataOperate.useGroupBy(arr, { conditions });
   const regGroup = useDataOperate.useGroupBy(arrNew, { arrayCount: 2 });
   const rexGroup = useDataOperate.useGroupBy(arrNew)({ eatchCount: 4 });
+  const rekGroup = useDataOperate.useGroupBy(arrNew)({ condition: (item) => item.a > 2 });
+  const remGroup = useDataOperate.useGroupBy(arrNew)({ condition: (item) => item.a % 2 });
+  const renGroup = useDataOperate.useGroupBy(arrNew)({ condition: (item) => (item.a % 2) + item.b });
   const resGropRef = [
     [
       { a: 3, b: 4 },
@@ -127,10 +131,46 @@ test("test useGroupBy", () => {
     ],
     [{ a: 5, b: 6 }],
   ];
+  const rekGropRef = [
+    [
+      { a: 1, b: 2 },
+      { a: 2, b: 3 },
+    ],
+    [
+      { a: 3, b: 4 },
+      { a: 4, b: 5 },
+      { a: 5, b: 6 },
+    ],
+  ];
+  const remGropRef = [
+    [
+      { a: 1, b: 2 },
+      { a: 3, b: 4 },
+      { a: 5, b: 6 },
+    ],
+    [
+      { a: 2, b: 3 },
+      { a: 4, b: 5 },
+    ],
+  ];
+  const renGropRef = [
+    [
+      { a: 1, b: 2 },
+      { a: 2, b: 3 },
+    ],
+    [
+      { a: 3, b: 4 },
+      { a: 4, b: 5 },
+    ],
+    [{ a: 5, b: 6 }],
+  ];
   expect(useDataOperate.useDeepEqual(resGroup)(resGropRef)).toBe(true);
   expect(useDataOperate.useDeepEqual(retGroup, resGropRef)).toBe(true);
   expect(useDataOperate.useDeepEqual(regGroup, regGropRef)).toBe(true);
   expect(useDataOperate.useDeepEqual(rexGroup, rexGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(rekGroup, rekGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(remGroup, remGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(renGroup, renGropRef)).toBe(true);
 });
 
 /**test useRepPartStr */
@@ -150,12 +190,19 @@ test("test useTrimStr", () => {
 
 /**test useSetFirstSign */
 test("test useSetFirstSign", () => {
-  const resOne = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }])({ targetKey: "a", condition: (item) => Number(item) + 1 });
-  const resTwo = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 1 }, { b: 1 }])({ targetKey: "b" });
-  const resThree = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }, { a: 1 }], { targetKey: "a" });
-  const resFour = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }], { targetKey: "a", condition: (item) => typeof item });
-  expect(useDataOperate.useDeepEqual(resOne, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1 }])).toBe(true);
-  expect(useDataOperate.useDeepEqual(resTwo, [{ a: 1 }, { a: 1 }, { b: 1, firstSign: true }])).toBe(true);
-  expect(useDataOperate.useDeepEqual(resThree, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1 }, { a: 1 }])).toBe(true);
-  expect(useDataOperate.useDeepEqual(resFour, [{ a: 1, firstSign: true }, { a: 2 }, { b: 1 }])).toBe(true);
+  const resOne = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }])((item) => Number(item.a) + 1);
+  const resTwo = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 1 }, { b: 1 }])((item) => item.b);
+  const resThree = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }, { a: 1 }], (item) => item.a);
+  const resFour = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }], (item) => typeof item.a);
+
+  expect(
+    useDataOperate.useDeepEqual(resOne, [
+      { a: 1, firstSign: true },
+      { a: 2, firstSign: true },
+      { b: 1, firstSign: true },
+    ])
+  ).toBe(true);
+  expect(useDataOperate.useDeepEqual(resTwo, [{ a: 1, firstSign: true }, { a: 1 }, { b: 1, firstSign: true }])).toBe(true);
+  expect(useDataOperate.useDeepEqual(resThree, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1, firstSign: true }, { a: 1 }])).toBe(true);
+  expect(useDataOperate.useDeepEqual(resFour, [{ a: 1, firstSign: true }, { a: 2 }, { b: 1, firstSign: true }])).toBe(true);
 });
