@@ -256,6 +256,7 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     };
 
     if (Array.isArray(options.conditions)) {
+      /**具体到每组的条件 */
       for (let item of options.conditions) {
         const group = [];
         for (let i of origin) {
@@ -267,11 +268,14 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
       }
       return resGroup;
     } else if (options.eatchCount) {
+      /**每个数组有几项 */
       return countGroupHandler(origin, options.eatchCount);
     } else if (options.arrayCount) {
+      /**分成几个数组 */
       const eatchCount = Math.floor(origin.length / options.arrayCount);
       return countGroupHandler(origin, eatchCount);
     } else if (options.condition) {
+      /**整体条件 */
       const signSet = new Set(
         origin.map((item) => {
           return (options.condition as (item: T) => any)(item);
