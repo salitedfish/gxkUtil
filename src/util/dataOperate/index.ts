@@ -35,7 +35,7 @@ const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   let hasEmpty = false;
   for (let key in target) {
     if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {})) {
-      if (!exclude || useDeepFindIndex(exclude)(target[key]) === false) {
+      if (!exclude || exclude.includes(target[key]) === false) {
         hasEmpty = true;
       }
     }
