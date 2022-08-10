@@ -220,7 +220,7 @@ export const useShallowRmRpt = <V>(oldArr: V[]): V[] => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 type GroupOption<T> = {
-  conditions?: ((param: T) => boolean)[];
+  conditions?: ((item: T) => boolean)[];
   arrayCount?: number;
   eatchCount?: number;
   condition?: (item: T) => any;
@@ -228,13 +228,26 @@ type GroupOption<T> = {
 /**
  * 数组按要求分组
  * @param origin
- * @param options 条件数组,每组几个,几个数组,整体条件
+ * @param options 每组满足的条件,每组几个,几个数组,分组条件
  */
 export function useGroupBy<T>(origin: T[]): (options: GroupOption<T>) => T[][];
 export function useGroupBy<T>(origin: T[], options: GroupOption<T>): T[][];
 export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
     const resGroup: T[][] = [];
+
+    const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
+      for (let item of conditions) {
+        const group = [];
+        for (let i of origin) {
+          if (item(i)) {
+            group.push(i);
+          }
+        }
+        resGroup.push(group);
+      }
+      return resGroup;
+    };
 
     const countGroupHandler = (arr: T[], num: number): T[][] => {
       if (arr.length <= num) {
@@ -255,18 +268,28 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
       }
     };
 
-    if (Array.isArray(options.conditions)) {
-      /**具体到每组的条件 */
-      for (let item of options.conditions) {
-        const group = [];
+    const conditionGroupHandler = (arr: T[], condition: (item: T) => any) => {
+      const signSet = new Set(
+        origin.map((item) => {
+          return condition(item);
+        })
+      );
+      for (let item of signSet) {
+        const arr = [];
         for (let i of origin) {
-          if (item(i)) {
-            group.push(i);
+          if (condition(i) === item) {
+            arr.push(i);
           }
         }
-        resGroup.push(group);
+        resGroup.push(arr);
       }
       return resGroup;
+    };
+
+    /**不同分组条件判断 */
+    if (Array.isArray(options.conditions)) {
+      /**具体到每组的条件 */
+      return conditionsGroupHandler(origin, options.conditions);
     } else if (options.eatchCount) {
       /**每个数组有几项 */
       return countGroupHandler(origin, options.eatchCount);
@@ -276,21 +299,7 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
       return countGroupHandler(origin, eatchCount);
     } else if (options.condition) {
       /**整体条件 */
-      const signSet = new Set(
-        origin.map((item) => {
-          return (options.condition as (item: T) => any)(item);
-        })
-      );
-      for (let item of signSet) {
-        const arr = [];
-        for (let i of origin) {
-          if (options.condition(i) === item) {
-            arr.push(i);
-          }
-        }
-        resGroup.push(arr);
-      }
-      return resGroup;
+      return conditionGroupHandler(origin, options.condition);
     } else {
       return resGroup;
     }

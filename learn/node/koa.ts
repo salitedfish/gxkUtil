@@ -10,6 +10,7 @@ const server = new Koa();
 const router = new Router();
 
 router.get("/", async (ctx) => {
+  /**直接返回HTML就是服务端渲染 */
   await sendFile(ctx, path.join(__dirname, "index.html"));
 });
 
