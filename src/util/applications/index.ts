@@ -3,7 +3,6 @@ export * from "./timeHandler";
 export * from "./legitimacy";
 export * from "./environment";
 export * from "./higherFunction";
-export * from "./axios";
 export * from "./genFetch";
 export * from "./dom";
 export * from "./storage";
