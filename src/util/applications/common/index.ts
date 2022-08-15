@@ -1,4 +1,4 @@
-import SparkMD5 from "spark-md5";
+import { hash as SparkMD5_Hash, ArrayBuffer as SparkMD5_ArrayBuffrt } from "spark-md5";
 import SHA256 from "crypto-js/sha256";
 import { useCurryTwo } from "../../../util/currying";
 import { useConsoleWarn } from "../../../useInside";
@@ -124,7 +124,7 @@ export const useClipboard = async (text: string | number) => {
  */
 export const useGenMD5Hash = async (data: File | string | Blob) => {
   if (typeof data === "string") {
-    return SparkMD5.hash(data);
+    return SparkMD5_Hash(data);
   } else {
     //将文件读取成buffer数组
     const dataBufferArr = await data.arrayBuffer();
@@ -132,7 +132,7 @@ export const useGenMD5Hash = async (data: File | string | Blob) => {
     let chunkSize = 104857600;
     let chunks = Math.ceil(data.size / chunkSize);
     let currentChunk = 0;
-    let spark = new SparkMD5.ArrayBuffer();
+    let spark = new SparkMD5_ArrayBuffrt();
     //循环将每块文件块计算hash
     while (currentChunk < chunks) {
       const start = currentChunk * chunkSize,
