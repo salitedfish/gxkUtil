@@ -2,5 +2,4 @@
 export * from "./dataOperate";
 export * from "./applications";
 export * from "./node";
-export * from "./npm";
 export * from "./currying";
