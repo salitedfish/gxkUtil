@@ -13,16 +13,16 @@ export const useCheckUndefined = (...argument: any[]): boolean => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 检查是否含有简单数据类型, string number boolean null undefined
+ * 检查是否都是简单数据类型, string number boolean symbol null undefined
  * @param argument
  */
 export const useCheckSimpleData = (...argument: any[]) => {
   for (let item of argument) {
-    if (["string", "number", "boolean"].includes(typeof item) || [null, undefined].includes(item)) {
-      return true;
+    if (!["string", "number", "boolean", "symbol"].includes(typeof item) && ![null, undefined].includes(item)) {
+      return false;
     }
   }
-  return false;
+  return true;
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**

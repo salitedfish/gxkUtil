@@ -1,7 +1,21 @@
 <template>
   <div class="ar-page bg-black">
     <div class="ar-box">
-      <video ref="arVideo" class="ar-video" id="ar-video" autoplay :width="videoWidth" :height="videoHeight" playsinline="true" webkit-playsinline="true" muted></video>
+      <video
+        ref="arVideo"
+        class="ar-video"
+        id="ar-video"
+        autoplay="autoplay"
+        playsinline="true"
+        webkit-playsinline="true"
+        x5-video-player-type="h5"
+        x5-video-player-fullscreen="true"
+        x5-video-orientation="portrait"
+        x-webkit-airplay="allow"
+        airplay="allow"
+        style="object-fit: fill"
+        muted="true"
+      ></video>
     </div>
 
     <van-button type="primary" @click="onTakePhoto" class="photo-btn">拍照</van-button>
@@ -21,7 +35,7 @@ export default {
     return {
       imgURL: "",
       thisVideo: "",
-      videoSize: 375,
+      videoWidth: 375,
       /**获取设备像素比 */
       devicePixelRatio: Math.floor(window.devicePixelRatio),
     };
@@ -30,15 +44,15 @@ export default {
     /**开局获取一下页面宽度 */
     const width = window.getComputedStyle(document.getElementsByClassName("ar-page")[0]).getPropertyValue("width");
     if (navigator.userAgent.toLowerCase().match(/huawei/i) == "huawei") {
-      this.videoSize = width.slice(0, -2) * this.devicePixelRatio * 2;
+      this.videoWidth = width.slice(0, -2) * this.devicePixelRatio * 2;
     } else {
-      this.videoSize = width.slice(0, -2) * this.devicePixelRatio;
+      this.videoWidth = width.slice(0, -2) * this.devicePixelRatio;
     }
     if ((navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
       //调用用户媒体设备，访问摄像头
       this.initVideo({
         video: {
-          width: this.videoSize,
+          width: this.videoWidth,
           facingMode: "environment",
         },
       });
@@ -95,6 +109,7 @@ export default {
       top: 0;
       left: 0;
       width: 100vw;
+      height: 100vh;
     }
   }
 
