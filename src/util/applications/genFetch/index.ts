@@ -30,7 +30,150 @@ type CusFetchOptions = {
 };
 /**处理后返回值类型 */
 type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
-type ResponseType = ObjectType | Blob | FormData | string;
+type ResponseType = ObjectType | Blob | FormData | string | ArrayBuffer;
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+export class UseFetch {
+  static readonly responseTypeMap: ObjectType<ResponseTypeMethod> = {
+    json: "json",
+    form: "formData",
+    blob: "blob",
+    vnd: "blob",
+    text: "text",
+    arrayBuffer: "arrayBuffer",
+  };
+  private abortControllers: Map<keyof any, AbortController> = new Map();
+  private comConfig: ComFetchConfig;
+  private comOptions: ComFetchOptions;
+
+  constructor(comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) {
+    this.comConfig = comConfig;
+    this.comOptions = comOptions;
+  }
+  /**请求过程中处理 */
+  private initURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
+    return useGenParamsUrl(comConfig.baseURL || "" + cusConfig.URL)(cusConfig.params || {});
+  }
+  private initResConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
+    const resConfig = { ...comConfig, ...cusConfig };
+    resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
+    return resConfig;
+  }
+  private initAbortController(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
+    const timeOut = cusOptions.timeOut || comOptions.timeOut;
+    const abortId = cusOptions.reqestId;
+    let timeoutId: NodeJS.Timeout | undefined = undefined;
+    if (timeOut || abortId) {
+      const abortController = new AbortController();
+      resConfig.signal = abortController.signal;
+      /**设置过期时间，以便自动调用 */
+      if (timeOut) {
+        timeoutId = setTimeout(() => {
+          abortController.abort();
+        }, timeOut);
+      }
+      /**收集取消控制器，以便手动调用 */
+      if (abortId) {
+        /**先取消之前相同id的请求（如果有的话）*/
+        this.abortRequest(abortId);
+        /**再设置新的取消控制器*/
+        this.abortControllers.set(abortId, abortController);
+      }
+    }
+    return {
+      timeoutId,
+      abortId,
+    };
+  }
+  private initRegConfig(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
+    const retConfig = comOptions.reqHandler ? comOptions.reqHandler(resConfig) : resConfig;
+    const regConfig = cusOptions.reqHandler ? cusOptions.reqHandler(retConfig) : retConfig;
+    return regConfig;
+  }
+  private clearAbortController(timeoutId: NodeJS.Timeout | undefined, abortId: keyof any | undefined) {
+    /**清空取消控制器延时器 */
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    /**删除取消控制器map内对应的控制器*/
+    if (abortId) {
+      this.abortControllers.delete(abortId);
+    }
+  }
+  private handleResponse(shallowResponse: Response): Promise<ResponseType> | undefined {
+    const contentType = shallowResponse.headers.get("Content-Type");
+    for (let key in UseFetch.responseTypeMap) {
+      if (contentType && contentType.includes(key)) {
+        return shallowResponse[UseFetch.responseTypeMap[key]]();
+      }
+    }
+    useConsoleWarn("handerResponse: 未匹配到返回值类型!");
+    return undefined;
+  }
+  /**发起请求 */
+  async request<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<T> {
+    /**处理url */
+    const URL = this.initURL(this.comConfig, cusConfig);
+    /**合并请求配置 */
+    const resConfig = this.initResConfig(this.comConfig, cusConfig);
+    /**初始化取消控制器 */
+    const { timeoutId, abortId } = this.initAbortController(this.comOptions, cusOptions, resConfig);
+    /**处理请求拦截器 */
+    const regConfig = this.initRegConfig(this.comOptions, cusOptions, resConfig);
+
+    /**发送请求 */
+    return fetch(URL, regConfig)
+      .then(async (res: Response) => {
+        if (regConfig.signal) {
+          this.clearAbortController(timeoutId, abortId);
+        }
+        /**处理返回结果 */
+        const reg = await this.handleResponse(res.clone());
+        /**如果有拦截器，则先处理拦截器，处理返回值。
+         * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
+         * cusOptions.resHandler则只传入comOptions.resHandler返回的结果。
+         * */
+        const ret = this.comOptions.resHandler ? this.comOptions.resHandler(reg, res) : reg;
+        const rex = cusOptions.resHandler ? cusOptions.resHandler(ret) : ret;
+        return rex;
+      })
+      .catch((err) => {
+        if (regConfig.signal) {
+          this.clearAbortController(timeoutId, abortId);
+        }
+        /**如果有拦截器，则先处理拦截器 */
+        const ert = this.comOptions.errHandler ? this.comOptions.errHandler(err) : err;
+        const erx = cusOptions.errHandler ? cusOptions.errHandler(ert) : ert;
+        return Promise.reject(erx);
+      });
+  }
+  async get<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "GET";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  async post<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "POST";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  async delete<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "DELETE";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  async put<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "PUT";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  /**取消请求 */
+  abortRequest(requestId: keyof any) {
+    const oldAbortController = this.abortControllers.get(requestId);
+    if (oldAbortController) {
+      oldAbortController.abort();
+      this.abortControllers.delete(requestId);
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**收集取消控制器的map */
 const abortControllers: Map<keyof any, AbortController> = new Map();
@@ -108,7 +251,6 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> | unde
   useConsoleWarn("handerResponse: 未匹配到返回值类型!");
   return undefined;
 };
-/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param comConfig
  * @param comOptions reqHandler resHandler errHandler timeOut
@@ -165,60 +307,3 @@ const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions 
 };
 
 export const useFetch = useCurryTwo(useFetchShallow);
-/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-/**useage */
-// function useage() {
-//   const apiFetch = useFetch({
-//     baseURL: "/",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//   })({
-//     reqHandler: (resConfig) => {
-//       return { ...resConfig, token: "123" };
-//     },
-//     resHandler: (res) => {
-//       return res;
-//     },
-//     errHandler: () => {},
-//     timeOut: 10000,
-//   });
-
-//   apiFetch({
-//     params: { a: 1 },
-//     body: JSON.stringify({ a: 1 }),
-//     headers: {
-//       "Content-type": "text",
-//     },
-//   })({
-//     reqHandler: (resConfig) => {
-//       return resConfig;
-//     },
-//     resHandler: () => {},
-//     errHandler: () => {
-//       console.log("err");
-//     },
-//     timeOut: 5000,
-//   }).then();
-
-//   apiFetch({
-//     URL: "/api",
-//     method: "GET",
-//     params: { a: 1 },
-//     body: JSON.stringify({ a: 1 }),
-//     headers: {
-//       "Content-type": "text",
-//     },
-//   })({
-//     reqHandler: (resConfig) => {
-//       return resConfig;
-//     },
-//     resHandler: () => {},
-//     errHandler: () => {
-//       console.log("err");
-//     },
-//     timeOut: 5000,
-//     reqestId: "34",
-//   }).then();
-// }
-// useage;

@@ -121,11 +121,13 @@ const useDeepEqualShallow = (origin: any, target: any) => {
         return true;
       }
     } else if (origin instanceof Map && target instanceof Map) {
-      /**map这里如果key为对象的时候，如果两个key深度相同，但是引用不同，会判断为不同，因为有一个会找不到, 除非遍历套遍历,复杂度太高,还是算了 */
       if (origin.size !== target.size) {
         return false;
       } else {
         for (const [key, value] of origin) {
+          /**map这里如果key为对象的时候，如果两个key字面量相同，但是引用不同，则会判断为不同。
+           * 因为有一个会找不到引用，导致target.get(key)找不到, 除非遍历套遍历，复杂度太高，还是算了
+           */
           if (!useDeepEqual(value, target.get(key))) {
             return false;
           }
