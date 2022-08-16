@@ -32,17 +32,8 @@ type CusFetchOptions = {
 type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
 type ResponseType = ObjectType | Blob | FormData | string;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-/**导出个方法给用户调用取消请求 */
-export const useAbortFetch = (requestId: keyof any) => {
-  const oldAbortController = abortControllers.get(requestId);
-  if (oldAbortController) {
-    oldAbortController.abort();
-    abortControllers.delete(requestId);
-    return true;
-  } else {
-    return false;
-  }
-};
+/**收集取消控制器的map */
+const abortControllers: Map<keyof any, AbortController> = new Map();
 
 /**设置取消控制器 */
 const abortControllerHandler = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: CusFetchConfig) => {
@@ -73,14 +64,26 @@ const abortControllerHandler = (comOptions: ComFetchOptions, cusOptions: CusFetc
 };
 
 /**构造清空取消控制器函数，以便请求完成后删除取消控制器 */
-const clearAbortController = (comOptions: ComFetchOptions, cusOptions: CusFetchOptions, timeoutId: NodeJS.Timeout | undefined, abortId: keyof any | undefined) => {
+const clearAbortController = (timeoutId: NodeJS.Timeout | undefined, abortId: keyof any | undefined) => {
   /**清空取消控制器延时器 */
-  if ((cusOptions.timeOut || comOptions.timeOut) && timeoutId) {
+  if (timeoutId) {
     clearTimeout(timeoutId);
   }
   /**删除取消控制器map内对应的控制器*/
   if (abortId) {
     abortControllers.delete(abortId);
+  }
+};
+
+/**导出个方法给用户调用取消请求 */
+export const useAbortFetch = (requestId: keyof any) => {
+  const oldAbortController = abortControllers.get(requestId);
+  if (oldAbortController) {
+    oldAbortController.abort();
+    abortControllers.delete(requestId);
+    return true;
+  } else {
+    return false;
   }
 };
 
@@ -105,10 +108,6 @@ const handerResponse = (shallowResponse: Response): Promise<ResponseType> | unde
   useConsoleWarn("handerResponse: 未匹配到返回值类型!");
   return undefined;
 };
-
-/**收集取消控制器的map */
-const abortControllers: Map<keyof any, AbortController> = new Map();
-
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * @param comConfig
@@ -142,7 +141,7 @@ const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions 
         /**处理返回结果 */
         const reg = await handerResponse(res.clone());
         if (regConfig.signal) {
-          clearAbortController(comOptions, cusOptions, timeoutId, abortId);
+          clearAbortController(timeoutId, abortId);
         }
         /**如果有拦截器，则先处理拦截器，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
@@ -154,7 +153,7 @@ const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions 
       })
       .catch((err) => {
         if (regConfig.signal) {
-          clearAbortController(comOptions, cusOptions, timeoutId, abortId);
+          clearAbortController(timeoutId, abortId);
         }
         /**如果有拦截器，则先处理拦截器 */
         const ert = comOptions.errHandler ? comOptions.errHandler(err) : err;

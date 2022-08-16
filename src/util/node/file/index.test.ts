@@ -1,7 +1,7 @@
 import * as useFile from ".";
 
 const randomString = "文件读写测试：" + "-----------";
-const fileAddress = "./learn/fileText.sh";
+const fileAddress = "./fileText.sh";
 const appendString = "追加语句";
 
 /**test useWriteFile */
