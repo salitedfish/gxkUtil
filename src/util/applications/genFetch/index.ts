@@ -32,8 +32,11 @@ type CusFetchOptions = {
 type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
 type ResponseType = ObjectType | Blob | FormData | string | ArrayBuffer;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-export class UseFetch {
-  static readonly responseTypeMap: ObjectType<ResponseTypeMethod> = {
+/**
+ * 父类主要是fetch的基础封装
+ */
+class BaseFetch {
+  private readonly responseTypeMap: ObjectType<ResponseTypeMethod> = {
     json: "json",
     form: "formData",
     blob: "blob",
@@ -44,7 +47,6 @@ export class UseFetch {
   private abortControllers: Map<keyof any, AbortController> = new Map();
   private comConfig: ComFetchConfig;
   private comOptions: ComFetchOptions;
-
   constructor(comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) {
     this.comConfig = comConfig;
     this.comOptions = comOptions;
@@ -101,16 +103,16 @@ export class UseFetch {
   }
   private handleResponse(shallowResponse: Response): Promise<ResponseType> | undefined {
     const contentType = shallowResponse.headers.get("Content-Type");
-    for (let key in UseFetch.responseTypeMap) {
+    for (let key in this.responseTypeMap) {
       if (contentType && contentType.includes(key)) {
-        return shallowResponse[UseFetch.responseTypeMap[key]]();
+        return shallowResponse[this.responseTypeMap[key]]();
       }
     }
     useConsoleWarn("handerResponse: 未匹配到返回值类型!");
     return undefined;
   }
   /**发起请求 */
-  async request<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<T> {
+  public async request<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<T> {
     /**处理url */
     const URL = this.initURL(this.comConfig, cusConfig);
     /**合并请求配置 */
@@ -146,24 +148,8 @@ export class UseFetch {
         return Promise.reject(erx);
       });
   }
-  async get<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
-    cusConfig.method = "GET";
-    return await this.request<T>(cusConfig, cusOptions);
-  }
-  async post<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
-    cusConfig.method = "POST";
-    return await this.request<T>(cusConfig, cusOptions);
-  }
-  async delete<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
-    cusConfig.method = "DELETE";
-    return await this.request<T>(cusConfig, cusOptions);
-  }
-  async put<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
-    cusConfig.method = "PUT";
-    return await this.request<T>(cusConfig, cusOptions);
-  }
   /**取消请求 */
-  abortRequest(requestId: keyof any) {
+  public abortRequest(requestId: keyof any) {
     const oldAbortController = this.abortControllers.get(requestId);
     if (oldAbortController) {
       oldAbortController.abort();
@@ -174,6 +160,41 @@ export class UseFetch {
     }
   }
 }
+
+/**
+ * 子类主要用来分化请求方法
+ */
+export class UseFetch extends BaseFetch {
+  constructor(comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) {
+    super(comConfig, comOptions);
+  }
+  public async get<T = any>(cusConfig: Omit<CusFetchConfig, "body"> = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "GET";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  public async post<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "POST";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  public async delete<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "DELETE";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+  public async put<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+    cusConfig.method = "PUT";
+    return await this.request<T>(cusConfig, cusOptions);
+  }
+}
+
+/**
+ * 创建fetch实例
+ * @param comConfig 主要是传参、header配置等
+ * @param comOptions 主要是拦截器、过期时间等
+ * @returns
+ */
+export const createFetch = (comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) => {
+  return new UseFetch(comConfig, comOptions);
+};
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**收集取消控制器的map */
 const abortControllers: Map<keyof any, AbortController> = new Map();
