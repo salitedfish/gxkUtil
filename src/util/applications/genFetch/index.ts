@@ -6,7 +6,7 @@ import { useCurryTwo } from "../../../util/currying";
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**基础请求参数的类型 */
 interface ComFetchConfig extends RequestInit {
-  baseURL?: string;
+  baseURL?: `/${string}`;
   method?: Method;
 }
 type ComFetchOptions = {
@@ -17,13 +17,13 @@ type ComFetchOptions = {
 };
 /**单个请求参数的类型 */
 interface CusFetchConfig extends RequestInit {
-  URL?: string;
+  URL?: `/${string}`;
   method?: Method;
   params?: ObjectType<string | number>;
 }
 type CusFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (response: any) => any;
+  resHandler?: (response: any, shallowResponse: Response) => any;
   errHandler?: (err: any) => any;
   reqestId?: keyof any;
   timeOut?: number;
@@ -51,16 +51,18 @@ class BaseFetch {
     this.comConfig = comConfig;
     this.comOptions = comOptions;
   }
-  /**请求过程中处理 */
-  private initURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
+  /**合并请求URL */
+  private createURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
     return useGenParamsUrl(comConfig.baseURL || "" + cusConfig.URL)(cusConfig.params || {});
   }
-  private initResConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
+  /**合并请求配置 */
+  private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
     const resConfig = { ...comConfig, ...cusConfig };
     resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
     return resConfig;
   }
-  private initAbortController(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
+  /**创建取消控制器 */
+  private createAbortController(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
     const timeOut = cusOptions.timeOut || comOptions.timeOut;
     const abortId = cusOptions.reqestId;
     let timeoutId: NodeJS.Timeout | undefined = undefined;
@@ -86,11 +88,13 @@ class BaseFetch {
       abortId,
     };
   }
-  private initRegConfig(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
+  /**处理请求拦截器 */
+  private requestInterceptor(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
     const retConfig = comOptions.reqHandler ? comOptions.reqHandler(resConfig) : resConfig;
     const regConfig = cusOptions.reqHandler ? cusOptions.reqHandler(retConfig) : retConfig;
     return regConfig;
   }
+  /**清空取消控制器 */
   private clearAbortController(timeoutId: NodeJS.Timeout | undefined, abortId: keyof any | undefined) {
     /**清空取消控制器延时器 */
     if (timeoutId) {
@@ -101,7 +105,8 @@ class BaseFetch {
       this.abortControllers.delete(abortId);
     }
   }
-  private handleResponse(shallowResponse: Response): Promise<ResponseType> | undefined {
+  /**处理响应拦截器 */
+  private responseInterceptor(shallowResponse: Response): Promise<ResponseType> | undefined {
     const contentType = shallowResponse.headers.get("Content-Type");
     for (let key in this.responseTypeMap) {
       if (contentType && contentType.includes(key)) {
@@ -113,14 +118,10 @@ class BaseFetch {
   }
   /**发起请求 */
   public async request<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<T> {
-    /**处理url */
-    const URL = this.initURL(this.comConfig, cusConfig);
-    /**合并请求配置 */
-    const resConfig = this.initResConfig(this.comConfig, cusConfig);
-    /**初始化取消控制器 */
-    const { timeoutId, abortId } = this.initAbortController(this.comOptions, cusOptions, resConfig);
-    /**处理请求拦截器 */
-    const regConfig = this.initRegConfig(this.comOptions, cusOptions, resConfig);
+    const URL = this.createURL(this.comConfig, cusConfig);
+    const resConfig = this.createRequestConfig(this.comConfig, cusConfig);
+    const { timeoutId, abortId } = this.createAbortController(this.comOptions, cusOptions, resConfig);
+    const regConfig = this.requestInterceptor(this.comOptions, cusOptions, resConfig);
 
     /**发送请求 */
     return fetch(URL, regConfig)
@@ -129,13 +130,13 @@ class BaseFetch {
           this.clearAbortController(timeoutId, abortId);
         }
         /**处理返回结果 */
-        const reg = await this.handleResponse(res.clone());
+        const reg = await this.responseInterceptor(res.clone());
         /**如果有拦截器，则先处理拦截器，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
-         * cusOptions.resHandler则只传入comOptions.resHandler返回的结果。
+         * cusOptions.resHandler会把comOptions.resHandler返回的结果和原始的resposne都传入，用户自行选择使用哪个。
          * */
         const ret = this.comOptions.resHandler ? this.comOptions.resHandler(reg, res) : reg;
-        const rex = cusOptions.resHandler ? cusOptions.resHandler(ret) : ret;
+        const rex = cusOptions.resHandler ? cusOptions.resHandler(ret, res) : ret;
         return rex;
       })
       .catch((err) => {
@@ -308,10 +309,10 @@ const useFetchShallow = (comConfig: ComFetchConfig, comOptions: ComFetchOptions 
         }
         /**如果有拦截器，则先处理拦截器，处理返回值。
          * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
-         * cusOptions.resHandler则只传入comOptions.resHandler返回的结果。
+         * cusOptions.resHandler会把comOptions.resHandler返回的结果和原始的resposne都传入，用户自行选择使用哪个。
          * */
         const ret = comOptions.resHandler ? comOptions.resHandler(reg, res) : reg;
-        const rex = cusOptions.resHandler ? cusOptions.resHandler(ret) : ret;
+        const rex = cusOptions.resHandler ? cusOptions.resHandler(ret, res) : ret;
         return rex;
       })
       .catch((err) => {

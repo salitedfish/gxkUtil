@@ -26,7 +26,7 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.test.ts",
-    "./*.ts", "learn/common/jsonParse.ts",
+    "./*.ts",
   ],
-  "exclude": ["node_modules", "lib", "learn"]
+  "exclude": ["node_modules", "lib"]
 }
