@@ -35,7 +35,7 @@ type ResponseType = ObjectType | Blob | FormData | string | ArrayBuffer;
 /**
  * 父类主要是fetch的基础封装
  */
-class BaseFetch {
+abstract class BaseFetch {
   private readonly responseTypeMap: ObjectType<ResponseTypeMethod> = {
     json: "json",
     form: "formData",
