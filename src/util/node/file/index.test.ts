@@ -1,5 +1,5 @@
 import * as useFile from ".";
-import { useDeepEqual } from "../../../index";
+import { useDeepEqual } from "../../index";
 
 const randomString = "文件读写测试：" + "-----------";
 const fileAddress = "./fileText.sh";

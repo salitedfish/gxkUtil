@@ -6,6 +6,9 @@ import { useConsoleWarn } from "../../../useInside";
  * @param title
  */
 export const useSetHTMLTitle = (title: string): void => {
+  if (!window) {
+    useConsoleWarn("useSetHTMLTitle: window不存在");
+  }
   const titleDom = window.document.getElementsByTagName("title")[0];
   titleDom.innerText = title;
 };
@@ -16,7 +19,10 @@ export const useSetHTMLTitle = (title: string): void => {
  * @returns
  */
 export const useGetDom = (target: string) => {
-  let targetDom: NodeListOf<HTMLElement> = document.querySelectorAll(target);
+  if (!window) {
+    useConsoleWarn("useGetDom: window不存在");
+  }
+  let targetDom: NodeListOf<HTMLElement> = window.document.querySelectorAll(target);
   if (targetDom.length === 0) {
     useConsoleWarn("useGetDom: 没获取到dom!");
   }
@@ -44,7 +50,6 @@ export const useAddDomClass = useCurryTwo(useAddDomClassShallow);
  * @returns
  */
 const useRemoveDomClassShallow = (target: string, classNames: string[]) => {
-  // const handler = (classNames: string[]) => {
   let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
   for (let i = 0; i <= targetDom.length - 1; i++) {
     targetDom[i].classList.remove(...classNames);
@@ -60,6 +65,10 @@ type GetStyleName = keyof CSSStyleDeclaration & string;
  * @returns
  */
 const useGetDomStyleShallow = (target: string, styleName: GetStyleName): string[] => {
+  if (!window || !window.getComputedStyle) {
+    useConsoleWarn("useGetDomStyle: window或window.getComputedStyle不存在");
+    return [];
+  }
   let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
   const styles = [];
   for (let i = 0; i <= targetDom.length - 1; i++) {
@@ -126,3 +135,23 @@ const useSetDomScrollTopShallow = (target: string, scrollTop: number) => {
   }
 };
 export const useSetDomScrollTop = useCurryTwo(useSetDomScrollTopShallow);
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
+ * 判断目标dom是否在屏幕视野内
+ * @param target
+ * @returns boolean
+ */
+export const useDomOnVisibleArea = (target: string) => {
+  if (!window) {
+    useConsoleWarn("useDomOnVisibleArea: window不存在");
+    return false;
+  }
+  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
+  const targetOffsetTop = targetDom[0].offsetTop;
+  const screenHeight = window.innerHeight;
+  if (targetOffsetTop > 0 && targetOffsetTop < screenHeight) {
+    return true;
+  } else {
+    return false;
+  }
+};

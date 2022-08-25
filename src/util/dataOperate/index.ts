@@ -32,15 +32,16 @@ export const useCheckSimpleData = (...argument: any[]) => {
  * @returns
  */
 const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
-  let hasEmpty = false;
   for (let key in target) {
+    /**这里选出空值 */
     if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {})) {
-      if (!exclude || exclude.includes(target[key]) === false) {
-        hasEmpty = true;
+      /**如果exclude不存在或者exclude不包含此空值，说明此空值没有被排除，则返回true */
+      if (!exclude || useDeepInclude(exclude)(target[key]) === false) {
+        return true;
       }
     }
   }
-  return hasEmpty;
+  return false;
 };
 export const useCheckEmptyInObj = useCurryTwo(useCheckEmptyInObjShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -106,7 +107,7 @@ export const useDeepClone = <T>(oldData: T): T => {
  * @returns
  */
 const useDeepEqualShallow = (origin: any, target: any) => {
-  if (useCheckSimpleData(origin, target)) {
+  if (useCheckSimpleData(origin) || useCheckSimpleData(target)) {
     return origin === target;
   } else {
     if (Array.isArray(origin) && Array.isArray(target)) {
@@ -120,7 +121,7 @@ const useDeepEqualShallow = (origin: any, target: any) => {
         }
         return true;
       }
-    } else if (origin instanceof Map && target instanceof Map) {
+    } else if (origin.constructor === Map && target.constructor === Map) {
       if (origin.size !== target.size) {
         return false;
       } else {
@@ -134,7 +135,7 @@ const useDeepEqualShallow = (origin: any, target: any) => {
         }
         return true;
       }
-    } else if (origin instanceof Set && target instanceof Set) {
+    } else if (origin.constructor === Set && target.constructor === Set) {
       if (origin.size !== target.size) {
         return false;
       } else {
@@ -147,7 +148,7 @@ const useDeepEqualShallow = (origin: any, target: any) => {
         }
         return true;
       }
-    } else if (typeof origin === "object" && typeof target === "object") {
+    } else if (origin.constructor === Object && target.constructor === Object) {
       if (Object.keys(origin).length !== Object.keys(target).length) {
         return false;
       } else {
@@ -171,9 +172,9 @@ export const useDeepEqual = useCurryTwo(useDeepEqualShallow);
  * @param condition 例如 {a:1} 或 (item) => true
  * @returns
  */
-export function useDeepFindIndex<T>(origin: T[]): (condition: T | ((item: T) => boolean)) => false | string;
-export function useDeepFindIndex<T>(origin: T[], condition: T | ((item: T) => boolean)): false | string;
-export function useDeepFindIndex<T>(origin: T[], condition?: T | ((item: T) => boolean)) {
+export function useDeepInclude<T>(origin: T[]): (condition: T | ((item: T) => boolean)) => false | string;
+export function useDeepInclude<T>(origin: T[], condition: T | ((item: T) => boolean)): false | string;
+export function useDeepInclude<T>(origin: T[], condition?: T | ((item: T) => boolean)) {
   const handler = (condition: T | ((item: T) => boolean)) => {
     for (const key in origin) {
       if (useCheckSimpleData(condition) && origin[key] === condition) {
@@ -198,14 +199,14 @@ export function useDeepFindIndex<T>(origin: T[], condition?: T | ((item: T) => b
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 深度数组去重，不改变原数组, 依赖useDeepFindIndex
+ * 深度数组去重，不改变原数组, 依赖useDeepInclude
  * @param oldArr
  * @returns
  */
 export const useDeepRmRpt = <V>(oldArr: V[]): V[] => {
   const newArr: V[] = [];
   for (const item of oldArr) {
-    if (useDeepFindIndex(newArr, item) === false) {
+    if (useDeepInclude(newArr, item) === false) {
       newArr.push(item);
     }
   }
@@ -241,7 +242,7 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
       for (let item of conditions) {
         const group = [];
-        for (let i of origin) {
+        for (let i of arr) {
           if (item(i)) {
             group.push(i);
           }
@@ -271,19 +272,20 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     };
 
     const conditionGroupHandler = (arr: T[], condition: (item: T) => any) => {
-      const signSet = new Set(
-        origin.map((item) => {
-          return condition(item);
-        })
-      );
-      for (let item of signSet) {
-        const arr = [];
-        for (let i of origin) {
-          if (condition(i) === item) {
-            arr.push(i);
-          }
+      const _map = new Map();
+
+      for (let item of arr) {
+        const cond = condition(item);
+        if (_map.has(cond)) {
+          const condArr = _map.get(cond);
+          condArr.push(item);
+          _map.set(cond, condArr);
+        } else {
+          _map.set(cond, [item]);
         }
-        resGroup.push(arr);
+      }
+      for (let item of _map.values()) {
+        resGroup.push(item);
       }
       return resGroup;
     };
