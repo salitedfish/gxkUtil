@@ -49,6 +49,7 @@ test("test useDeepEqual", () => {
   expect(useDataOperate.useDeepEqual([1, 2], [1, 2])).toBe(true);
   expect(useDataOperate.useDeepEqual(f, g)).toBe(true);
   expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), [])).toBe(false);
+  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2, 3]))).toBe(true);
 });
 
 /**test useDeepInclude */
