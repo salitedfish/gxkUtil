@@ -68,28 +68,32 @@ export const useIsPositiveInt = (num: number) => {
  * @param oldData
  * @returns
  */
-export const useDeepClone = <T>(oldData: T): T => {
+export const useDeepClone = <T extends Object>(oldData: T): T => {
   if (useCheckSimpleData(oldData)) {
     return oldData;
+    /**数组 */
   } else if (Array.isArray(oldData)) {
     const newData: any = [];
     for (const item of oldData) {
       newData.push(useDeepClone(item));
     }
     return newData;
+    /**Map */
   } else if (oldData instanceof Map) {
     const newData: any = new Map();
     for (const [key, value] of oldData) {
       newData.set(key, useDeepClone(value));
     }
     return newData;
+    /**Set */
   } else if (oldData instanceof Set) {
     const newData: any = new Set();
     for (const item of oldData) {
       newData.add(useDeepClone(item));
     }
     return newData;
-  } else if (typeof oldData === "object") {
+    /**Object */
+  } else if (oldData.constructor === Object) {
     const newData: any = {};
     for (const key in oldData) {
       newData[key] = useDeepClone(oldData[key]);
@@ -109,59 +113,59 @@ export const useDeepClone = <T>(oldData: T): T => {
 const useDeepEqualShallow = (origin: any, target: any) => {
   if (useCheckSimpleData(origin) || useCheckSimpleData(target)) {
     return origin === target;
-  } else {
-    if (Array.isArray(origin) && Array.isArray(target)) {
-      if (origin.length !== target.length) {
-        return false;
-      } else {
-        for (let i = 0; i < origin.length; i++) {
-          if (!useDeepEqual(origin[i], target[i])) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else if (origin.constructor === Map && target.constructor === Map) {
-      if (origin.size !== target.size) {
-        return false;
-      } else {
-        for (const [key, value] of origin) {
-          /**map这里如果key为对象的时候，如果两个key字面量相同，但是引用不同，则会判断为不同。
-           * 因为有一个会找不到引用，导致target.get(key)找不到, 除非遍历套遍历，复杂度太高，还是算了
-           */
-          if (!useDeepEqual(value, target.get(key))) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else if (origin.constructor === Set && target.constructor === Set) {
-      if (origin.size !== target.size) {
-        return false;
-      } else {
-        const originArr = Array.from(origin);
-        const newArr = Array.from(target);
-        for (let i = 0; i < originArr.length; i++) {
-          if (!useDeepEqual(originArr[i], newArr[i])) {
-            return false;
-          }
-        }
-        return true;
-      }
-    } else if (origin.constructor === Object && target.constructor === Object) {
-      if (Object.keys(origin).length !== Object.keys(target).length) {
-        return false;
-      } else {
-        for (const key in origin) {
-          if (!useDeepEqual(origin[key], target[key])) {
-            return false;
-          }
-        }
-        return true;
-      }
+    /**数组 */
+  } else if (Array.isArray(origin) && Array.isArray(target)) {
+    if (origin.length !== target.length) {
+      return false;
     } else {
-      return origin === target;
+      for (let i = 0; i < origin.length; i++) {
+        if (!useDeepEqual(origin[i], target[i])) {
+          return false;
+        }
+      }
+      return true;
     }
+    /**Map */
+  } else if (origin instanceof Map && target instanceof Map) {
+    if (origin.size !== target.size) {
+      return false;
+    } else {
+      for (const [key, value] of origin) {
+        /**map这里如果key为对象的时候，如果两个key字面量相同，但是引用不同，则会判断为不同。
+         * 因为有一个会找不到引用，导致target.get(key)找不到, 除非遍历套遍历，复杂度太高，还是算了
+         */
+        if (!useDeepEqual(value, target.get(key))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    /**Set */
+  } else if (origin instanceof Set && target instanceof Set) {
+    if (origin.size !== target.size) {
+      return false;
+    } else {
+      const originArr = Array.from(origin);
+      const newArr = Array.from(target);
+      if (!useDeepEqual(originArr, newArr)) {
+        return false;
+      }
+      return true;
+    }
+    /**Object */
+  } else if (origin.constructor === Object && target.constructor === Object) {
+    if (Object.keys(origin).length !== Object.keys(target).length) {
+      return false;
+    } else {
+      for (const key in origin) {
+        if (!useDeepEqual(origin[key], target[key])) {
+          return false;
+        }
+      }
+      return true;
+    }
+  } else {
+    return origin === target;
   }
 };
 export const useDeepEqual = useCurryTwo(useDeepEqualShallow);
