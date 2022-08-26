@@ -47,13 +47,8 @@ abstract class BaseFetch {
     text: "text",
     arrayBuffer: "arrayBuffer",
   };
-  private abortControllers: Map<keyof any, AbortController> = new Map();
-  private comConfig: ComFetchConfig;
-  private comOptions: ComFetchOptions;
-  constructor(comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) {
-    this.comConfig = comConfig;
-    this.comOptions = comOptions;
-  }
+  private readonly abortControllers: Map<keyof any, AbortController> = new Map();
+  constructor(private comConfig: ComFetchConfig, private comOptions: ComFetchOptions = {}) {}
   /**合并请求URL */
   private createURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
     return useGenParamsUrl(comConfig.baseURL || "" + cusConfig.URL)(cusConfig.params || {});
