@@ -1,6 +1,6 @@
 {
   "name": "@monster-hunter/fatalis",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
