@@ -43,35 +43,42 @@ type UseTimesClick = <V extends any[], R>(callBack: (...params: V) => R, option?
 /**
  * 多次点击Hook,支持节流
  * @param callBack
- * @param option 可选参数times默认两次，countDown持续500ms, interval间隔0秒
+ * @param option 可选参数times默认两次，countDown持续300ms, interval间隔300秒
  * @returns
  */
 export const useTimesClick: UseTimesClick = (callBack, option) => {
   let times = 0;
   let lock = false;
   let timer: NodeJS.Timeout;
-  let op = {
+  /**重置状态 */
+  const reset = () => {
+    times = 0;
+    clearTimeout(timer);
+    lock = false;
+  };
+  let _option = {
     ...{
       times: 2,
-      countDown: 500,
-      interval: 0,
+      countDown: 300,
+      interval: 300,
     },
     ...option,
   };
   return (...params) => {
     if (!lock) {
+      /**第一次点击，设置持续一段时间后重置状态 */
       if (!timer) {
         timer = setTimeout(() => {
-          times = 0;
-          clearTimeout(timer);
-        }, op.countDown);
+          reset();
+        }, _option.countDown);
       }
       times = times + 1;
-      if (times === op.times) {
+      /**当点击次数等于设置的次数时，执行目标函数，并关锁。间隔一段时间后重置状态*/
+      if (times === _option.times) {
         lock = true;
         setTimeout(() => {
-          lock = false;
-        }, op.interval);
+          reset();
+        }, _option.interval);
         return callBack(...params);
       }
     }
@@ -81,22 +88,22 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
 /**
  * promise返回结果后，如果满足条件则返回，否则继续执行，直到最终满足条件或达到最大次数
  * @param asyncCallBack
- * @param options count 最大请求次数，默认3， countDown 请求返回后间隔多少时间请求一次，默认500
+ * @param options count 最大请求次数，默认3， interval 请求返回后间隔多少时间请求一次，默认500
  * @param condition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
  * @returns 返回一个直到结果为true才返回promise的函数
  */
 export function usePromiseInsist<V extends any[], T>(
   asyncCallBack: (...params: V) => Promise<T>,
-  options?: { count?: number; countDown?: number }
+  options?: { count?: number; interval?: number }
 ): (condition: (params: T) => boolean) => (...params: V) => Promise<T>;
 export function usePromiseInsist<V extends any[], T>(
   asyncCallBack: (...params: V) => Promise<T>,
-  options: { count?: number; countDown?: number },
+  options: { count?: number; interval?: number },
   condition: (params: T) => boolean
 ): (...params: V) => Promise<T>;
-export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; countDown?: number } = {}, condition?: (params: T) => boolean): any {
+export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; interval?: number } = {}, condition?: (params: T) => boolean): any {
   const handler = (condition: (params: T) => boolean): ((...params: V) => Promise<T>) => {
-    const resOptions = { count: 3, countDown: 500, ...options };
+    const resOptions = { count: 3, interval: 500, ...options };
     let count = 0;
     return (...params) => {
       return new Promise((resolve, reject) => {
@@ -112,13 +119,14 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
               reject("Exceeded times");
             } else {
               /**否则继续执行 */
-              setTimeout(handler, resOptions.countDown);
+              setTimeout(handler, resOptions.interval);
             }
           } catch (error) {
             reject(error);
           }
         };
-        setTimeout(handler, resOptions.countDown);
+        /**开始先请求一次 */
+        handler();
       });
     };
   };

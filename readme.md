@@ -6,4 +6,4 @@ windows：%npm_package_config_dist%
 mac：$npm_package_config_dist
 
 # useage
-pnpm isntall @gexk/gxk
+pnpm isntall @monster-hunter/fatalis
