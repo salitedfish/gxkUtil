@@ -48,13 +48,13 @@ abstract class BaseFetch {
     arrayBuffer: "arrayBuffer",
   };
   private readonly abortControllers: Map<keyof any, AbortController> = new Map();
-  constructor(private comConfig: ComFetchConfig, private comOptions: ComFetchOptions = {}) {}
+  constructor(private comConfig: ComFetchConfig, private comOptions: ComFetchOptions) {}
   /**合并请求URL */
-  private createURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
+  private createURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig) {
     return useGenParamsUrl(comConfig.baseURL || "" + cusConfig.URL)(cusConfig.params || {});
   }
   /**合并请求配置 */
-  private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig = {}) {
+  private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig) {
     const resConfig = { ...comConfig, ...cusConfig };
     resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
     return resConfig;
@@ -175,7 +175,7 @@ abstract class BaseFetch {
  * 子类主要用来分化请求方法
  */
 export class CreateFetch extends BaseFetch {
-  constructor(comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) {
+  constructor(comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) {
     super(comConfig, comOptions);
   }
   public async get<T = any>(cusConfig: Omit<CusFetchConfig, "body"> = {}, cusOptions: CusFetchOptions = {}) {
@@ -202,7 +202,7 @@ export class CreateFetch extends BaseFetch {
  * @param comOptions 主要是拦截器、过期时间等
  * @returns
  */
-export const createFetch = (comConfig: ComFetchConfig, comOptions: ComFetchOptions = {}) => {
+export const createFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
   return new CreateFetch(comConfig, comOptions);
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
