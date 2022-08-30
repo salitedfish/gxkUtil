@@ -358,7 +358,7 @@ export function useSetFirstSign<T extends ObjectType>(target: T[], condition?: (
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type Position = "head" | "center" | "tail" | "between";
+type Position = "left" | "center" | "right" | "between";
 /**
  * 根据提供的位置替换字符串
  * @param target
@@ -367,15 +367,15 @@ type Position = "head" | "center" | "tail" | "between";
  * @param replaceStr default: "*"
  */
 export function useRepPartStr(target: string, position: "center" | "between", count: [number, number], replaceStr?: string): string;
-export function useRepPartStr(target: string, position: "head" | "tail", count: [number], replaceStr?: string): string;
+export function useRepPartStr(target: string, position: "left" | "right", count: [number], replaceStr?: string): string;
 export function useRepPartStr(target: string, position: Position, count: number[], replaceStr: string = "*"): string {
-  if (["head", "tail"].includes(position)) {
+  if (["left", "right"].includes(position)) {
     /**二段 */
     const preStr = target.slice(0, count[0]);
     const nextStr = target.slice(count[0]);
-    if (position === "head") {
+    if (position === "left") {
       return preStr.replace(/./g, replaceStr) + nextStr;
-    } else if (position === "tail") {
+    } else if (position === "right") {
       return preStr + nextStr.replace(/./g, replaceStr);
     }
   } else if (["center", "between"].includes(position)) {
@@ -392,7 +392,7 @@ export function useRepPartStr(target: string, position: Position, count: number[
   return target;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-type PositionTrim = "head" | "tail" | "between" | "global";
+type PositionTrim = "left" | "right" | "between" | "global";
 /**
  * 去除字符串中的空格
  * @param target
@@ -400,9 +400,9 @@ type PositionTrim = "head" | "tail" | "between" | "global";
  * @returns
  */
 const useTrimStrShallow = (target: string, position?: PositionTrim) => {
-  if (position === "head") {
+  if (position === "left") {
     return target.replace(/^\s+/g, "");
-  } else if (position === "tail") {
+  } else if (position === "right") {
     return target.replace(/\s+$/g, "");
   } else if (position === "between") {
     return target.replace(/^\s+|\s+$/g, "");

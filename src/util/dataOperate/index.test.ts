@@ -197,16 +197,16 @@ test("test useGroupBy", () => {
 test("test useRepPartStr", () => {
   expect(useDataOperate.useRepPartStr("123456789", "between", [1, 1], "?")).toBe("?2345678?");
   expect(useDataOperate.useRepPartStr("123456789", "center", [1, 1])).toBe("1*******9");
-  expect(useDataOperate.useRepPartStr("123456789", "head", [4])).toBe("****56789");
-  expect(useDataOperate.useRepPartStr("123456789", "tail", [4])).toBe("1234*****");
-  expect(useDataOperate.useRepPartStr("123456789", "tail", [4], "/")).toBe("1234/////");
+  expect(useDataOperate.useRepPartStr("123456789", "left", [4])).toBe("****56789");
+  expect(useDataOperate.useRepPartStr("123456789", "right", [4])).toBe("1234*****");
+  expect(useDataOperate.useRepPartStr("123456789", "right", [4], "/")).toBe("1234/////");
 });
 
 /**test useTrimStr */
 test("test useTrimStr", () => {
   expect(useDataOperate.useTrimStr(" 123 4567 89 ", "between")).toBe("123 4567 89");
-  expect(useDataOperate.useTrimStr(" 123 4567 89 ", "head")).toBe("123 4567 89 ");
-  expect(useDataOperate.useTrimStr(" 123 4567 89 ")("tail")).toBe(" 123 4567 89");
+  expect(useDataOperate.useTrimStr(" 123 4567 89 ", "left")).toBe("123 4567 89 ");
+  expect(useDataOperate.useTrimStr(" 123 4567 89 ")("right")).toBe(" 123 4567 89");
   expect(useDataOperate.useTrimStr(" 123 4567 89 ")("global")).toBe("123456789");
 });
 
