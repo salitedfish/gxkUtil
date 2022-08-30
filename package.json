@@ -1,13 +1,16 @@
 {
   "name": "@ultra-man/noa",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The first light of the universe",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
   "config": {
     "dist": "lib"
   },
-  "keywords":  ["typescript", "library"],
+  "keywords": [
+    "typescript",
+    "library"
+  ],
   "scripts": {
     "prepare": "husky install",
     "test": "jest",
