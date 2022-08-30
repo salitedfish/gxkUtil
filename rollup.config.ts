@@ -47,7 +47,7 @@ const packageJsonPlugin = genPackageJson({
     dependencies: packageJSON.dependencies,
     description: packageJSON.description,
     sideEffects: false,
-    keywords: ["gxk"],
+    keywords: ["typescript", "library"],
   }),
 });
 
