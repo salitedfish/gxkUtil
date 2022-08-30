@@ -1,7 +1,7 @@
 {
   "name": "@ultra-man/noa",
   "version": "0.0.1",
-  "description": "",
+  "description": "The first light of the universe",
   "module": "lib/index.mjs",
   "main": "lib/index.cjs",
   "config": {
