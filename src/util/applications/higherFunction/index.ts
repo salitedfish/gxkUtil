@@ -89,7 +89,7 @@ export const useTimesClick: UseTimesClick = (callBack, option) => {
  * promise返回结果后，如果满足条件则返回，否则继续执行，直到最终满足条件或达到最大次数
  * @param asyncCallBack
  * @param options count 最大请求次数，默认3， interval 请求返回后间隔多少时间请求一次，默认500
- * @param condition 判断是否满足条件的函数，返回true表示满足, 默认返回有值则满足条件
+ * @param condition 判断是否满足条件的函数，返回true表示满足
  * @returns 返回一个直到结果为true才返回promise的函数
  */
 export function usePromiseInsist<V extends any[], T>(

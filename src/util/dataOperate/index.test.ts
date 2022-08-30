@@ -12,6 +12,12 @@ const obj = {
   e: new Set([1, 2, 3]),
   f,
 };
+const h = {
+  a: new Set(),
+  b: 0,
+  c: new Map(),
+};
+const i = [new Set(), 0, new Map()];
 const cloneObj = useDataOperate.useDeepClone(obj);
 
 /**test useCheckEmptyInObj */
@@ -26,6 +32,10 @@ test("test useCheckEmptyInObj", () => {
   expect(useDataOperate.useCheckEmptyInObj([0, []], [0, []])).toBe(false);
   expect(useDataOperate.useCheckEmptyInObj([0, {}], [0, {}])).toBe(false);
   expect(useDataOperate.useCheckEmptyInObj([0, null, undefined])([0, null])).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj(h)([new Set(), 0])).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj(h)([new Set(), 0, new Map()])).toBe(false);
+  expect(useDataOperate.useCheckEmptyInObj(i)([new Set(), 0])).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj(i)([new Set(), 0, new Map()])).toBe(false);
 });
 
 /**test useIsPositiveInt */

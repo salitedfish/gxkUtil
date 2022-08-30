@@ -1,10 +1,12 @@
+import packageJSON from "../../package.json";
+
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 控制台警告信息
  * @param warnMessage
  */
 export const useConsoleWarn = (warnMessage: string) => {
-  console.warn(`@gexk/gxk: ${warnMessage}`);
+  console.warn(`${packageJSON.name}: ${warnMessage}`);
 };
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -13,5 +15,5 @@ export const useConsoleWarn = (warnMessage: string) => {
  * @param errMessage
  */
 export const useConsoleError = (errMessage: string) => {
-  console.error(`@gexk/gxk: ${errMessage}`);
+  console.error(`${packageJSON.name}: ${errMessage}`);
 };

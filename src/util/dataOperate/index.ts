@@ -1,6 +1,6 @@
 import { useCurryTwo } from "../../util/currying";
 import { ObjectType } from "../../type";
-import { useConsoleWarn } from "src/useInside";
+import { useConsoleError } from "src/useInside";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
@@ -18,7 +18,8 @@ export const useCheckUndefined = (...argument: any[]): boolean => {
  */
 export const useCheckSimpleData = (...argument: any[]) => {
   for (let item of argument) {
-    if (!["string", "number", "boolean", "symbol"].includes(typeof item) && ![null, undefined].includes(item)) {
+    /**如果过既不在["string", "number", "boolean", "symbol", "undefined"]里也不是null，则表示是引用类型，返回false*/
+    if (!["string", "number", "boolean", "symbol", "undefined"].includes(typeof item) && item !== null) {
       return false;
     }
   }
@@ -26,7 +27,7 @@ export const useCheckSimpleData = (...argument: any[]) => {
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 检查对象或数组中是否包含null、0、NaN、undefined、空数组、空对象、""
+ * 检查对象或数组中是否包含null、0、NaN、undefined、空数组、空对象、""、空Set、空Map
  * @param target
  * @param exclude 排除的值
  * @returns
@@ -34,7 +35,7 @@ export const useCheckSimpleData = (...argument: any[]) => {
 const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   for (let key in target) {
     /**这里选出空值 */
-    if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {})) {
+    if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {}) || useDeepEqual(target[key], new Set()) || useDeepEqual(target[key], new Map())) {
       /**如果exclude不存在或者exclude不包含此空值，说明此空值没有被排除，则返回true */
       if (!exclude || useDeepInclude(exclude)(target[key]) === false) {
         return true;
@@ -317,8 +318,8 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
   if (options === undefined) {
     return handler;
   } else {
-    if (options?.arrayCount && !useIsPositiveInt(options?.arrayCount) && options?.eatchCount && !useIsPositiveInt(options?.eatchCount)) {
-      useConsoleWarn("useGroupBy: 分组条件不正确!");
+    if ((options?.arrayCount && !useIsPositiveInt(options?.arrayCount)) || (options?.eatchCount && !useIsPositiveInt(options?.eatchCount))) {
+      useConsoleError("useGroupBy: 分组条件不正确!");
       return [];
     }
     return handler(options);

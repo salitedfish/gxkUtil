@@ -6,9 +6,6 @@ import { useConsoleWarn } from "../../../useInside";
  * @param title
  */
 export const useSetHTMLTitle = (title: string): void => {
-  if (!window) {
-    useConsoleWarn("useSetHTMLTitle: window不存在");
-  }
   const titleDom = window.document.getElementsByTagName("title")[0];
   titleDom.innerText = title;
 };
@@ -19,9 +16,6 @@ export const useSetHTMLTitle = (title: string): void => {
  * @returns
  */
 export const useGetDom = (target: string) => {
-  if (!window) {
-    useConsoleWarn("useGetDom: window不存在");
-  }
   let targetDom: NodeListOf<HTMLElement> = window.document.querySelectorAll(target);
   if (targetDom.length === 0) {
     useConsoleWarn("useGetDom: 没获取到dom!");
@@ -142,10 +136,6 @@ export const useSetDomScrollTop = useCurryTwo(useSetDomScrollTopShallow);
  * @returns boolean
  */
 export const useDomOnVisibleArea = (target: string) => {
-  if (!window) {
-    useConsoleWarn("useDomOnVisibleArea: window不存在");
-    return false;
-  }
   let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
   const targetOffsetTop = targetDom[0].offsetTop;
   const screenHeight = window.innerHeight;
