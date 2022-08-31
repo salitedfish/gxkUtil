@@ -131,17 +131,45 @@ const useSetDomScrollTopShallow = (target: string, scrollTop: number) => {
 export const useSetDomScrollTop = useCurryTwo(useSetDomScrollTopShallow);
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
+ * 判断容器中的滚动条是否滚动到页面底部
+ * @param target
+ * @param offect
+ * @returns
+ */
+const useHadScrollBottomShallow = (target: string, offect: number = 0) => {
+  let targetDom: HTMLElement | undefined = useGetDom(target)[0];
+  if (!targetDom) {
+    return false;
+  } else {
+    if (targetDom.scrollTop + targetDom.clientHeight + offect >= targetDom.scrollHeight) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+};
+export const useHadScrollBottom = useCurryTwo(useHadScrollBottomShallow);
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/**
  * 判断目标dom是否在屏幕视野内
  * @param target
  * @returns boolean
  */
 export const useDomOnVisibleArea = (target: string) => {
-  let targetDom: NodeListOf<HTMLElement> = useGetDom(target);
-  const targetOffsetTop = targetDom[0].offsetTop;
-  const screenHeight = window.innerHeight;
-  if (targetOffsetTop > 0 && targetOffsetTop < screenHeight) {
-    return true;
-  } else {
+  let targetDom: HTMLElement | undefined = useGetDom(target)[0];
+  if (!targetDom) {
     return false;
+  } else {
+    const targetOffsetClientTop = targetDom.getBoundingClientRect().top;
+    const targetOffsetClientLeft = targetDom.getBoundingClientRect().left;
+    const targetHeight = targetDom.offsetHeight;
+    const targetWidth = targetDom.offsetWidth;
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+    if (targetOffsetClientTop + targetHeight > 0 && targetOffsetClientTop < screenHeight && targetOffsetClientLeft + targetWidth > 0 && targetOffsetClientLeft < screenWidth) {
+      return true;
+    } else {
+      return false;
+    }
   }
 };
