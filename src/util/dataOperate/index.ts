@@ -66,42 +66,50 @@ export const useIsPositiveInt = (num: number) => {
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
  * 深拷贝
- * @param oldData
+ * @param target 目标数据
+ * @param complete 是否完全深拷贝，默认为false
  * @returns
  */
-export const useDeepClone = <T extends Object>(oldData: T): T => {
-  if (useCheckSimpleData(oldData)) {
-    return oldData;
-    /**数组 */
-  } else if (Array.isArray(oldData)) {
-    const newData: any = [];
-    for (const item of oldData) {
-      newData.push(useDeepClone(item));
-    }
-    return newData;
-    /**Map */
-  } else if (oldData instanceof Map) {
-    const newData: any = new Map();
-    for (const [key, value] of oldData) {
-      newData.set(key, useDeepClone(value));
-    }
-    return newData;
-    /**Set */
-  } else if (oldData instanceof Set) {
-    const newData: any = new Set();
-    for (const item of oldData) {
-      newData.add(useDeepClone(item));
-    }
-    return newData;
-    /**Object */
-  } else if (oldData.constructor === Object) {
-    const newData: any = {};
-    for (const key in oldData) {
-      newData[key] = useDeepClone(oldData[key]);
-    }
-    return newData;
+export const useDeepClone = <T extends Object>(target: T, complete: boolean = false): T => {
+  /**
+   * 如果不需要拷贝函数、Map、Set，就直接用JSON拷贝
+   * JSON的拷贝会去除值为undefined的属性，数组中的undefined、NaN也会变为null
+   */
+  if (!complete) {
+    return JSON.parse(JSON.stringify(target));
   } else {
-    return oldData;
+    if (Array.isArray(target)) {
+      /**Array */
+      const newData: any = [];
+      for (const item of target) {
+        newData.push(useDeepClone(item, true));
+      }
+      return newData;
+    } else if (target instanceof Map) {
+      /**Map */
+      const newData: any = new Map();
+      for (const [key, value] of target) {
+        newData.set(key, useDeepClone(value, true));
+      }
+      return newData;
+    } else if (target instanceof Set) {
+      /**Set */
+      const newData: any = new Set();
+      for (const item of target) {
+        newData.add(useDeepClone(item, true));
+      }
+      return newData;
+    } else if (target?.constructor === Object) {
+      /**Object */
+      const newData: any = {};
+      for (const key in target) {
+        newData[key] = useDeepClone(target[key], true);
+      }
+      return newData;
+    } else {
+      /**简单类型或函数就直接返回 */
+      return target;
+    }
   }
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/

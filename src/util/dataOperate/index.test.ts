@@ -11,14 +11,27 @@ const obj = {
   d: null,
   e: new Set([1, 2, 3]),
   f,
+  g: () => {
+    return true;
+  },
 };
 const h = {
   a: new Set(),
   b: 0,
   c: new Map(),
 };
+const mbj = {
+  a: 1,
+  b: { a: 1, b: 2 },
+  c: [1, 2, 3, null, null],
+  d: null,
+};
 const i = [new Set(), 0, new Map()];
-const cloneObj = useDataOperate.useDeepClone(obj);
+/**不拷贝函数、Map、Set*/
+const simpleCloneObj = useDataOperate.useDeepClone(obj);
+const simpleCloneMbj = useDataOperate.useDeepClone(mbj);
+/**完全深拷贝*/
+const cloneObj = useDataOperate.useDeepClone(obj, true);
 
 /**test useCheckEmptyInObj */
 test("test useCheckEmptyInObj", () => {
@@ -50,6 +63,8 @@ test("test useIsPositiveInt", () => {
 
 /**test useDeepClone */
 test("test useDeepClone", () => {
+  expect(useDataOperate.useDeepEqual(obj, simpleCloneObj)).toBe(false);
+  expect(useDataOperate.useDeepEqual(mbj, simpleCloneMbj)).toBe(true);
   expect(useDataOperate.useDeepEqual(obj, cloneObj) && obj !== cloneObj).toBe(true);
 });
 
