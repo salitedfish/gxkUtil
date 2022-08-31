@@ -138,25 +138,24 @@ abstract class BaseFetch {
     const regConfig = this.requestInterceptor(this.comOptions, cusOptions, resConfig);
 
     /**发送请求 */
-    return fetch(URL, regConfig)
-      .then(async (res: Response) => {
-        if (regConfig.signal) {
-          this.clearAbortController(timeoutId, abortId);
-        }
-        /**处理返回结果 */
-        const reg = await this.responseHandler(res.clone());
-        /**如果有拦截器，则先处理拦截器，处理返回值 */
-        const rex = this.responseInterceptor(this.comOptions, cusOptions, reg, res);
-        return rex;
-      })
-      .catch((err) => {
-        if (regConfig.signal) {
-          this.clearAbortController(timeoutId, abortId);
-        }
-        /**如果有拦截器，则先处理拦截器 */
-        const erx = this.errInterceptor(this.comOptions, cusOptions, err);
-        return Promise.reject(erx);
-      });
+    try {
+      const res = await fetch(URL, regConfig);
+      if (regConfig.signal) {
+        this.clearAbortController(timeoutId, abortId);
+      }
+      /**处理返回结果 */
+      const reg = await this.responseHandler(res.clone());
+      /**如果有拦截器，则先处理拦截器，处理返回值 */
+      const rex = this.responseInterceptor(this.comOptions, cusOptions, reg, res);
+      return rex;
+    } catch (err) {
+      if (regConfig.signal) {
+        this.clearAbortController(timeoutId, abortId);
+      }
+      /**如果有拦截器，则先处理拦截器 */
+      const erx = this.errInterceptor(this.comOptions, cusOptions, err);
+      return Promise.reject(erx);
+    }
   }
   /**---取消请求---> */
   public abortRequest(requestId: keyof any) {

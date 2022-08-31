@@ -239,7 +239,7 @@ type GroupOption<T> = {
   conditions?: ((item: T) => boolean)[];
   arrayCount?: number;
   eatchCount?: number;
-  condition?: (item: T) => any;
+  condition?: (item: T) => unknown;
 };
 /**
  * 数组按要求分组
@@ -284,7 +284,7 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
       }
     };
 
-    const conditionGroupHandler = (arr: T[], condition: (item: T) => any) => {
+    const conditionGroupHandler = (arr: T[], condition: (item: T) => unknown) => {
       const _map = new Map();
 
       for (let item of arr) {
