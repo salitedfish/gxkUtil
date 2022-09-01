@@ -1,4 +1,5 @@
 import { useCheckSimpleData, useDeepEqual } from ".";
+
 /**
  * 深度判断数组中是否包含某个值或满足某个条件的值,无返回false,有则返回下标, 依赖useDeepEqual
  * @param origin 例如[{a:1}]

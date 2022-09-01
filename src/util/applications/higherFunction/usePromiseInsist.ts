@@ -5,15 +5,8 @@
  * @param condition 判断是否满足条件的函数，返回true表示满足
  * @returns 返回一个直到结果为true才返回promise的函数
  */
-export function usePromiseInsist<V extends any[], T>(
-  asyncCallBack: (...params: V) => Promise<T>,
-  options?: { count?: number; interval?: number }
-): (condition: (params: T) => boolean) => (...params: V) => Promise<T>;
-export function usePromiseInsist<V extends any[], T>(
-  asyncCallBack: (...params: V) => Promise<T>,
-  options: { count?: number; interval?: number },
-  condition: (params: T) => boolean
-): (...params: V) => Promise<T>;
+export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options?: { count?: number; interval?: number }): (condition: (params: T) => boolean) => (...params: V) => Promise<T>;
+export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; interval?: number }, condition: (params: T) => boolean): (...params: V) => Promise<T>;
 export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: V) => Promise<T>, options: { count?: number; interval?: number } = {}, condition?: (params: T) => boolean): any {
   const handler = (condition: (params: T) => boolean): ((...params: V) => Promise<T>) => {
     const resOptions = { count: 3, interval: 500, ...options };
