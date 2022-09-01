@@ -57,7 +57,7 @@ class UseWebSocket {
     if (!this.socket) return;
     /**心跳检测，定时给socket发送消息, 如果心跳没有改变说明socket没有正常连接，则重启socket */
     this.socketPingInterval = setInterval(() => {
-      if (!this.socket || this.socket.readyState != 1) return;
+      if (!this.socket || this.socket.readyState !== 1) return;
       this.socket.send("ping");
     }, pingInterval);
     this.socketPongInterval = setInterval(() => {

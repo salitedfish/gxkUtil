@@ -28,10 +28,10 @@ const mbj = {
 };
 const i = [new Set(), 0, new Map()];
 /**不拷贝函数、Map、Set*/
-const simpleCloneObj = useDataOperate.useDeepClone(obj);
-const simpleCloneMbj = useDataOperate.useDeepClone(mbj);
+const simpleCloneObj = useDataOperate.useDeepClone(obj)(false);
+const simpleCloneMbj = useDataOperate.useDeepClone(mbj, false);
 /**完全深拷贝*/
-const cloneObj = useDataOperate.useDeepClone(obj, true);
+const cloneObj = useDataOperate.useDeepClone(obj)(true);
 
 /**test useCheckEmptyInObj */
 test("test useCheckEmptyInObj", () => {
@@ -93,16 +93,11 @@ test("test useDeepInclude", () => {
   expect(useDataOperate.useDeepInclude([0, [1, 2, 3], 2])([1, 2, 3])).toBe("1");
 });
 
-/**useDeepRmRpt */
-test("test useDeepRmRpt", () => {
+/**useRmRpt */
+test("test useRmRepeat", () => {
   const arr = [cloneObj, cloneObj, obj, obj];
-  expect(useDataOperate.useDeepRmRpt(arr).length).toBe(1);
-});
-
-/**useShallowRmRpt */
-test("test useShallowRmRpt", () => {
-  const arr = [cloneObj, cloneObj, obj, obj];
-  expect(useDataOperate.useShallowRmRpt(arr).length).toBe(2);
+  expect(useDataOperate.useRmRepeat(arr, true).length).toBe(1);
+  expect(useDataOperate.useRmRepeat(arr)(false).length).toBe(2);
 });
 
 /**useGroupBy */

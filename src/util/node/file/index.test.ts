@@ -40,7 +40,7 @@ test("test useGetFileTree", async () => {
   try {
     const fileTree = await useFile.useGetFileTree("./src/util/node/file");
     expect(
-      useDeepEqual(fileTree, [
+      useDeepEqual(fileTree.slice(0, 3), [
         {
           filePathAbsolute: "C:\\Users\\33\\projects\\gxkUtil\\src\\util\\node\\file\\fileText.sh",
           fileName: "fileText.sh",

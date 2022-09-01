@@ -17,6 +17,7 @@ module.exports = {
     "@typescript-eslint/no-this-alias": "error",
     "no-var": "error",
     "no-console": "off",
-    quotes: ["error", "double"],
+    quotes: ["error", "double"], // 双引号
+    eqeqeq: ["error", "always"], // 全等
   },
 };
