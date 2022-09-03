@@ -1,5 +1,5 @@
+import type { ObjectType } from "../../type";
 import { useDeepClone } from ".";
-import { ObjectType } from "../../type";
 
 /**
  * 根据给定的条件,给数组中第一次满足的对象做标记

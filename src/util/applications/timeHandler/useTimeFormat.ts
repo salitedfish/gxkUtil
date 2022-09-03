@@ -1,5 +1,5 @@
+import type { ObjectType } from "../../../type";
 import { useGenTimeStamp } from ".";
-import { ObjectType } from "../../../type";
 import { useCurryTwo } from "../../../util/currying";
 
 /**

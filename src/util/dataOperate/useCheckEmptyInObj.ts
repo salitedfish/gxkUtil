@@ -1,6 +1,6 @@
+import type { ObjectType } from "../../type";
 import { useDeepEqual, useDeepInclude } from ".";
 import { useCurryTwo } from "../../util/currying";
-import { ObjectType } from "../../type";
 
 /**
  * 检查对象或数组中是否包含null、0、NaN、undefined、空数组、空对象、""、空Set、空Map

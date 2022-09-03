@@ -18,6 +18,7 @@
     "declaration": true, //生成定义文件
     "declarationMap": false,
     "types": ["node", "jest"], //导入类型包
+    "importsNotUsedAsValues": "error",
     "paths": {
       "src/*": ["src/*"],
     },

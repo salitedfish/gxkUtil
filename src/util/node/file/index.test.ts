@@ -39,28 +39,9 @@ test("test useReadFile", async () => {
 test("test useGetFileTree", async () => {
   try {
     const fileTree = await useFile.useGetFileTree("./src/util/node/file");
-    expect(
-      useDeepEqual(fileTree.slice(0, 3), [
-        {
-          filePathAbsolute: "C:\\Users\\33\\projects\\gxkUtil\\src\\util\\node\\file\\fileText.sh",
-          fileName: "fileText.sh",
-          isFile: true,
-          child: [],
-        },
-        {
-          filePathAbsolute: "C:\\Users\\33\\projects\\gxkUtil\\src\\util\\node\\file\\index.test.ts",
-          fileName: "index.test.ts",
-          isFile: true,
-          child: [],
-        },
-        {
-          filePathAbsolute: "C:\\Users\\33\\projects\\gxkUtil\\src\\util\\node\\file\\index.ts",
-          fileName: "index.ts",
-          isFile: true,
-          child: [],
-        },
-      ])
-    ).toBe(true);
+    const sliceFileTree = fileTree.slice(0, 3);
+
+    expect(useDeepEqual(sliceFileTree[0].fileName, "fileText.sh")).toBe(true);
   } catch (err) {
     expect(err).toMatch("");
   }

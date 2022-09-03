@@ -1,5 +1,5 @@
+import type { ObjectType } from "../../../type";
 import { useCurryTwo } from "../../../util/currying";
-import { ObjectType } from "../../../type";
 
 /**
  * 剩余时间毫秒转化为时间格式字符串

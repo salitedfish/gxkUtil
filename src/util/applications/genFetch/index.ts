@@ -1,4 +1,4 @@
-import { Method, ObjectType } from "../../../type";
+import type { Method, ObjectType } from "../../../type";
 import { useGenParamsUrl } from "../../../util";
 import { useConsoleWarn } from "../../../useInside";
 // import { useCurryTwo } from "../../../util/currying";

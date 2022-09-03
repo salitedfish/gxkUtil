@@ -1,4 +1,4 @@
-import { Function, SplitParams } from "../../type";
+import type { Function, SplitParams } from "../../type";
 
 /**
  * 两个参数函数的柯里化(如果原始函数包含泛型，则不推荐使用，泛型会失效)
