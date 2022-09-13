@@ -2,10 +2,10 @@
   "name": "@ultra-man/noa",
   "version": "0.0.5",
   "description": "The first light of the universe",
-  "module": "lib/index.mjs",
-  "main": "lib/index.cjs",
+  "module": "noa/index.mjs",
+  "main": "noa/index.cjs",
   "config": {
-    "dist": "lib"
+    "dest": "noa"
   },
   "keywords": [
     "typescript",
@@ -14,9 +14,9 @@
   "scripts": {
     "prepare": "husky install",
     "test": "jest",
-    "build": "rm -rf ./%npm_package_config_dist% && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./%npm_package_config_dist%/rollup.config.d.ts ",
-    "build_link": "pnpm run build && cd ./%npm_package_config_dist% && pnpm link",
-    "build_publish": "pnpm run build && cd ./%npm_package_config_dist% && pnpm publish --access public",
+    "build": "rm -rf ./%npm_package_config_dest% && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./%npm_package_config_dest%/rollup.config.d.ts ",
+    "build_link": "pnpm run build && cd ./%npm_package_config_dest% && pnpm link",
+    "build_publish": "pnpm run build && cd ./%npm_package_config_dest% && pnpm publish --access public",
     "publish_patch": "pnpm version patch && pnpm run build_publish",
     "publish_minor": "pnpm version minor && pnpm run build_publish",
     "publish_major": "pnpm version major && pnpm run build_publish"

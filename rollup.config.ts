@@ -14,6 +14,10 @@ import { useRollupPluginTest } from "./src/plugin";
 
 const getPath = (_path: string) => path.resolve(__dirname, _path);
 
+/**解构package.json内容 */
+const { config, name, version, dependencies, description, module, main } = packageJSON;
+const { dest } = config;
+
 /**ts解析插件 */
 const tsPlugin = typescript({
   tsconfig: "tsconfig.json",
@@ -36,16 +40,16 @@ const babelPlugin = babel({
 
 /**生成package.json插件 */
 const packageJsonPlugin = genPackageJson({
-  outputFolder: "lib",
+  outputFolder: dest,
   baseContents: () => ({
-    name: packageJSON.name,
-    version: packageJSON.version,
+    name,
+    version,
     license: "MIT",
     main: "index.cjs",
     module: "index.mjs",
     typings: "src/index.d.ts",
-    dependencies: packageJSON.dependencies,
-    description: packageJSON.description,
+    dependencies,
+    description,
     sideEffects: false,
     keywords: ["typescript", "library"],
   }),
@@ -54,8 +58,8 @@ const packageJsonPlugin = genPackageJson({
 /**复制文件夹到指定文件夹 */
 const rollupCopy = copy({
   targets: [
-    { src: "src/css", dest: "lib" },
-    { src: "./readme.md", dest: "lib" },
+    { src: "src/css", dest },
+    { src: "./readme.md", dest },
   ],
 });
 
@@ -64,7 +68,7 @@ export default () => {
     /**打包入口 */
     input: getPath("./src/index.ts"),
     /**排除外部引入的包 */
-    external: Object.keys(packageJSON.dependencies),
+    external: Object.keys(dependencies),
     plugins: [
       nodeResolve({}),
       esPlugin,
@@ -80,8 +84,8 @@ export default () => {
     ],
     /**同时支持ESModule和commonjs导出 */
     output: [
-      { file: packageJSON.module, format: "esm", name: packageJSON.name },
-      { file: packageJSON.main, format: "cjs", name: packageJSON.name },
+      { file: module, format: "esm", name },
+      { file: main, format: "cjs", name },
     ],
   };
 };
