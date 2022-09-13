@@ -24,6 +24,12 @@ const useCountDownFormatShallow = (format: string, time: number | string) => {
       format = format.replace(regRes[0], String(replaceValue));
     }
   }
-  return format;
+  return {
+    format,
+    day: date["d+"],
+    hour: date["h+"],
+    minute: date["m+"],
+    second: date["s+"],
+  };
 };
 export const useCountDownFormat = useCurryTwo(useCountDownFormatShallow);
