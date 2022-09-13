@@ -36,7 +36,7 @@ export function useDeepClone<T extends any>(target: T, complete?: boolean): T | 
           newData.add(useDeepClone(item)(true));
         }
         return newData;
-      } else if (target?.constructor === Object) {
+      } else if ((target as Object)?.constructor === Object) {
         /**Object */
         const newData: any = {};
         for (const key in target) {
