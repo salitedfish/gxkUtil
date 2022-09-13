@@ -4,9 +4,9 @@
  * @param complete 是否完全深拷贝，默认为false
  * @returns
  */
-export function useDeepClone<T extends Object>(target: T): (complete: boolean) => T;
-export function useDeepClone<T extends Object>(target: T, complete: boolean): T;
-export function useDeepClone<T extends Object>(target: T, complete?: boolean): T | ((complete: boolean) => T) {
+export function useDeepClone<T extends any>(target: T): (complete: boolean) => T;
+export function useDeepClone<T extends any>(target: T, complete: boolean): T;
+export function useDeepClone<T extends any>(target: T, complete?: boolean): T | ((complete: boolean) => T) {
   const handler = (complete: boolean) => {
     /**
      * 如果不需要拷贝函数、Map、Set，就直接用JSON拷贝
