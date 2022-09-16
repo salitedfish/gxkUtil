@@ -222,10 +222,10 @@ test("test useTrimStr", () => {
 
 /**test useSetFirstSign */
 test("test useSetFirstSign", () => {
-  const resOne = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }])((item) => Number(item.a) + 1);
-  const resTwo = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 1 }, { b: 1 }])((item) => item.b);
-  const resThree = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }, { a: 1 }], (item) => item.a);
-  const resFour = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }], (item) => typeof item.a);
+  const resOne = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }])({ condition: (item) => Number(item.a) + 1 });
+  const resTwo = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 1 }, { b: 1 }])({ condition: (item) => item.b, pure: true });
+  const resThree = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }, { a: 1 }], { condition: (item) => item.a });
+  const resFour = useDataOperate.useSetFirstSign([{ a: 1 }, { a: 2 }, { b: 1 }], { condition: (item) => typeof item.a, pure: true });
 
   expect(
     useDataOperate.useDeepEqual(resOne, [

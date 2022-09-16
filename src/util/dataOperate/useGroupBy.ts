@@ -1,4 +1,4 @@
-import { useIsPositiveInt } from ".";
+import { useIsPositiveInt, useDeepClone } from ".";
 import { useConsoleError } from "../../useInside";
 
 type GroupOption<T> = {
@@ -6,6 +6,7 @@ type GroupOption<T> = {
   arrayCount?: number;
   eatchCount?: number;
   condition?: (item: T) => unknown;
+  pure?: boolean;
 };
 /**
  * 数组按要求分组
@@ -16,6 +17,7 @@ export function useGroupBy<T>(origin: T[]): (options: GroupOption<T>) => T[][];
 export function useGroupBy<T>(origin: T[], options: GroupOption<T>): T[][];
 export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
+    const _origin = options.pure ? useDeepClone(origin)(true) : origin;
     const resGroup: T[][] = [];
 
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
@@ -72,17 +74,17 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     /**不同分组条件判断 */
     if (Array.isArray(options.conditions)) {
       /**具体到每组的条件 */
-      return conditionsGroupHandler(origin, options.conditions);
+      return conditionsGroupHandler(_origin, options.conditions);
     } else if (options.eatchCount) {
       /**每个数组有几项 */
-      return countGroupHandler(origin, options.eatchCount);
+      return countGroupHandler(_origin, options.eatchCount);
     } else if (options.arrayCount) {
       /**分成几个数组 */
       const eatchCount = Math.floor(origin.length / options.arrayCount);
-      return countGroupHandler(origin, eatchCount);
+      return countGroupHandler(_origin, eatchCount);
     } else if (options.condition) {
       /**整体条件 */
-      return conditionGroupHandler(origin, options.condition);
+      return conditionGroupHandler(_origin, options.condition);
     } else {
       return resGroup;
     }
