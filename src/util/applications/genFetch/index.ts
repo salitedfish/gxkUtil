@@ -55,6 +55,7 @@ abstract class BaseFetch {
   }
   /**合并请求配置 */
   private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig) {
+    /**这里合并完对比原生fetch的config多了URL、params、baseURL，但是应该不影响使用 */
     const resConfig = { ...comConfig, ...cusConfig };
     resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
     return resConfig;
@@ -106,6 +107,7 @@ abstract class BaseFetch {
   /**处理响应处理器 */
   private responseHandler(shallowResponse: Response): Promise<ResponseType> | undefined {
     const contentType = shallowResponse.headers.get("Content-Type");
+    /**根据接口返回的Content-Type来进行对应的响应值处理 */
     for (let key in this.responseTypeMap) {
       if (contentType && contentType.includes(key)) {
         return shallowResponse[this.responseTypeMap[key]]();
@@ -337,3 +339,38 @@ export const createFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetch
 // };
 
 // export const useFetch = useCurryTwo(useFetchShallow);
+
+// /**
+//  * 分块下载处理下载进度
+//  * @param response
+//  * @param cb
+//  * @returns
+//  */
+// export const downloadProcessHandler = async (response: Response, cb: (percent: number) => void) => {
+//   const reader = response.body?.getReader();
+//   if (!reader) return;
+//   const contentLength = Number(response.headers.get("Content-Length"));
+//   let receivedLength = 0;
+//   const chunks = [];
+//   let percent: number;
+//   /**处理完成的比例*/
+//   while (true) {
+//     const { done, value } = await reader.read();
+//     if (done) {
+//       break;
+//     }
+//     chunks.push(value);
+//     receivedLength = receivedLength + value.length;
+//     percent = receivedLength / contentLength;
+//     cb(percent);
+//   }
+//   /**处理分块后的数据 */
+//   const chunksAll = new Uint8Array(receivedLength);
+//   let position = 0;
+//   for (const chunk of chunks) {
+//     chunksAll.set(chunk, position);
+//     position = position + chunk.length;
+//   }
+//   const result = new TextDecoder("utf-8").decode(chunksAll);
+//   return result;
+// };

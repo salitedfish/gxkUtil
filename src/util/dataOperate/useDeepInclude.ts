@@ -10,16 +10,16 @@ export function useDeepInclude<T>(origin: T[]): (condition: T | ((item: T) => bo
 export function useDeepInclude<T>(origin: T[], condition: T | ((item: T) => boolean)): false | string;
 export function useDeepInclude<T>(origin: T[], condition?: T | ((item: T) => boolean)) {
   const handler = (condition: T | ((item: T) => boolean)) => {
-    for (const key in origin) {
-      if (useCheckSimpleData(condition) && origin[key] === condition) {
+    for (const index in origin) {
+      if (useCheckSimpleData(condition) && origin[index] === condition) {
         /**原始值 */
-        return key;
-      } else if (condition instanceof Function && condition(origin[key])) {
+        return index;
+      } else if (condition instanceof Function && condition(origin[index])) {
         /**函数条件 */
-        return key;
-      } else if (useDeepEqual(origin[key], condition)) {
+        return index;
+      } else if (useDeepEqual(origin[index], condition)) {
         /**引用值 */
-        return key;
+        return index;
       }
     }
     return false;
