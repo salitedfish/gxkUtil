@@ -9,6 +9,7 @@ interface ComFetchConfig extends RequestInit {
   baseURL?: string;
   method?: Method;
 }
+/**父请求配置 */
 type ComFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   resHandler?: (response: any, shallowResponse: Response) => any;
@@ -21,6 +22,8 @@ interface CusFetchConfig extends RequestInit {
   method?: Method;
   params?: ObjectType<string | number>;
 }
+/**子请求配置 */
+/**pure为true时，会跳过父请求的相关拦截器 */
 type CusFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   pureReqHandler?: boolean;

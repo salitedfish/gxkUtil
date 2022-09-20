@@ -6,12 +6,12 @@ type GroupOption<T> = {
   arrayCount?: number;
   eatchCount?: number;
   condition?: (item: T) => unknown;
-  pure?: boolean;
+  pure?: boolean; // true为不改变原数组，默认改变原数组
 };
 /**
  * 数组按要求分组
  * @param origin
- * @param options 每组满足的条件,每组几个,几个数组,分组条件
+ * @param options 每组满足的条件,每组几个,几个数组,分组条件，是否改变原数组
  */
 export function useGroupBy<T>(origin: T[]): (options: GroupOption<T>) => T[][];
 export function useGroupBy<T>(origin: T[], options: GroupOption<T>): T[][];
