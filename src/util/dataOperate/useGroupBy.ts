@@ -21,11 +21,11 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     const resGroup: T[][] = [];
 
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
-      for (let item of conditions) {
+      for (let condition of conditions) {
         const group = [];
-        for (let i of arr) {
-          if (item(i)) {
-            group.push(i);
+        for (let item of arr) {
+          if (condition(item)) {
+            group.push(item);
           }
         }
         resGroup.push(group);

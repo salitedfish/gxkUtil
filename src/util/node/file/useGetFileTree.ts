@@ -18,7 +18,7 @@ const useIsFile = async (filePath: string) => {
   return stat.isFile();
 };
 /**
- * 读取路径下的所有子目录
+ * 读取路径下的所有子目录,返回绝对路径文件树
  * @param filePath 根路径
  * @returns
  */
