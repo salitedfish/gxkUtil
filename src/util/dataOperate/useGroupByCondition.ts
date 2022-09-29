@@ -6,16 +6,16 @@ type GroupOption<T> = {
   arrayCount?: number;
   eatchCount?: number;
   condition?: (item: T) => unknown;
-  pure?: boolean; // true为不改变原数组，默认改变原数组
+  pure?: boolean; // true则结果数据和原数据无关联，否则还存在引用关联
 };
 /**
  * 数组按要求分组
  * @param origin
  * @param options 每组满足的条件,每组几个,几个数组,分组条件，是否改变原数组
  */
-export function useGroupBy<T>(origin: T[]): (options: GroupOption<T>) => T[][];
-export function useGroupBy<T>(origin: T[], options: GroupOption<T>): T[][];
-export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
+export function useGroupByCondition<T>(origin: T[]): (options: GroupOption<T>) => T[][];
+export function useGroupByCondition<T>(origin: T[], options: GroupOption<T>): T[][];
+export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
     const _origin = options.pure ? useDeepClone(origin)(true) : origin;
     const resGroup: T[][] = [];
@@ -95,7 +95,7 @@ export function useGroupBy<T>(origin: T[], options?: GroupOption<T>) {
     return handler;
   } else {
     if ((options?.arrayCount && !useIsPositiveInt(options?.arrayCount)) || (options?.eatchCount && !useIsPositiveInt(options?.eatchCount))) {
-      useConsoleError("useGroupBy: 分组条件不正确!");
+      useConsoleError("useGroupByCondition: 分组条件不正确!");
       return [];
     }
     return handler(options);

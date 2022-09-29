@@ -2,7 +2,7 @@ type UseTimesClick = <V extends any[], R>(callBack: (...params: V) => R, option?
 /**
  * 多次点击Hook，支持节流
  * @param callBack
- * @param option 可选参数times默认两次，countDown持续300ms, interval间隔300秒
+ * @param option 可选参数times默认两次，countDown持续300ms, interval间歇周期300秒
  * @returns
  */
 export const useTimesClick: UseTimesClick = (callBack, option) => {

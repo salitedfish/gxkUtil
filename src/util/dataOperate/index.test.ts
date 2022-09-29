@@ -91,6 +91,28 @@ test("test useDeepInclude", () => {
   expect(useDataOperate.useDeepInclude([0, 1, 2, 3, 4, 5, 6])((item) => item === 2)).toBe("2");
   expect(useDataOperate.useDeepInclude([0, new Set([1, 2, 3]), 2])(new Set([1, 2, 3]))).toBe("1");
   expect(useDataOperate.useDeepInclude([0, [1, 2, 3], 2])([1, 2, 3])).toBe("1");
+  expect(
+    useDataOperate.useDeepInclude([
+      { name: "c", path: "c", query: { age: 0, name: "gxl" } },
+      "",
+      { name: "c", path: "c", query: { age: 0, name: "gxl" } },
+      9,
+      { name: "c", path: "c", query: { age: 0, name: "gxl" } },
+      { name: "a", path: "a", query: { age: 1, name: "gxk" } },
+      { name: "b", path: "b", query: { age: 2, name: "gxh" } },
+    ])({ name: "a", path: "a", query: { age: 1, name: "gxk" } })
+  ).toBe("5");
+  expect(
+    useDataOperate.useDeepInclude([
+      { name: "c", path: "c", query: { age: 0, name: "gxl" } },
+      "",
+      { name: "c", path: "c", query: { age: 0, name: "gxl" } },
+      9,
+      { name: "c", path: "c", query: { age: 0, name: "gxl" } },
+      { name: "a", path: "a", query: { age: 1, name: "gxk" } },
+      { name: "b", path: "b", query: { age: 2, name: "gxh" } },
+    ])((item) => (item as any).name === "b")
+  ).toBe("6");
 });
 
 /**useRmRpt */
@@ -100,8 +122,8 @@ test("test useRmRepeat", () => {
   expect(useDataOperate.useRmRepeat(arr)(false).length).toBe(2);
 });
 
-/**useGroupBy */
-test("test useGroupBy", () => {
+/**useGroupByCondition */
+test("test useGroupByCondition", () => {
   type Item = {
     a: number;
     b: number;
@@ -122,13 +144,13 @@ test("test useGroupBy", () => {
     { a: 4, b: 5 },
     { a: 5, b: 6 },
   ];
-  const resGroup = useDataOperate.useGroupBy(arr)({ conditions });
-  const retGroup = useDataOperate.useGroupBy(arr, { conditions });
-  const regGroup = useDataOperate.useGroupBy(arrNew, { arrayCount: 2 });
-  const rexGroup = useDataOperate.useGroupBy(arrNew)({ eatchCount: 4 });
-  const rekGroup = useDataOperate.useGroupBy(arrNew)({ condition: (item) => item.a > 2 });
-  const remGroup = useDataOperate.useGroupBy(arrNew)({ condition: (item) => item.a % 2 });
-  const renGroup = useDataOperate.useGroupBy(arrNew)({ condition: (item) => (item.a % 2) + item.b });
+  const resGroup = useDataOperate.useGroupByCondition(arr)({ conditions });
+  const retGroup = useDataOperate.useGroupByCondition(arr, { conditions });
+  const regGroup = useDataOperate.useGroupByCondition(arrNew, { arrayCount: 2 });
+  const rexGroup = useDataOperate.useGroupByCondition(arrNew)({ eatchCount: 4 });
+  const rekGroup = useDataOperate.useGroupByCondition(arrNew)({ condition: (item) => item.a > 2 });
+  const remGroup = useDataOperate.useGroupByCondition(arrNew)({ condition: (item) => item.a % 2 });
+  const renGroup = useDataOperate.useGroupByCondition(arrNew)({ condition: (item) => (item.a % 2) + item.b });
   const resGropRef = [
     [
       { a: 3, b: 4 },

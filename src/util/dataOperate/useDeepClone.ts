@@ -9,7 +9,7 @@ export function useDeepClone<T extends any>(target: T, complete: boolean): T;
 export function useDeepClone<T extends any>(target: T, complete?: boolean): T | ((complete: boolean) => T) {
   const handler = (complete: boolean) => {
     /**
-     * 如果不需要拷贝函数、Map、Set，就直接用JSON拷贝
+     * JSON不能拷贝函数、Map、Set
      * JSON的拷贝会去除值为undefined的属性，数组中的undefined、NaN也会变为null
      */
     if (!complete) {

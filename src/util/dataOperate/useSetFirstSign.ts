@@ -3,7 +3,7 @@ import { useDeepClone } from ".";
 
 type FirstSignOptions<T> = {
   condition: (item: T) => any;
-  pure?: boolean; // true不改变原数组，默认改变原数组
+  pure?: boolean; // true则结果数据和原数据无关，否则是在原数据上改
 };
 
 /**
@@ -20,13 +20,14 @@ export function useSetFirstSign<T extends ObjectType>(target: T[], options?: Fir
 
   const handler = (options: FirstSignOptions<T>) => {
     const _target = options.pure ? useDeepClone(target)(true) : target;
-    const signMap = new Map();
-    for (let key in target) {
-      const targetValue = options.condition(target[key]);
+    /**用来保存出现过的条件值 */
+    const signMap = new Set();
+    for (let item of _target) {
+      const targetValue = options.condition(item);
       /**如果signMap中不存在_targetValue,则设置标记 */
-      if (!signMap.get(targetValue)) {
-        signMap.set(targetValue, key);
-        (_target[key] as X).firstSign = true;
+      if (!signMap.has(targetValue)) {
+        signMap.add(targetValue);
+        (item as X).firstSign = true;
       }
     }
     return _target as X[];

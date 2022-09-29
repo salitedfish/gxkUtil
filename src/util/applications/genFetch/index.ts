@@ -42,6 +42,7 @@ type ResponseType = ObjectType | Blob | FormData | string | ArrayBuffer;
  * 父类主要是fetch的基础封装
  */
 abstract class BaseFetch {
+  /**response header的content-type关键字对应response方法名的映射 */
   private readonly responseTypeMap: ObjectType<ResponseTypeMethod> = {
     json: "json",
     form: "formData",
@@ -50,6 +51,7 @@ abstract class BaseFetch {
     text: "text",
     arrayBuffer: "arrayBuffer",
   };
+  /**实例下所有的取消控制器 */
   private readonly abortControllers: Map<keyof any, AbortController> = new Map();
   constructor(private comConfig: ComFetchConfig, private comOptions: ComFetchOptions) {}
   /**合并请求URL */

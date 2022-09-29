@@ -4,7 +4,7 @@ export * from "./useCheckUndefined";
 export * from "./useDeepClone";
 export * from "./useDeepEqual";
 export * from "./useDeepInclude";
-export * from "./useGroupBy";
+export * from "./useGroupByCondition";
 export * from "./useIsPositiveInt";
 export * from "./useRepPartStr";
 export * from "./useRmRepeat";
