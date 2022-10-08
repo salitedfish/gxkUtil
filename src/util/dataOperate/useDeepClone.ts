@@ -1,7 +1,7 @@
 /**
  * 深拷贝
  * @param target 目标数据
- * @param complete 是否完全深拷贝，默认为false
+ * @param complete 判断通过递归方式、JSON方式进行深拷贝
  * @returns
  */
 export function useDeepClone<T extends any>(target: T): (complete: boolean) => T;

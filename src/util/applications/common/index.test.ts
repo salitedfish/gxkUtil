@@ -51,3 +51,8 @@ test("test useRunTimes", () => {
   });
   expect(time).toBe(10);
 });
+
+/**test useGenUUID */
+// test("test useGenUUID", () => {
+//   expect(useCommon.useGenUUID()).toBe(false);
+// });

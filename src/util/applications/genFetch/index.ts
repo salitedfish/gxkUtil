@@ -31,7 +31,7 @@ type CusFetchOptions = {
   pureResHandler?: boolean;
   errHandler?: (ert: any, err: any) => any;
   pureErrHandler?: boolean;
-  reqestId?: keyof any;
+  requestId?: keyof any;
   timeOut?: number;
 };
 /**处理后返回值类型 */
@@ -68,7 +68,7 @@ abstract class BaseFetch {
   /**创建取消控制器 */
   private createAbortController(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, resConfig: ComFetchConfig & CusFetchConfig) {
     const timeOut = cusOptions.timeOut || comOptions.timeOut;
-    const abortId = cusOptions.reqestId;
+    const abortId = cusOptions.requestId;
     let timeoutId: NodeJS.Timeout | undefined = undefined;
     if (timeOut || abortId) {
       const abortController = new AbortController();
@@ -180,23 +180,23 @@ abstract class BaseFetch {
 /**
  * 子类主要用来分化请求方法
  */
-export class CreateFetch extends BaseFetch {
+export class UltraFetch extends BaseFetch {
   constructor(comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) {
     super(comConfig, comOptions);
   }
-  public async get<T = any>(cusConfig: Omit<CusFetchConfig, "body"> = {}, cusOptions: CusFetchOptions = {}) {
+  public async get<T = any>(cusConfig: Omit<CusFetchConfig & { method?: "GET" }, "body"> = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "GET";
     return await this.request<T>(cusConfig, cusOptions);
   }
-  public async post<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+  public async post<T = any>(cusConfig: CusFetchConfig & { method?: "POST" } = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "POST";
     return await this.request<T>(cusConfig, cusOptions);
   }
-  public async delete<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+  public async delete<T = any>(cusConfig: CusFetchConfig & { method?: "DELETE" } = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "DELETE";
     return await this.request<T>(cusConfig, cusOptions);
   }
-  public async put<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}) {
+  public async put<T = any>(cusConfig: CusFetchConfig & { method?: "PUT" } = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "PUT";
     return await this.request<T>(cusConfig, cusOptions);
   }
@@ -209,7 +209,7 @@ export class CreateFetch extends BaseFetch {
  * @returns
  */
 export const createFetch = (comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) => {
-  return new CreateFetch(comConfig, comOptions);
+  return new UltraFetch(comConfig, comOptions);
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 // /**收集取消控制器的map */

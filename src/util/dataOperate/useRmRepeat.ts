@@ -1,29 +1,44 @@
-import { useDeepInclude } from ".";
+import { useDeepInclude, useDeepClone } from ".";
+
+type RmRepeatOptions<T, V> = {
+  deep?: boolean; // 是否不考虑引用地址进行值比较
+  pure?: boolean; // true则结果数据和原数据无关联，否则还存在引用关联
+  condition?: (item: T) => V;
+  complete?: boolean; // 只有当pure为true时才有效，判断通过递归方式、JSON方式进行深拷贝
+};
 
 /**
  * 数组去重，不改变原数组, 依赖useDeepInclude
  * @param oldArr
- * @param deep 是否深度去重，默认false
+ * @param options 是否深度去重，去重条件，是否纯净
  * @returns
  */
-export function useRmRepeat<V>(oldArr: V[]): (deep: boolean) => V[];
-export function useRmRepeat<V>(oldArr: V[], deep: boolean): V[];
-export function useRmRepeat<V>(oldArr: V[], deep?: boolean): V[] | ((deep: boolean) => V[]) {
-  const handler = (deep: boolean) => {
-    const newArr: V[] = [];
+export function useRmRepeat<V, W>(oldArr: V[]): (options: RmRepeatOptions<V, W>) => V[];
+export function useRmRepeat<V, W>(oldArr: V[], options: RmRepeatOptions<V, W>): V[];
+export function useRmRepeat<V, W>(oldArr: V[], options?: RmRepeatOptions<V, W>): V[] | ((options: RmRepeatOptions<V, W>) => V[]) {
+  const handler = (options: RmRepeatOptions<V, W>) => {
+    const newArr: Array<V> = [];
+    const referenceArr: Array<V | W> = [];
     for (const item of oldArr) {
+      /**如果有conditions则依据处理后的值来判断 */
       /**deep为true则用useDeepInclude判断是否重复，否则用includes判断是否重复 */
-      const repeat = deep ? useDeepInclude(newArr, item) !== false : newArr.includes(item);
+      const referenceItem = options.condition ? options.condition(item) : item;
+      const repeat = options.deep ? useDeepInclude(referenceArr, referenceItem) !== false : referenceArr.includes(referenceItem);
       if (!repeat) {
-        newArr.push(item);
+        /**pure为true则，新数组的每一项完全和旧数组没联系
+         * 这里只有不是重复时才进行纯净判断，优化性能
+         */
+        const resItem = options.pure ? useDeepClone(item)(options.complete || false) : item;
+        newArr.push(resItem);
+        referenceArr.push(referenceItem);
       }
     }
     return newArr;
   };
   /**Currying */
-  if (deep === undefined) {
+  if (options === undefined) {
     return handler;
   } else {
-    return handler(deep);
+    return handler(options);
   }
 }

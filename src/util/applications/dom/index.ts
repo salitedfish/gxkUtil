@@ -8,3 +8,4 @@ export * from "./useRmDomClass";
 export * from "./useSetDomScrollTop";
 export * from "./useSetDomStyle";
 export * from "./useSetHTMLTitle";
+export * from "./useFullScreen";

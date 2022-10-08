@@ -118,8 +118,11 @@ test("test useDeepInclude", () => {
 /**useRmRpt */
 test("test useRmRepeat", () => {
   const arr = [cloneObj, cloneObj, obj, obj];
-  expect(useDataOperate.useRmRepeat(arr, true).length).toBe(1);
-  expect(useDataOperate.useRmRepeat(arr)(false).length).toBe(2);
+  expect(useDataOperate.useRmRepeat(arr, { deep: true }).length).toBe(1);
+  expect(useDataOperate.useRmRepeat(arr)({ deep: false }).length).toBe(2);
+  expect(useDataOperate.useRmRepeat(arr)({ deep: false, condition: (item) => item.a }).length).toBe(1);
+  expect(useDataOperate.useRmRepeat(arr)({ deep: false, condition: (item) => item.b, pure: true }).length).toBe(2);
+  expect(useDataOperate.useRmRepeat(arr)({ deep: true, condition: (item) => item.b, pure: true }).length).toBe(1);
 });
 
 /**useGroupByCondition */

@@ -7,3 +7,4 @@ export * from "./genFetch";
 export * from "./dom";
 export * from "./storage";
 export * from "./websocket";
+export * from "./moneyHandler";

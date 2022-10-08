@@ -7,17 +7,18 @@ type GroupOption<T> = {
   eatchCount?: number;
   condition?: (item: T) => unknown;
   pure?: boolean; // true则结果数据和原数据无关联，否则还存在引用关联
+  complete?: boolean; // 只有当pure为true时才有效，判断通过递归方式、JSON方式进行深拷贝
 };
 /**
  * 数组按要求分组
  * @param origin
- * @param options 每组满足的条件,每组几个,几个数组,分组条件，是否改变原数组
+ * @param options 每组满足的条件,每组几个,几个数组,分组条件，是否纯净
  */
 export function useGroupByCondition<T>(origin: T[]): (options: GroupOption<T>) => T[][];
 export function useGroupByCondition<T>(origin: T[], options: GroupOption<T>): T[][];
 export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
-    const _origin = options.pure ? useDeepClone(origin)(true) : origin;
+    const _origin = options.pure ? useDeepClone(origin)(options.complete || false) : origin;
     const resGroup: T[][] = [];
 
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
