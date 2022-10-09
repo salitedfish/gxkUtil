@@ -3,7 +3,7 @@ import { useDeepInclude, useDeepClone } from ".";
 type RmRepeatOptions<T, V> = {
   deep?: boolean; // 是否不考虑引用地址进行值比较
   pure?: boolean; // true则结果数据和原数据无关联，否则还存在引用关联
-  condition?: (item: T) => V;
+  condition?: (item: T) => V; // 依据的去重条件，没用则依据每一项
   complete?: boolean; // 只有当pure为true时才有效，判断通过递归方式、JSON方式进行深拷贝
 };
 

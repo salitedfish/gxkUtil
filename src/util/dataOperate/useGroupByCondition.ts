@@ -2,10 +2,10 @@ import { useIsPositiveInt, useDeepClone } from ".";
 import { useConsoleError } from "../../useInside";
 
 type GroupOption<T> = {
-  conditions?: ((item: T) => boolean)[];
-  arrayCount?: number;
-  eatchCount?: number;
-  condition?: (item: T) => unknown;
+  conditions?: ((item: T) => boolean)[]; // 比如条件为[item.a > 1, item.b > 100]，则最终分组是按照item.a > 1一组，item.b > 100 一组
+  arrayCount?: number; // 按组数分组
+  eatchCount?: number; // 按每组个数分组
+  condition?: (item: T) => unknown; // 比如条件返回item.a，则最终的分组是按照item.a不同值进行分组
   pure?: boolean; // true则结果数据和原数据无关联，否则还存在引用关联
   complete?: boolean; // 只有当pure为true时才有效，判断通过递归方式、JSON方式进行深拷贝
 };
@@ -20,7 +20,6 @@ export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
     const _origin = options.pure ? useDeepClone(origin)(options.complete || false) : origin;
     const resGroup: T[][] = [];
-
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
       for (let condition of conditions) {
         const group = [];
@@ -33,7 +32,6 @@ export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
       }
       return resGroup;
     };
-
     const countGroupHandler = (arr: T[], num: number): T[][] => {
       if (arr.length <= num) {
         resGroup.push(arr);
@@ -52,7 +50,6 @@ export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
         return countGroupHandler(arr.slice(num), num);
       }
     };
-
     const conditionGroupHandler = (arr: T[], condition: (item: T) => unknown) => {
       const _map = new Map();
 
@@ -71,7 +68,6 @@ export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
       }
       return resGroup;
     };
-
     /**不同分组条件判断 */
     if (Array.isArray(options.conditions)) {
       /**具体到每组的条件 */
