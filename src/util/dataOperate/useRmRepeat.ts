@@ -8,7 +8,7 @@ type RmRepeatOptions<T, V> = {
 };
 
 /**
- * 数组去重，不改变原数组, 依赖useDeepInclude
+ * 数组去重，不改变原数组, 依赖useDeepInclude、useDeepClone
  * @param oldArr
  * @param options 是否深度去重，去重条件，是否纯净
  * @returns
@@ -20,7 +20,7 @@ export function useRmRepeat<V, W>(oldArr: V[], options?: RmRepeatOptions<V, W>):
     const newArr: Array<V> = [];
     const referenceArr: Array<V | W> = [];
     for (const item of oldArr) {
-      /**如果有conditions则依据处理后的值来判断 */
+      /**如果有condition则依据处理后的值来判断 */
       /**deep为true则用useDeepInclude判断是否重复，否则用includes判断是否重复 */
       const referenceItem = options.condition ? options.condition(item) : item;
       const repeat = options.deep ? useDeepInclude(referenceArr, referenceItem) !== false : referenceArr.includes(referenceItem);

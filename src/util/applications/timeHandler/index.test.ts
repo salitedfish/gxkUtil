@@ -5,6 +5,8 @@ test("test useGenTimeStamp", () => {
   expect(useTimeHandler.useGenTimeStamp("2014年12月2日 15:2分1秒")).toBe(1417503721000);
   expect(useTimeHandler.useGenTimeStamp(1417503721000)).toBe(1417503721000);
   expect(useTimeHandler.useGenTimeStamp("1417503721000")).toBe(1417503721000);
+  expect(useTimeHandler.useGenTimeStamp(NaN)).toBe(NaN);
+  expect(useTimeHandler.useGenTimeStamp("SDFSDFSDF")).toBe(NaN);
 });
 
 /**test useCountDownFormat */
@@ -13,6 +15,7 @@ test("test useCountDownFormat", () => {
   expect(useTimeHandler.useCountDownFormat("{h}时{m}分{s}秒")(7272000).format).toBe("2时1分12秒");
   expect(useTimeHandler.useCountDownFormat("{h}h{m}m{s}s", 7272000).format).toBe("2h1m12s");
   expect(useTimeHandler.useCountDownFormat("{h}h{m}m{s}s")(7272000).format).toBe("2h1m12s");
+  expect(useTimeHandler.useCountDownFormat("{h}h{m}m{s}s")("SDFRSDFSDF").format).toBe("NaNhNaNmNaNs");
 });
 
 /**test useTimeFormat */

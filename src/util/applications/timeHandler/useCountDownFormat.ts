@@ -1,5 +1,6 @@
 import type { ObjectType } from "../../../type";
 import { useCurryTwo } from "../../../util/currying";
+import { useConsoleError } from "../../../useInside";
 
 /**
  * 剩余时间毫秒转化为时间格式字符串
@@ -8,6 +9,9 @@ import { useCurryTwo } from "../../../util/currying";
  */
 const useCountDownFormatShallow = (format: string, time: number | string) => {
   let newTime = Number(time);
+  if (isNaN(newTime)) {
+    useConsoleError("useCountDownFormat: 时间戳格式不对!");
+  }
   /**解析时间 */
   const date: ObjectType<number> = {
     "d+": Math.floor(newTime / 1000 / 3600 / 24),
