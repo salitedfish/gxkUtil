@@ -11,7 +11,8 @@ import { useCurryTwo } from "../../util/currying";
 const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
   for (let key in target) {
     /**这里选出空值 */
-    if (!target[key] || useDeepEqual(target[key], []) || useDeepEqual(target[key], {}) || useDeepEqual(target[key], new Set()) || useDeepEqual(target[key], new Map())) {
+    const useTargetDeepEqual = useDeepEqual(target[key]);
+    if (!target[key] || useTargetDeepEqual([])({ complete: true }) || useTargetDeepEqual({})({ complete: true }) || useTargetDeepEqual(new Set())({ complete: true }) || useTargetDeepEqual(new Map())({ complete: true })) {
       /**如果exclude不存在或者exclude不包含此空值，说明此空值没有被排除，则返回true */
       if (!exclude || useDeepInclude(exclude)(target[key]) === false) {
         return true;

@@ -41,7 +41,7 @@ test("test useGetFileTree", async () => {
     const fileTree = await useFile.useGetFileTree("./src/util/node/file");
     const sliceFileTree = fileTree.slice(0, 3);
 
-    expect(useDeepEqual(sliceFileTree[0].fileName, "fileText.sh")).toBe(true);
+    expect(useDeepEqual(sliceFileTree[0].fileName, "fileText.sh")({ complete: false })).toBe(true);
   } catch (err) {
     expect(err).toMatch("");
   }

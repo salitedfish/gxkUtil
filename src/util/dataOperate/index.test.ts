@@ -28,10 +28,10 @@ const mbj = {
 };
 const i = [new Set(), 0, new Map()];
 /**不拷贝函数、Map、Set*/
-const simpleCloneObj = useDataOperate.useDeepClone(obj)(false);
-const simpleCloneMbj = useDataOperate.useDeepClone(mbj, false);
+const simpleCloneObj = useDataOperate.useDeepClone(obj)({});
+const simpleCloneMbj = useDataOperate.useDeepClone(mbj, {});
 /**完全深拷贝*/
-const cloneObj = useDataOperate.useDeepClone(obj)(true);
+const cloneObj = useDataOperate.useDeepClone(obj)({ complete: true });
 
 /**test useCheckEmptyInObj */
 test("test useCheckEmptyInObj", () => {
@@ -63,20 +63,20 @@ test("test useIsPositiveInt", () => {
 
 /**test useDeepClone */
 test("test useDeepClone", () => {
-  expect(useDataOperate.useDeepEqual(obj, simpleCloneObj)).toBe(false);
-  expect(useDataOperate.useDeepEqual(mbj, simpleCloneMbj)).toBe(true);
-  expect(useDataOperate.useDeepEqual(obj, cloneObj) && obj !== cloneObj).toBe(true);
+  expect(useDataOperate.useDeepEqual(obj, simpleCloneObj)({ complete: true })).toBe(false);
+  expect(useDataOperate.useDeepEqual(mbj, simpleCloneMbj)({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual(obj, cloneObj)({ complete: true }) && obj !== cloneObj).toBe(true);
 });
 
 /**test useDeepEqual */
 test("test useDeepEqual", () => {
-  expect(useDataOperate.useDeepEqual(cloneObj, obj)).toBe(true);
-  expect(useDataOperate.useDeepEqual({ a: 1 }, { a: 1, b: 1 })).toBe(false);
-  expect(useDataOperate.useDeepEqual([1, 2], [1, 2])).toBe(true);
-  expect(useDataOperate.useDeepEqual(f, g)).toBe(true);
-  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), [])).toBe(false);
-  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2, 3]))).toBe(true);
-  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2]))).toBe(false);
+  expect(useDataOperate.useDeepEqual(cloneObj, obj)({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: 1 }, { a: 1, b: 1 })({})).toBe(false);
+  expect(useDataOperate.useDeepEqual([1, 2], [1, 2])({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(f, g)({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), [])({ complete: true })).toBe(false);
+  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2, 3]))({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2]))({ complete: true })).toBe(false);
 });
 
 /**test useDeepInclude */
@@ -219,13 +219,13 @@ test("test useGroupByCondition", () => {
     ],
     [{ a: 5, b: 6 }],
   ];
-  expect(useDataOperate.useDeepEqual(resGroup)(resGropRef)).toBe(true);
-  expect(useDataOperate.useDeepEqual(retGroup, resGropRef)).toBe(true);
-  expect(useDataOperate.useDeepEqual(regGroup, regGropRef)).toBe(true);
-  expect(useDataOperate.useDeepEqual(rexGroup, rexGropRef)).toBe(true);
-  expect(useDataOperate.useDeepEqual(rekGroup, rekGropRef)).toBe(true);
-  expect(useDataOperate.useDeepEqual(remGroup, remGropRef)).toBe(true);
-  expect(useDataOperate.useDeepEqual(renGroup, renGropRef)).toBe(true);
+  expect(useDataOperate.useDeepEqual(resGroup)(resGropRef)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(retGroup, resGropRef)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(regGroup, regGropRef)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(rexGroup, rexGropRef)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(rekGroup, rekGropRef)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(remGroup, remGropRef)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(renGroup, renGropRef)({})).toBe(true);
 });
 
 /**test useRepPartStr */
@@ -257,9 +257,9 @@ test("test useSetFirstSign", () => {
       { a: 1, firstSign: true },
       { a: 2, firstSign: true },
       { b: 1, firstSign: true },
-    ])
+    ])({})
   ).toBe(true);
-  expect(useDataOperate.useDeepEqual(resTwo, [{ a: 1, firstSign: true }, { a: 1 }, { b: 1, firstSign: true }])).toBe(true);
-  expect(useDataOperate.useDeepEqual(resThree, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1, firstSign: true }, { a: 1 }])).toBe(true);
-  expect(useDataOperate.useDeepEqual(resFour, [{ a: 1, firstSign: true }, { a: 2 }, { b: 1, firstSign: true }])).toBe(true);
+  expect(useDataOperate.useDeepEqual(resTwo, [{ a: 1, firstSign: true }, { a: 1 }, { b: 1, firstSign: true }])({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(resThree, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1, firstSign: true }, { a: 1 }])({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual(resFour, [{ a: 1, firstSign: true }, { a: 2 }, { b: 1, firstSign: true }])({})).toBe(true);
 });

@@ -17,7 +17,7 @@ export function useDeepInclude<T>(origin: T[], condition?: T | ((item: T) => boo
       } else if (condition instanceof Function && condition(origin[index])) {
         /**函数条件 */
         return index;
-      } else if (useDeepEqual(origin[index], condition)) {
+      } else if (useDeepEqual(origin[index], condition)({ complete: true })) {
         /**引用值 */
         return index;
       }
