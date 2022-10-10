@@ -2,7 +2,7 @@ import * as useFile from ".";
 import { useDeepEqual } from "../../index";
 
 const randomString = "文件读写测试：" + "-----------";
-const fileAddress = "./fileText.sh";
+const fileAddress = "./src/util/node/file/fileText.sh";
 const appendString = "追加语句";
 
 /**test useWriteFile */
