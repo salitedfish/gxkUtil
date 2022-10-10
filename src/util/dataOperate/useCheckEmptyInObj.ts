@@ -1,5 +1,5 @@
 import type { ObjectType } from "../../type";
-import { useDeepEqual, useDeepInclude } from ".";
+import { useDeepInclude } from ".";
 import { useCurryTwo } from "../../util/currying";
 
 /**
@@ -8,15 +8,13 @@ import { useCurryTwo } from "../../util/currying";
  * @param exclude 排除的值
  * @returns
  */
-const useCheckEmptyInObjShallow = (target: ObjectType, exclude?: unknown[]) => {
+const useCheckEmptyInObjShallow = (target: ObjectType, exclude: unknown[]) => {
+  const referenceArr = [null, 0, NaN, undefined, [], {}, "", new Set(), new Map()];
   for (let key in target) {
-    /**这里选出空值 */
-    const useTargetDeepEqual = useDeepEqual(target[key]);
-    if (!target[key] || useTargetDeepEqual([])({ complete: true }) || useTargetDeepEqual({})({ complete: true }) || useTargetDeepEqual(new Set())({ complete: true }) || useTargetDeepEqual(new Map())({ complete: true })) {
-      /**如果exclude不存在或者exclude不包含此空值，说明此空值没有被排除，则返回true */
-      if (!exclude || useDeepInclude(exclude)(target[key]) === false) {
-        return true;
-      }
+    const item = target[key];
+    /**如果包含在空值列表，但不包含在排除列表，则表示有空值 */
+    if (useDeepInclude(referenceArr)(item) !== false && useDeepInclude(exclude)(item) === false) {
+      return true;
     }
   }
   return false;

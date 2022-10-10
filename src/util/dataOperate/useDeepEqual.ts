@@ -23,9 +23,12 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
    * 通过递归遍历每一项进行比较
    */
   if (useCheckSimpleData(origin) || useCheckSimpleData(target)) {
+    /**如果是NaN */
+    if (isNaN(origin) && typeof origin === "number" && isNaN(target) && typeof target === "number") return true;
+    /**不是NaN的简单数据 */
     return origin === target;
-    /**数组 */
   } else if (Array.isArray(origin) && Array.isArray(target)) {
+    /**数组 */
     if (origin.length !== target.length) {
       return false;
     } else {
@@ -36,8 +39,8 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
       }
       return true;
     }
-    /**Map */
   } else if (origin instanceof Map && target instanceof Map) {
+    /**Map */
     if (origin.size !== target.size) {
       return false;
     } else {
@@ -51,8 +54,8 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
       }
       return true;
     }
-    /**Set */
   } else if (origin instanceof Set && target instanceof Set) {
+    /**Set */
     if (origin.size !== target.size) {
       return false;
     } else {
@@ -63,8 +66,8 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
       }
       return true;
     }
-    /**Object */
   } else if (origin.constructor === Object && target.constructor === Object) {
+    /**Object */
     if (Object.keys(origin).length !== Object.keys(target).length) {
       return false;
     } else {
@@ -76,6 +79,7 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
       return true;
     }
   } else {
+    /**函数 */
     return origin === target;
   }
 };

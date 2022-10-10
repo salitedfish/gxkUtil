@@ -35,11 +35,11 @@ const cloneObj = useDataOperate.useDeepClone(obj)({ complete: true });
 
 /**test useCheckEmptyInObj */
 test("test useCheckEmptyInObj", () => {
-  expect(useDataOperate.useCheckEmptyInObj(obj)()).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj(obj)([])).toBe(true);
   expect(useDataOperate.useCheckEmptyInObj(obj)([null])).toBe(false);
   expect(useDataOperate.useCheckEmptyInObj(obj)([0])).toBe(true);
   expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })([0, null])).toBe(false);
-  expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })()).toBe(true);
+  expect(useDataOperate.useCheckEmptyInObj({ a: 0, b: null })([])).toBe(true);
   expect(useDataOperate.useCheckEmptyInObj([0, null], [0, null])).toBe(false);
   expect(useDataOperate.useCheckEmptyInObj([0, []], [0])).toBe(true);
   expect(useDataOperate.useCheckEmptyInObj([0, []], [0, []])).toBe(false);
@@ -77,6 +77,10 @@ test("test useDeepEqual", () => {
   expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), [])({ complete: true })).toBe(false);
   expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2, 3]))({ complete: true })).toBe(true);
   expect(useDataOperate.useDeepEqual(new Set([1, 2, 3]), new Set([1, 2]))({ complete: true })).toBe(false);
+  expect(useDataOperate.useDeepEqual(NaN, NaN)({})).toBe(true);
+  expect(useDataOperate.useDeepEqual(NaN, NaN)({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: NaN }, { a: NaN })({ complete: true })).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: NaN }, { a: "ERE" })({ complete: true })).toBe(false);
 });
 
 /**test useDeepInclude */
@@ -113,6 +117,7 @@ test("test useDeepInclude", () => {
       { name: "b", path: "b", query: { age: 2, name: "gxh" } },
     ])((item) => (item as any).name === "b")
   ).toBe("6");
+  expect(useDataOperate.useDeepInclude([0, [undefined, 2, 3], 2])([undefined, 2, 3])).toBe("1");
 });
 
 /**useRmRpt */
