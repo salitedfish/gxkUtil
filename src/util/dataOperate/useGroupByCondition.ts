@@ -18,7 +18,7 @@ export function useGroupByCondition<T>(origin: T[]): (options: GroupOption<T>) =
 export function useGroupByCondition<T>(origin: T[], options: GroupOption<T>): T[][];
 export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
   const handler = (options: GroupOption<T>) => {
-    const _origin = options.pure ? useDeepClone(origin)({ complete: options.complete || false }) : origin;
+    const _origin = options.pure ? useDeepClone(origin)({ complete: options.complete }) : origin;
     const resGroup: T[][] = [];
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
       for (let condition of conditions) {

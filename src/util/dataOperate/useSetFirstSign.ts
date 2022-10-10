@@ -20,7 +20,7 @@ export function useSetFirstSign<T extends ObjectType>(target: T[], options?: Fir
   };
 
   const handler = (options: FirstSignOptions<T>) => {
-    const _target = options.pure ? useDeepClone(target)({ complete: options.complete || false }) : target;
+    const _target = options.pure ? useDeepClone(target)({ complete: options.complete }) : target;
     /**用来保存出现过的条件值 */
     const signMap = new Set();
     for (let item of _target) {

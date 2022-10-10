@@ -28,7 +28,7 @@ export function useRmRepeat<V, W>(oldArr: V[], options?: RmRepeatOptions<V, W>):
         /**pure为true则，新数组的每一项完全和旧数组没联系
          * 这里只有不是重复时才进行纯净判断，优化性能
          */
-        const resItem = options.pure ? useDeepClone(item)({ complete: options.complete || false }) : item;
+        const resItem = options.pure ? useDeepClone(item)({ complete: options.complete }) : item;
         newArr.push(resItem);
         referenceArr.push(referenceItem);
       }
