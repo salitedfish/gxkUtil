@@ -23,8 +23,8 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
    * 通过递归遍历每一项进行比较
    */
   if (useCheckSimpleData(origin) || useCheckSimpleData(target)) {
-    /**如果是NaN */
-    if (isNaN(origin) && typeof origin === "number" && isNaN(target) && typeof target === "number") return true;
+    /**如果是NaN或'NaN'，因为NaN !== NaN，而且isNaN('不是数字的字符串')都为true，所以用String来判断NaN */
+    if (String(origin) === "NaN" && String(target) === "NaN") return true;
     /**不是NaN的简单数据 */
     return origin === target;
   } else if (Array.isArray(origin) && Array.isArray(target)) {
@@ -72,7 +72,8 @@ const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions
       return false;
     } else {
       for (const key in origin) {
-        if (!useDeepEqualShallow(origin[key], target[key], options)) {
+        /** origin里如果有个属性是undefined，那么target即使没这个属性也会判断为相等，所以先判断target有这个属性 */
+        if (!target.hasOwnProperty(key) || !useDeepEqualShallow(origin[key], target[key], options)) {
           return false;
         }
       }

@@ -56,7 +56,9 @@ abstract class BaseFetch {
   constructor(private comConfig: ComFetchConfig, private comOptions: ComFetchOptions) {}
   /**合并请求URL */
   private createURL(comConfig: ComFetchConfig, cusConfig: CusFetchConfig) {
-    return useGenParamsUrl(comConfig.baseURL || "" + cusConfig.URL)(cusConfig.params || {});
+    comConfig.baseURL ||= "";
+    cusConfig.params ||= {};
+    return useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params);
   }
   /**合并请求配置 */
   private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig) {

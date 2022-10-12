@@ -4,8 +4,9 @@
  */
 export const useCheckSimpleData = (...argument: any[]) => {
   for (let item of argument) {
-    /**如果过既不在["string", "number", "boolean", "symbol", "undefined"]里也不是null，则表示是引用数据，返回false*/
-    if (!["string", "number", "boolean", "symbol", "undefined"].includes(typeof item) && item !== null) {
+    const isEasy = ["string", "number", "boolean", "symbol", "undefined"].includes(typeof item) || [null].includes(item);
+    /**如果类型不在["string", "number", "boolean", "symbol", "undefined"]里，且值不在[null]里，则表示是引用数据，返回false*/
+    if (!isEasy) {
       return false;
     }
   }

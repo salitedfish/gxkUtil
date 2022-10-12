@@ -81,6 +81,13 @@ test("test useDeepEqual", () => {
   expect(useDataOperate.useDeepEqual(NaN, NaN)({ complete: true })).toBe(true);
   expect(useDataOperate.useDeepEqual({ a: NaN }, { a: NaN })({ complete: true })).toBe(true);
   expect(useDataOperate.useDeepEqual({ a: NaN }, { a: "ERE" })({ complete: true })).toBe(false);
+  // 如果complete不设置true，则useDeepEqual会转为JSON字符串进行比较，而NaN会被转为null，所以下面判断为true
+  expect(useDataOperate.useDeepEqual({ a: NaN }, { a: null })({})).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: NaN }, { a: null })({ complete: true })).toBe(false);
+  expect(useDataOperate.useDeepEqual({ a: undefined }, {})({})).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: undefined }, {})({ complete: true })).toBe(false);
+  expect(useDataOperate.useDeepEqual({ a: undefined }, { b: undefined })({})).toBe(true);
+  expect(useDataOperate.useDeepEqual({ a: undefined }, { b: undefined })({ complete: true })).toBe(false);
 });
 
 /**test useDeepInclude */

@@ -1,6 +1,5 @@
 export * from "./useCheckEmptyInObj";
 export * from "./useCheckSimpleData";
-export * from "./useCheckUndefined";
 export * from "./useDeepClone";
 export * from "./useDeepEqual";
 export * from "./useDeepInclude";
