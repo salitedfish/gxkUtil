@@ -18,7 +18,9 @@ export function useGroupByCondition<T>(origin: T[]): (options: GroupOptions<T>) 
 export function useGroupByCondition<T>(origin: T[], options: GroupOptions<T>): T[][];
 export function useGroupByCondition<T>(origin: T[], options?: GroupOptions<T>) {
   const handler = (options: GroupOptions<T>) => {
-    const _origin = options.pure ? useDeepClone(origin)({ complete: options.complete }) : origin;
+    /**解构配置项 */
+    const { condition, arrayCount, eatchCount, conditions, pure, complete } = options;
+    const _origin = pure ? useDeepClone(origin)({ complete }) : origin;
     const resGroup: T[][] = [];
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {
       for (let condition of conditions) {
@@ -69,19 +71,19 @@ export function useGroupByCondition<T>(origin: T[], options?: GroupOptions<T>) {
       return resGroup;
     };
     /**不同分组条件判断 */
-    if (Array.isArray(options.conditions)) {
+    if (Array.isArray(conditions)) {
       /**具体到每组的条件 */
-      return conditionsGroupHandler(_origin, options.conditions);
-    } else if (options.eatchCount) {
+      return conditionsGroupHandler(_origin, conditions);
+    } else if (eatchCount) {
       /**每个数组有几项 */
-      return countGroupHandler(_origin, options.eatchCount);
-    } else if (options.arrayCount) {
-      /**分成几个数组 */
-      const eatchCount = Math.floor(origin.length / options.arrayCount);
       return countGroupHandler(_origin, eatchCount);
-    } else if (options.condition) {
+    } else if (arrayCount) {
+      /**分成几个数组 */
+      const eatchCount = Math.floor(origin.length / arrayCount);
+      return countGroupHandler(_origin, eatchCount);
+    } else if (condition) {
       /**整体条件 */
-      return conditionGroupHandler(_origin, options.condition);
+      return conditionGroupHandler(_origin, condition);
     } else {
       return resGroup;
     }

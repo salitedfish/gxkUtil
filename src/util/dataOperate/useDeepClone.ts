@@ -12,7 +12,9 @@ export function useDeepClone<T extends any>(target: T): (options: DeepCloneOptio
 export function useDeepClone<T extends any>(target: T, options: DeepCloneOptions): T;
 export function useDeepClone<T extends any>(target: T, options?: DeepCloneOptions): T | ((options: DeepCloneOptions) => T) {
   const handler = (options: DeepCloneOptions) => {
-    if (!options.complete) {
+    /**解构配置项 */
+    const { complete } = options;
+    if (!complete) {
       /**
        * JSON不能拷贝函数、Map、Set
        * JSON的拷贝会去除值为undefined的属性，数组中的undefined、NaN也会变为null

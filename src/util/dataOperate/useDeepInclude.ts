@@ -15,14 +15,16 @@ export function useDeepInclude<T>(origin: T[]): (options: DeepIncludeOptions<T>)
 export function useDeepInclude<T>(origin: T[], options: DeepIncludeOptions<T>): false | string;
 export function useDeepInclude<T>(origin: T[], options?: DeepIncludeOptions<T>) {
   const handler = (options: DeepIncludeOptions<T>) => {
+    /**解构配置项 */
+    const { condition, complete } = options;
     for (const index in origin) {
-      if (useCheckSimpleData(options.condition) && origin[index] === options.condition) {
+      if (useCheckSimpleData(condition) && origin[index] === condition) {
         /**原始值 */
         return index;
-      } else if (options.condition instanceof Function && options.condition(origin[index])) {
+      } else if (condition instanceof Function && condition(origin[index])) {
         /**函数条件 */
         return index;
-      } else if (useDeepEqual(origin[index], options.condition)({ complete: options.complete })) {
+      } else if (useDeepEqual(origin[index], condition)({ complete })) {
         /**引用值 */
         return index;
       }

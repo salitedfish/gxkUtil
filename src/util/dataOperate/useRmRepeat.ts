@@ -17,18 +17,20 @@ export function useRmRepeat<V, W>(oldArr: V[]): (options: RmRepeatOptions<V, W>)
 export function useRmRepeat<V, W>(oldArr: V[], options: RmRepeatOptions<V, W>): V[];
 export function useRmRepeat<V, W>(oldArr: V[], options?: RmRepeatOptions<V, W>): V[] | ((options: RmRepeatOptions<V, W>) => V[]) {
   const handler = (options: RmRepeatOptions<V, W>) => {
+    /**解构配置项 */
+    const { condition, deep, complete, pure } = options;
     const newArr: Array<V> = [];
     const referenceArr: Array<V | W> = [];
     for (const item of oldArr) {
       /**如果有condition则依据处理后的值来判断 */
       /**deep为true则用useDeepInclude判断是否重复，否则用includes判断是否重复 */
-      const referenceItem = options.condition ? options.condition(item) : item;
-      const repeat = options.deep ? useDeepInclude(referenceArr, { condition: referenceItem }) !== false : referenceArr.includes(referenceItem);
+      const referenceItem = condition ? condition(item) : item;
+      const repeat = deep ? useDeepInclude(referenceArr, { condition: referenceItem }) !== false : referenceArr.includes(referenceItem);
       if (!repeat) {
         /**pure为true则，新数组的每一项完全和旧数组没联系
          * 这里只有不是重复时才进行纯净判断，优化性能
          */
-        const resItem = options.pure ? useDeepClone(item)({ complete: options.complete }) : item;
+        const resItem = pure ? useDeepClone(item)({ complete }) : item;
         newArr.push(resItem);
         referenceArr.push(referenceItem);
       }

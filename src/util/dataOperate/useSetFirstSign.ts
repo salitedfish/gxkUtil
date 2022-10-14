@@ -20,11 +20,13 @@ export function useSetFirstSign<T extends ObjectType>(target: T[], options?: Fir
   };
 
   const handler = (options: FirstSignOptions<T>) => {
-    const _target = options.pure ? useDeepClone(target)({ complete: options.complete }) : target;
+    /**解构配置项 */
+    const { condition, complete, pure } = options;
+    const _target = pure ? useDeepClone(target)({ complete }) : target;
     /**用来保存出现过的条件值 */
     const signMap = new Set();
     for (let item of _target) {
-      const targetValue = options.condition(item);
+      const targetValue = condition(item);
       /**如果signMap中不存在_targetValue,则设置标记 */
       if (!signMap.has(targetValue)) {
         signMap.add(targetValue);

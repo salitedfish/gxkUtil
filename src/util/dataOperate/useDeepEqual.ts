@@ -12,11 +12,13 @@ type DeepEqualOptions = {
  * @returns
  */
 const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions) => {
+  /**解构配置项 */
+  const { complete } = options;
   /**
    * 通过转化为JSON字符串进行比较
    * 如果比较的两个值都是对象或原始值的数组，不包含set、map、undefined、NaN等
    */
-  if (!options.complete) {
+  if (!complete) {
     return JSON.stringify(origin) === JSON.stringify(target);
   }
   /**

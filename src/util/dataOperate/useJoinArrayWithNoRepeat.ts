@@ -11,17 +11,19 @@ export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[])
 export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[], options: JoinArrayWithNoRepeatOptions<T>): T[];
 export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[], options?: JoinArrayWithNoRepeatOptions<T>): T[] | ((options: JoinArrayWithNoRepeatOptions<T>) => T[]) {
   const handler = (options: JoinArrayWithNoRepeatOptions<T>) => {
-    const _targetArray = options.pure ? useDeepClone(targetArray)({ complete: options.complete }) : targetArray;
+    /**解构配置项 */
+    const { condition, deep, complete, pure } = options;
+    const _targetArray = pure ? useDeepClone(targetArray)({ complete }) : targetArray;
     for (let item of referenceArr) {
       let repeat = false;
       for (let i of _targetArray) {
-        const _A = options.condition ? options.condition(item) : item;
-        const _B = options.condition ? options.condition(i) : i;
-        repeat = options.deep ? useDeepEqual(_A, _B)({ complete: options.complete }) : _A === _B;
+        const _A = condition ? condition(item) : item;
+        const _B = condition ? condition(i) : i;
+        repeat = deep ? useDeepEqual(_A, _B)({ complete }) : _A === _B;
         if (repeat) break;
       }
       if (!repeat) {
-        const _item = options.pure ? useDeepClone(item)({ complete: options.complete }) : item;
+        const _item = pure ? useDeepClone(item)({ complete }) : item;
         _targetArray.push(_item);
       }
     }
