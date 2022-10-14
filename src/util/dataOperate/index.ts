@@ -5,6 +5,7 @@ export * from "./useDeepEqual";
 export * from "./useDeepInclude";
 export * from "./useGroupByCondition";
 export * from "./useIsPositiveInt";
+export * from "./useJoinArrayWithNoRepeat";
 export * from "./useRepPartStr";
 export * from "./useRmRepeat";
 export * from "./useSetFirstSign";

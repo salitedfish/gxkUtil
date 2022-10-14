@@ -1,7 +1,7 @@
 import { useIsPositiveInt, useDeepClone } from ".";
 import { useConsoleError } from "../../useInside";
 
-type GroupOption<T> = {
+type GroupOptions<T> = {
   conditions?: ((item: T) => boolean)[]; // 比如条件为[item.a > 1, item.b > 100]，则最终分组是按照item.a > 1一组，item.b > 100 一组
   arrayCount?: number; // 按组数分组
   eatchCount?: number; // 按每组个数分组
@@ -14,10 +14,10 @@ type GroupOption<T> = {
  * @param origin
  * @param options 每组满足的条件,每组几个,几个数组,分组条件，是否纯净
  */
-export function useGroupByCondition<T>(origin: T[]): (options: GroupOption<T>) => T[][];
-export function useGroupByCondition<T>(origin: T[], options: GroupOption<T>): T[][];
-export function useGroupByCondition<T>(origin: T[], options?: GroupOption<T>) {
-  const handler = (options: GroupOption<T>) => {
+export function useGroupByCondition<T>(origin: T[]): (options: GroupOptions<T>) => T[][];
+export function useGroupByCondition<T>(origin: T[], options: GroupOptions<T>): T[][];
+export function useGroupByCondition<T>(origin: T[], options?: GroupOptions<T>) {
+  const handler = (options: GroupOptions<T>) => {
     const _origin = options.pure ? useDeepClone(origin)({ complete: options.complete }) : origin;
     const resGroup: T[][] = [];
     const conditionsGroupHandler = (arr: T[], conditions: ((item: T) => boolean)[]) => {

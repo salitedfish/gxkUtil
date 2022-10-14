@@ -13,7 +13,7 @@ const useCheckEmptyInObjShallow = (target: ObjectType, exclude: unknown[]) => {
   for (let key in target) {
     const item = target[key];
     /**如果包含在空值列表，但不包含在排除列表，则表示有空值 */
-    if (useDeepInclude(referenceArr)(item) !== false && useDeepInclude(exclude)(item) === false) {
+    if (useDeepInclude(referenceArr)({ condition: item, complete: true }) !== false && useDeepInclude(exclude)({ condition: item, complete: true }) === false) {
       return true;
     }
   }

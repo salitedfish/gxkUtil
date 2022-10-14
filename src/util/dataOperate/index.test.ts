@@ -92,16 +92,16 @@ test("test useDeepEqual", () => {
 
 /**test useDeepInclude */
 test("test useDeepInclude", () => {
-  expect(useDataOperate.useDeepInclude([obj], cloneObj)).toBe("0");
-  expect(useDataOperate.useDeepInclude([1, f], g)).toBe("1");
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { a: 1, b: 2 })).toBe(false);
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.a === 1)).toBe("0");
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.a > 1)).toBe(false);
-  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])((item) => item.b === 1)).toBe("1");
-  expect(useDataOperate.useDeepInclude([0, 1, 2, 3, 4, 5, 6])(2)).toBe("2");
-  expect(useDataOperate.useDeepInclude([0, 1, 2, 3, 4, 5, 6])((item) => item === 2)).toBe("2");
-  expect(useDataOperate.useDeepInclude([0, new Set([1, 2, 3]), 2])(new Set([1, 2, 3]))).toBe("1");
-  expect(useDataOperate.useDeepInclude([0, [1, 2, 3], 2])([1, 2, 3])).toBe("1");
+  expect(useDataOperate.useDeepInclude([obj], { condition: cloneObj, complete: true })).toBe("0");
+  expect(useDataOperate.useDeepInclude([1, f], { condition: g, complete: true })).toBe("1");
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }], { condition: { a: 1, b: 2 }, complete: true })).toBe(false);
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])({ condition: (item) => item.a === 1, complete: true })).toBe("0");
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])({ condition: (item) => item.a > 1, complete: true })).toBe(false);
+  expect(useDataOperate.useDeepInclude([obj, { a: 1, b: 1 }])({ condition: (item) => item.b === 1, complete: true })).toBe("1");
+  expect(useDataOperate.useDeepInclude([0, 1, 2, 3, 4, 5, 6])({ condition: 2 })).toBe("2");
+  expect(useDataOperate.useDeepInclude([0, 1, 2, 3, 4, 5, 6])({ condition: (item) => item === 2, complete: true })).toBe("2");
+  expect(useDataOperate.useDeepInclude([0, new Set([1, 2, 3]), 2])({ condition: new Set([1, 2, 3]), complete: true })).toBe("1");
+  expect(useDataOperate.useDeepInclude([0, [1, 2, 3], 2])({ condition: [1, 2, 3] })).toBe("1");
   expect(
     useDataOperate.useDeepInclude([
       { name: "c", path: "c", query: { age: 0, name: "gxl" } },
@@ -111,7 +111,7 @@ test("test useDeepInclude", () => {
       { name: "c", path: "c", query: { age: 0, name: "gxl" } },
       { name: "a", path: "a", query: { age: 1, name: "gxk" } },
       { name: "b", path: "b", query: { age: 2, name: "gxh" } },
-    ])({ name: "a", path: "a", query: { age: 1, name: "gxk" } })
+    ])({ condition: { name: "a", path: "a", query: { age: 1, name: "gxk" } }, complete: true })
   ).toBe("5");
   expect(
     useDataOperate.useDeepInclude([
@@ -122,9 +122,9 @@ test("test useDeepInclude", () => {
       { name: "c", path: "c", query: { age: 0, name: "gxl" } },
       { name: "a", path: "a", query: { age: 1, name: "gxk" } },
       { name: "b", path: "b", query: { age: 2, name: "gxh" } },
-    ])((item) => (item as any).name === "b")
+    ])({ condition: (item) => (item as any).name === "b", complete: true })
   ).toBe("6");
-  expect(useDataOperate.useDeepInclude([0, [undefined, 2, 3], 2])([undefined, 2, 3])).toBe("1");
+  expect(useDataOperate.useDeepInclude([0, [undefined, 2, 3], 2])({ condition: [undefined, 2, 3], complete: true })).toBe("1");
 });
 
 /**useRmRpt */
@@ -274,4 +274,16 @@ test("test useSetFirstSign", () => {
   expect(useDataOperate.useDeepEqual(resTwo, [{ a: 1, firstSign: true }, { a: 1 }, { b: 1, firstSign: true }])({})).toBe(true);
   expect(useDataOperate.useDeepEqual(resThree, [{ a: 1, firstSign: true }, { a: 2, firstSign: true }, { b: 1, firstSign: true }, { a: 1 }])({ complete: true })).toBe(true);
   expect(useDataOperate.useDeepEqual(resFour, [{ a: 1, firstSign: true }, { a: 2 }, { b: 1, firstSign: true }])({})).toBe(true);
+});
+
+/**test useJoinArrayWithNoRepeat */
+test("test useJoinArrayWithNoRepeat", () => {
+  const _A = [{ a: 1 }, { a: 2 }, { a: 3 }];
+  const _B = [{ a: 2 }, { a: 4 }, { a: 1 }, { a: 5 }];
+  const _C = [{ a: 3 }, { a: 4 }, { a: 5 }, { a: 6 }];
+  const res = useDataOperate.useJoinArrayWithNoRepeat(_A, _B)({ pure: true, condition: (item) => item.a });
+  expect(useDataOperate.useDeepEqual(res, [{ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }, { a: 5 }])({})).toBe(true);
+
+  useDataOperate.useJoinArrayWithNoRepeat(_A, _C)({ condition: (item) => item.a });
+  expect(useDataOperate.useDeepEqual(_A, [{ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }, { a: 5 }, { a: 6 }])({})).toBe(true);
 });
