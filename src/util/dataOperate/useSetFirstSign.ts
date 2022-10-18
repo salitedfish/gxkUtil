@@ -12,8 +12,8 @@ type FirstSignOptions<T> = {
  * @param target
  * @param options 标记条件，是否纯净
  */
-export function useSetFirstSign<T extends ObjectType>(target: T[]): (options: FirstSignOptions<T>) => (T & { firstSign?: true })[];
 export function useSetFirstSign<T extends ObjectType>(target: T[], options: FirstSignOptions<T>): (T & { firstSign?: true })[];
+export function useSetFirstSign<T extends ObjectType>(target: T[]): (options: FirstSignOptions<T>) => (T & { firstSign?: true })[];
 export function useSetFirstSign<T extends ObjectType>(target: T[], options?: FirstSignOptions<T>) {
   type X = T & {
     firstSign?: true;

@@ -7,9 +7,9 @@ type SetStyleName = keyof CSSStyleDeclaration;
  * @param styleName 如：width
  * @param styleValue 如：12px
  */
+export function useSetDomStyle<T extends SetStyleName>(target: string, styleName: T, styleValue: CSSStyleDeclaration[T]): void;
 export function useSetDomStyle(target: string): <T extends SetStyleName>(styleName: T) => (styleValue: CSSStyleDeclaration[T]) => void;
 export function useSetDomStyle<T extends SetStyleName>(target: string, styleName: T): (styleValue: CSSStyleDeclaration[T]) => void;
-export function useSetDomStyle<T extends SetStyleName>(target: string, styleName: T, styleValue: CSSStyleDeclaration[T]): void;
 export function useSetDomStyle<T extends SetStyleName>(target: string, styleName?: T, styleValue?: CSSStyleDeclaration[T]) {
   const handler = (styleName: T) => {
     return (styleValue: CSSStyleDeclaration[T]) => {

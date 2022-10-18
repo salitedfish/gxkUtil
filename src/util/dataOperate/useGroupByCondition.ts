@@ -14,8 +14,8 @@ type GroupOptions<T> = {
  * @param origin
  * @param options 每组满足的条件,每组几个,几个数组,分组条件，是否纯净
  */
-export function useGroupByCondition<T>(origin: T[]): (options: GroupOptions<T>) => T[][];
 export function useGroupByCondition<T>(origin: T[], options: GroupOptions<T>): T[][];
+export function useGroupByCondition<T>(origin: T[]): (options: GroupOptions<T>) => T[][];
 export function useGroupByCondition<T>(origin: T[], options?: GroupOptions<T>) {
   const handler = (options: GroupOptions<T>) => {
     /**解构配置项 */

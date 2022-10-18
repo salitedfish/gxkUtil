@@ -13,8 +13,8 @@ type RmRepeatOptions<V, W> = {
  * @param options 是否深度去重，去重条件，是否纯净
  * @returns
  */
-export function useRmRepeat<V, W>(oldArr: V[]): (options: RmRepeatOptions<V, W>) => V[];
 export function useRmRepeat<V, W>(oldArr: V[], options: RmRepeatOptions<V, W>): V[];
+export function useRmRepeat<V, W>(oldArr: V[]): (options: RmRepeatOptions<V, W>) => V[];
 export function useRmRepeat<V, W>(oldArr: V[], options?: RmRepeatOptions<V, W>): V[] | ((options: RmRepeatOptions<V, W>) => V[]) {
   const handler = (options: RmRepeatOptions<V, W>) => {
     /**解构配置项 */

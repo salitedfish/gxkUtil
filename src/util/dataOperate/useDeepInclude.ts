@@ -8,11 +8,11 @@ type DeepIncludeOptions<T> = {
 /**
  * 深度判断数组中是否包含某个值或满足某个条件的值,无返回false,有则返回下标, 依赖useDeepEqual
  * @param origin 例如[{a:1}]
- * @param condition 例如 {a:1} 或 (item) => true
+ * @param options 配置
  * @returns
  */
-export function useDeepInclude<T>(origin: T[]): (options: DeepIncludeOptions<T>) => false | string;
 export function useDeepInclude<T>(origin: T[], options: DeepIncludeOptions<T>): false | string;
+export function useDeepInclude<T>(origin: T[]): (options: DeepIncludeOptions<T>) => false | string;
 export function useDeepInclude<T>(origin: T[], options?: DeepIncludeOptions<T>) {
   const handler = (options: DeepIncludeOptions<T>) => {
     /**解构配置项 */

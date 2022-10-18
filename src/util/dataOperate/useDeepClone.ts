@@ -5,11 +5,11 @@ type DeepCloneOptions = {
 /**
  * 深拷贝
  * @param target 目标数据
- * @param complete 判断通过递归方式、JSON方式进行深拷贝
+ * @param options 配置
  * @returns
  */
-export function useDeepClone<T extends any>(target: T): (options: DeepCloneOptions) => T;
 export function useDeepClone<T extends any>(target: T, options: DeepCloneOptions): T;
+export function useDeepClone<T extends any>(target: T): (options: DeepCloneOptions) => T;
 export function useDeepClone<T extends any>(target: T, options?: DeepCloneOptions): T | ((options: DeepCloneOptions) => T) {
   const handler = (options: DeepCloneOptions) => {
     /**解构配置项 */

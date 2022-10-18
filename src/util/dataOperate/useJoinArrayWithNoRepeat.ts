@@ -7,8 +7,14 @@ type JoinArrayWithNoRepeatOptions<T> = {
   pure?: boolean; // 默认在原数组上添加，true则会创建新的数组，数组的每一项也是新的
 };
 
-export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[]): (options: JoinArrayWithNoRepeatOptions<T>) => T[];
+/**
+ * 合并数组并去除重复值
+ * @param targetArray 合并到的数组
+ * @param referenceArr 被合并的数组
+ * @param options 配置
+ */
 export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[], options: JoinArrayWithNoRepeatOptions<T>): T[];
+export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[]): (options: JoinArrayWithNoRepeatOptions<T>) => T[];
 export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[], options?: JoinArrayWithNoRepeatOptions<T>): T[] | ((options: JoinArrayWithNoRepeatOptions<T>) => T[]) {
   const handler = (options: JoinArrayWithNoRepeatOptions<T>) => {
     /**解构配置项 */
