@@ -17,9 +17,9 @@ export function useJoinArrayWithNoRepeat<T>(targetArray: T[], referenceArr: T[],
     for (let item of referenceArr) {
       let repeat = false;
       for (let i of _targetArray) {
-        const _A = condition ? condition(item) : item;
-        const _B = condition ? condition(i) : i;
-        repeat = deep ? useDeepEqual(_A, _B)({ complete }) : _A === _B;
+        const referenceItem = condition ? condition(item) : item;
+        const _targetItem = condition ? condition(i) : i;
+        repeat = deep ? useDeepEqual(referenceItem, _targetItem)({ complete }) : referenceItem === _targetItem;
         if (repeat) break;
       }
       if (!repeat) {

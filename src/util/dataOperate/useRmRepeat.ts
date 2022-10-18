@@ -30,8 +30,8 @@ export function useRmRepeat<V, W>(oldArr: V[], options?: RmRepeatOptions<V, W>):
         /**pure为true则，新数组的每一项完全和旧数组没联系
          * 这里只有不是重复时才进行纯净判断，优化性能
          */
-        const resItem = pure ? useDeepClone(item)({ complete }) : item;
-        newArr.push(resItem);
+        const _item = pure ? useDeepClone(item)({ complete }) : item;
+        newArr.push(_item);
         referenceArr.push(referenceItem);
       }
     }
