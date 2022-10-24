@@ -2,7 +2,7 @@ import * as useDataStructure from ".";
 import { useDeepEqual } from "../dataOperate";
 
 /**test useLinkList */
-test("test useRepPartStr", () => {
+test("test useLinkList", () => {
   const linkList = new useDataStructure.LinkList();
   linkList.append({ a: 1, b: 2 });
   linkList.append({ a: 2, b: 3 });
