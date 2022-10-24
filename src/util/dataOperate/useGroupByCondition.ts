@@ -1,4 +1,5 @@
-import { useIsPositiveInt, useDeepClone } from ".";
+import { useDeepClone } from ".";
+import { useIsPositiveInt } from "../applications/legitimacy";
 import { useConsoleError } from "../../useInside";
 
 type GroupOptions<T> = {

@@ -51,16 +51,6 @@ test("test useCheckEmptyInObj", () => {
   expect(useDataOperate.useCheckEmptyInObj(i)([new Set(), 0, new Map()])).toBe(false);
 });
 
-/**test useIsPositiveInt */
-test("test useIsPositiveInt", () => {
-  expect(useDataOperate.useIsPositiveInt(1)).toBe(true);
-  expect(useDataOperate.useIsPositiveInt(0)).toBe(false);
-  expect(useDataOperate.useIsPositiveInt(1.1)).toBe(false);
-  expect(useDataOperate.useIsPositiveInt(-1)).toBe(false);
-  expect(useDataOperate.useIsPositiveInt(-1.1)).toBe(false);
-  expect(useDataOperate.useIsPositiveInt(NaN)).toBe(false);
-});
-
 /**test useDeepClone */
 test("test useDeepClone", () => {
   expect(useDataOperate.useDeepEqual(obj, simpleCloneObj)({ complete: true })).toBe(false);

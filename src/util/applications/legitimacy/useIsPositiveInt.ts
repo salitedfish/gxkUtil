@@ -1,10 +1,10 @@
 /**
- * 判断是不是正整数
+ * 判断是否是正整数
  * @param num
  * @returns
  */
 export const useIsPositiveInt = (num: number) => {
-  /**排除0和NaN */
+  /**排除0和NaN和其他类型 */
   if (!num || typeof num !== "number") {
     return false;
   }

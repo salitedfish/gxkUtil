@@ -25,3 +25,27 @@ test("test useIPV4Legal", () => {
   expect(useLegitimacy.useIPV4Legal("1.t.1.1")).toBe(false);
   expect(useLegitimacy.useIPV4Legal("1.256.1.1")).toBe(false);
 });
+
+/**test useIsPositiveInt */
+test("test useIsPositiveInt", () => {
+  expect(useLegitimacy.useIsPositiveInt(1)).toBe(true);
+  expect(useLegitimacy.useIsPositiveInt(0)).toBe(false);
+  expect(useLegitimacy.useIsPositiveInt(1.1)).toBe(false);
+  expect(useLegitimacy.useIsPositiveInt(-1)).toBe(false);
+  expect(useLegitimacy.useIsPositiveInt(-1.1)).toBe(false);
+  expect(useLegitimacy.useIsPositiveInt(NaN)).toBe(false);
+});
+
+/**test useIsPrime */
+test("test useIsPrime", () => {
+  expect(useLegitimacy.useIsPrime(-1)).toBe(false);
+  expect(useLegitimacy.useIsPrime(0)).toBe(false);
+  expect(useLegitimacy.useIsPrime(1.1)).toBe(false);
+  expect(useLegitimacy.useIsPrime(1)).toBe(false);
+  expect(useLegitimacy.useIsPrime(2)).toBe(true);
+  expect(useLegitimacy.useIsPrime(3)).toBe(true);
+  expect(useLegitimacy.useIsPrime(4)).toBe(false);
+  expect(useLegitimacy.useIsPrime(5)).toBe(true);
+  expect(useLegitimacy.useIsPrime(6)).toBe(false);
+  expect(useLegitimacy.useIsPrime(101)).toBe(true);
+});
