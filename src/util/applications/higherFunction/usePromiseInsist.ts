@@ -13,7 +13,7 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
     let count = 0;
     return (...params) => {
       return new Promise((resolve, reject) => {
-        const handler = async () => {
+        const reqHandler = async () => {
           count = count + 1;
           try {
             const result = await asyncCallBack(...params);
@@ -25,14 +25,14 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
               reject("Exceeded times");
             } else {
               /**否则继续执行 */
-              setTimeout(handler, resOptions.interval);
+              setTimeout(reqHandler, resOptions.interval);
             }
           } catch (error) {
             reject(error);
           }
         };
         /**开始先请求一次 */
-        handler();
+        reqHandler();
       });
     };
   };
