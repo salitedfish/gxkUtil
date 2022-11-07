@@ -39,7 +39,7 @@ type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
 type ResponseType = ObjectType | Blob | FormData | string | ArrayBuffer;
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**
- * 父类主要是fetch的基础封装
+ * 父类(抽象类)主要是fetch的基础封装
  */
 abstract class BaseFetch {
   /**response header的content-type关键字对应response方法名的映射 */
