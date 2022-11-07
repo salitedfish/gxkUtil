@@ -37,7 +37,7 @@ export type Method = "GET" | "DELETE" | "POST" | "PUT";
 /**
  * 通用函数类型
  */
-export type Function<P extends Params = any, R extends any = any> = (...args: P) => R;
+export type ComFunction<P extends Params = any, R extends any = any> = (...args: P) => R;
 
 /**
  * 只读参数类型
@@ -53,15 +53,6 @@ export type Length<L extends Params> = L["length"];
  * 剩余参数类型
  */
 export type Tail<L extends Params> = L extends readonly [] ? L : L extends readonly [any?, ...infer LTail] ? LTail : L;
-
-/**
- * 参数数组拆分后类型
- */
-export type SplitParams<P extends Params, PSplit extends Params[] = [], PRest extends Params = Tail<P>> = {
-  recur: P extends [...infer A, ...PRest] ? SplitParams<Tail<P>, [...PSplit, A], Tail<PRest>> : never;
-  result: PSplit;
-  inner: P[number][][];
-}[number extends Length<P> ? "inner" : P extends [] ? "result" : "recur"];
 
 /**
  * ts加法

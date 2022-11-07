@@ -21,7 +21,7 @@ test("test useCurryThree", () => {
   expect(aumCurry(1)(2)).toBe(4);
   expect(aumCurry(1)()).toBe(3);
   expect(sumCurry(1)(2)()).toBe(4);
-  // expect(sumCurry(1, 2, 1)).toBe(4); //不明原因ts会报错
+  expect(sumCurry(1, 2, 1)).toBe(4);
   expect(sumCurry(1, 2)(1)).toBe(4);
 });
 
@@ -35,7 +35,7 @@ test("test useCurryFour", () => {
   expect(aumCurry(3)("4")).toBe("64");
   expect(aumCurry(2)("2")).toBe("52");
   expect(sumCurry(1)(2)(3)("4")).toBe("64");
-  // expect(sumCurry(1, 2, 1)("2")).toBe("42"); //不明原因ts会报错
+  expect(sumCurry(1, 2, 1)("2")).toBe("42");
   expect(sumCurry(1, 2)(1)("2")).toBe("42");
   expect(sumCurry(1, 2, 1, "2")).toBe("42");
 });
