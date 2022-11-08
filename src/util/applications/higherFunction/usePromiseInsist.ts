@@ -11,6 +11,7 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
   const handler = (condition: (params: T) => boolean): ((...params: V) => Promise<T>) => {
     const resOptions = { count: 3, interval: 500, ...options };
     let count = 0;
+    /**最终调用的异步函数 */
     return (...params) => {
       return new Promise((resolve, reject) => {
         const reqHandler = async () => {
