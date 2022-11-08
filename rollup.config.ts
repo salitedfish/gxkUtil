@@ -15,7 +15,7 @@ import { useRollupPluginTest } from "./src/plugin";
 const getPath = (_path: string) => path.resolve(__dirname, _path);
 
 /**解构package.json内容 */
-const { config, name, version, dependencies, description, module, main } = packageJSON;
+const { config, name, version, dependencies, description } = packageJSON;
 const { dest } = config;
 
 /**ts解析插件 */
@@ -84,8 +84,8 @@ export default () => {
     ],
     /**同时支持ESModule和commonjs导出 */
     output: [
-      { file: module, format: "esm", name },
-      { file: main, format: "cjs", name },
+      { file: `${dest}/index.mjs`, format: "esm", name },
+      { file: `${dest}/index.cjs`, format: "cjs", name },
     ],
   };
 };
