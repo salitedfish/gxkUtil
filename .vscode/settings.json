@@ -6,5 +6,5 @@
         "html",
         "vue"
       ],
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true
 }
