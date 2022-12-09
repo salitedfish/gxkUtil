@@ -79,6 +79,19 @@ test("test useDeepEqual", () => {
   expect(useDataOperate.useDeepEqual({ a: undefined }, {})({ complete: true })).toBe(false);
   expect(useDataOperate.useDeepEqual({ a: undefined }, { b: undefined })({})).toBe(true);
   expect(useDataOperate.useDeepEqual({ a: undefined }, { b: undefined })({ complete: true })).toBe(false);
+  // 如果complete不设置true，那么函数都会判断为相同
+  expect(
+    useDataOperate.useDeepEqual(
+      () => 1,
+      () => 4
+    )({})
+  ).toBe(true);
+  expect(
+    useDataOperate.useDeepEqual(
+      () => 1,
+      () => 4
+    )({ complete: true })
+  ).toBe(false);
 });
 
 /**test useDeepInclude */

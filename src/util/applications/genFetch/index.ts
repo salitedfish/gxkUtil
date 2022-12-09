@@ -18,13 +18,14 @@ type ComFetchOptions = {
 };
 /**单个请求参数的类型 */
 interface CusFetchConfig extends RequestInit {
-  URL?: `/${string}`;
+  URL?: string;
   method?: Method;
   params?: ObjectType<string | number>;
 }
 /**子请求配置 */
 /**pure为true时，会跳过父请求的相关拦截器 */
 type CusFetchOptions = {
+  pureHeaders?: boolean;
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   pureReqHandler?: boolean;
   resHandler?: (response: any, shallowResponse: Response) => any;
@@ -45,11 +46,11 @@ abstract class BaseFetch {
   /**response header的content-type关键字对应response方法名的映射 */
   private readonly responseTypeMap: ObjectType<ResponseTypeMethod> = {
     json: "json",
-    form: "formData",
-    blob: "blob",
     vnd: "blob",
-    text: "text",
     arrayBuffer: "arrayBuffer",
+    blob: "blob",
+    text: "text",
+    form: "formData",
   };
   /**实例下所有的取消控制器 */
   private readonly abortControllers: Map<keyof any, AbortController> = new Map();
@@ -61,10 +62,16 @@ abstract class BaseFetch {
     return useGenParamsUrl(comConfig.baseURL + cusConfig.URL)(cusConfig.params);
   }
   /**合并请求配置 */
-  private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig) {
+  private createRequestConfig(comConfig: ComFetchConfig, cusConfig: CusFetchConfig, cusOptions: CusFetchOptions) {
     /**这里合并完对比原生fetch的config多了URL、params、baseURL，但是应该不影响使用 */
     const resConfig = { ...comConfig, ...cusConfig };
-    resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
+    /**当pureHeaders为ture时只用cusConfig的headers，默认为fdalse */
+    /**便于子请求去除父请求的headers */
+    if (cusOptions.pureHeaders) {
+      resConfig.headers = cusConfig.headers;
+    } else {
+      resConfig.headers = { ...comConfig.headers, ...cusConfig.headers };
+    }
     return resConfig;
   }
   /**创建取消控制器 */
@@ -112,12 +119,13 @@ abstract class BaseFetch {
     }
   }
   /**处理响应处理器 */
-  private responseHandler(shallowResponse: Response): Promise<ResponseType> | undefined {
+  private async responseHandler(shallowResponse: Response): Promise<Promise<ResponseType> | undefined> {
     const contentType = shallowResponse.headers.get("Content-Type");
     /**根据接口返回的Content-Type来进行对应的响应值处理 */
     for (let key in this.responseTypeMap) {
       if (contentType && contentType.includes(key)) {
-        return shallowResponse[this.responseTypeMap[key]]();
+        const res = await shallowResponse[this.responseTypeMap[key]]();
+        return res;
       }
     }
     useConsoleWarn("handerResponse: 未匹配到返回值类型!");
@@ -142,20 +150,23 @@ abstract class BaseFetch {
   /**---发起请求---> */
   public async request<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<T> {
     const URL = this.createURL(this.comConfig, cusConfig);
-    const resConfig = this.createRequestConfig(this.comConfig, cusConfig);
+    const resConfig = this.createRequestConfig(this.comConfig, cusConfig, cusOptions);
     const { timeoutId, abortId } = this.createAbortController(this.comOptions, cusOptions, resConfig);
     const regConfig = this.requestInterceptor(this.comOptions, cusOptions, resConfig);
 
     /**发送请求 */
     try {
       const res = await fetch(URL, regConfig);
+
       if (regConfig.signal) {
         this.clearAbortController(timeoutId, abortId);
       }
       /**处理返回结果 */
       const reg = await this.responseHandler(res.clone());
+
       /**如果有拦截器，则先处理拦截器，处理返回值 */
       const rex = this.responseInterceptor(this.comOptions, cusOptions, reg, res);
+
       return rex;
     } catch (err) {
       if (regConfig.signal) {

@@ -18,12 +18,16 @@ export function useDeepInclude<T>(origin: T[], options?: DeepIncludeOptions<T>) 
     /**解构配置项 */
     const { condition, complete } = options;
     for (const index in origin) {
-      if (useCheckSimpleData(condition) && origin[index] === condition) {
+      if (useCheckSimpleData(condition)) {
         /**原始值 */
-        return index;
-      } else if (condition instanceof Function && condition(origin[index])) {
+        if (origin[index] === condition) {
+          return index;
+        }
+      } else if (condition instanceof Function) {
         /**函数条件 */
-        return index;
+        if (condition(origin[index])) {
+          return index;
+        }
       } else if (useDeepEqual(origin[index], condition)({ complete })) {
         /**引用值 */
         return index;

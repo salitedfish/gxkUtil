@@ -25,13 +25,13 @@ export const monthMap = [
 ];
 
 export const weekMap = [
+  { zh: "天", en: "Sunday", num: 0 },
   { zh: "一", en: "Monday", num: 1 },
   { zh: "二", en: "Tuesday", num: 2 },
   { zh: "三", en: "Wednesday", num: 3 },
   { zh: "四", en: "Thursday", num: 4 },
   { zh: "五", en: "Friday", num: 5 },
   { zh: "六", en: "Saturday", num: 6 },
-  { zh: "天", en: "Sunday", num: 7 },
 ];
 
 /**
@@ -44,7 +44,7 @@ const useTimeFormatShallow = (format: string, time: number | string) => {
   const targetDate = new Date(newTime);
   const season = seasonMap[Math.floor((targetDate.getMonth() + 3) / 3) - 1];
   const month = monthMap[targetDate.getMonth()];
-  const week = weekMap[targetDate.getDay() - 1];
+  const week = weekMap[targetDate.getDay()];
   const hour = targetDate.getHours();
 
   /**解析时间 */

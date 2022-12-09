@@ -1,4 +1,5 @@
 export * from "./useClipboard";
+export * from "./useBinaryToURL";
 export * from "./useDownloadByURL";
 export * from "./useFileNameFromURL";
 export * from "./useFileTypeFromURL";
