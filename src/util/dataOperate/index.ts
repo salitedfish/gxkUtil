@@ -9,3 +9,4 @@ export * from "./useRepPartStr";
 export * from "./useRmRepeat";
 export * from "./useSetFirstSign";
 export * from "./useTrimStr";
+export * from "./useAssignByKey";

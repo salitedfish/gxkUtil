@@ -291,3 +291,12 @@ test("test useJoinArrayWithNoRepeat", () => {
   useDataOperate.useJoinArrayWithNoRepeat(_A, _C)({ condition: (item) => item.a });
   expect(useDataOperate.useDeepEqual(_A, [{ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }, { a: 5 }, { a: 6 }])({})).toBe(true);
 });
+
+/**test useAssignByKey */
+test("test useAssignByKey", () => {
+  const _A = { a: 1, b: 2, d: 6 };
+  const _B = { a: 2, b: 4, c: 5 };
+  useDataOperate.useAssignByKey(_A, _B);
+
+  expect(useDataOperate.useDeepEqual(_A, { a: 2, b: 4, d: 6 })({})).toBe(true);
+});
