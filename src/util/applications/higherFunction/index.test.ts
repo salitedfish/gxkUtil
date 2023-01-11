@@ -1,5 +1,6 @@
 import * as useHigherFunc from ".";
 import { useRunTimes } from "../../applications/common";
+import { useDeepEqual } from "../../dataOperate";
 
 /**测试异步请求用的，延时200ms，随机返回0 ~ 4的整数 */
 const genAsync = (delay: number = 200) => {
@@ -19,7 +20,49 @@ test("test usePromiseInsist", async () => {
     })(100);
     expect(genTarget).toBe(3);
   } catch (err) {
-    expect(err).toMatch("Exceeded times");
+    expect(err !== 3).toBe(false);
+  }
+});
+
+/**test usePromiseQueue */
+test("test usePromiseQueue", async () => {
+  const promises: (() => Promise<number>)[] = [];
+  for (let i = 0; i <= 5; i++) {
+    promises.push(() => {
+      return Promise.resolve(i);
+    });
+  }
+  const res = await useHigherFunc.usePromiseQueue(
+    promises,
+    (res: number) => {
+      return res < 6;
+    },
+    {
+      insist: true,
+    }
+  );
+
+  expect(useDeepEqual(res, [0, 1, 2, 3, 4, 5])()).toBe(true);
+  try {
+    await useHigherFunc.usePromiseQueue(promises, (res: number) => {
+      return res < 2;
+    });
+  } catch (err) {
+    expect(useDeepEqual(err, [0, 1])()).toBe(true);
+  }
+
+  try {
+    await useHigherFunc.usePromiseQueue(
+      promises,
+      (res: number) => {
+        return res < 3;
+      },
+      {
+        insist: true,
+      }
+    );
+  } catch (err) {
+    expect(useDeepEqual(err, [0, 1, 2])()).toBe(true);
   }
 });
 

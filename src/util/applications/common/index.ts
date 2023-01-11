@@ -8,3 +8,4 @@ export * from "./useGenParamsUrl";
 export * from "./useStrSHA256Hash";
 export * from "./useRunTimes";
 export * from "./useGenUUID";
+export * from "./useFileSplitChunk";

@@ -23,7 +23,7 @@ export function usePromiseInsist<V extends any[], T>(asyncCallBack: (...params: 
               resolve(result);
             } else if (count > resOptions.count) {
               /**超出最大次数返回reject */
-              reject("Exceeded times");
+              reject(result);
             } else {
               /**否则继续执行 */
               setTimeout(reqHandler, resOptions.interval);

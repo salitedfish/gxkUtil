@@ -11,6 +11,7 @@
     "typescript",
     "library"
   ],
+  "packageManager": "pnpm@7.12.1",
   "scripts": {
     "prepare": "husky install",
     "test": "jest",

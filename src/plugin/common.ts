@@ -12,7 +12,7 @@ export const useRollupPluginTest = () => {
     // },
     load() {
       count++;
-      console.log(count);
+      console.log(`第${count}个文件`);
     },
     // load(source: string) {
     //   count = count + 1;

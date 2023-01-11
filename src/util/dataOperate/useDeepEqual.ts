@@ -11,7 +11,7 @@ type DeepEqualOptions = {
  * @param target 例如: {a: 1}
  * @returns
  */
-const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions) => {
+const useDeepEqualShallow = (origin: any, target: any, options: DeepEqualOptions = {}) => {
   /**解构配置项 */
   const { complete } = options;
   /**
