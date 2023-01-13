@@ -23,12 +23,13 @@ const useIsFile = async (filePath: string) => {
  * @returns
  */
 export const useGetFileTree = async (filePath: string) => {
+  const fullAddress = path.resolve(__dirname, filePath);
   const fileTree: FileTreeItem[] = [];
-  const filenameArr = await fs.promises.readdir(filePath);
+  const filenameArr = await fs.promises.readdir(fullAddress);
 
   for (let fileName of filenameArr) {
     /**最终显示的路径是绝对路径 */
-    const filePathAbsolute = path.resolve(filePath, fileName);
+    const filePathAbsolute = path.resolve(fullAddress, fileName);
     const isFile = await useIsFile(filePathAbsolute);
     const file: FileTreeItem = {
       filePathAbsolute,

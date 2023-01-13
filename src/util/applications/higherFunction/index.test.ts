@@ -20,7 +20,7 @@ test("test usePromiseInsist", async () => {
     })(100);
     expect(genTarget).toBe(3);
   } catch (err) {
-    expect(err !== 3).toBe(false);
+    expect(err !== 3).toBe(true);
   }
 });
 
