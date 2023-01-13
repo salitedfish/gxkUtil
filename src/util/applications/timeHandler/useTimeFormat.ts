@@ -64,14 +64,14 @@ const useTimeFormatShallow = (format: string, time: number | string) => {
   /**替换格式化字符串,年和其他分开替换 */
   if (/({y+})/i.test(format)) {
     const reg = /({y+})/i;
-    const regRes = reg.exec(format) || [];
+    const regRes = reg.exec(format) || [""];
     const replaceValue = fullYear.toString().slice(6 - regRes[0].length);
     format = format.replace(regRes[0], replaceValue);
   }
   for (const key in date) {
     const reg = new RegExp("({" + key + "})");
     if (reg.test(format)) {
-      const regRes = reg.exec(format) || [];
+      const regRes = reg.exec(format) || [""];
       const replaceValue = regRes[0].length === 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], replaceValue);
     }

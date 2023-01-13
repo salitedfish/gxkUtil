@@ -1,4 +1,11 @@
 /**
+ * 获取枚举值的联合类型
+ */
+type GetNumberEnumValue<E extends number> = `${E}` extends `${infer T extends number}` ? T : never;
+type GetStringEnumValue<E extends string | number> = `${E}`;
+export type GetEnumValue<E extends number | string> = E extends number ? GetNumberEnumValue<E> : GetStringEnumValue<E>;
+
+/**
  * 对象类型
  */
 export type ObjectType<T = any> = {
