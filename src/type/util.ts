@@ -1,9 +1,9 @@
 /**
  * 获取枚举值的联合类型
  */
-type GetNumberEnumValue<E extends number> = `${E}` extends `${infer T extends number}` ? T : never;
-type GetStringEnumValue<E extends string | number> = `${E}`;
-export type GetEnumValue<E extends number | string> = E extends number ? GetNumberEnumValue<E> : GetStringEnumValue<E>;
+type NumberEnumValue<E extends number> = `${E}` extends `${infer T extends number}` ? T : never;
+type StringEnumValue<E extends string | number> = `${E}`;
+export type EnumValue<E extends number | string> = E extends number ? NumberEnumValue<E> : StringEnumValue<E>;
 
 /**
  * 对象类型
