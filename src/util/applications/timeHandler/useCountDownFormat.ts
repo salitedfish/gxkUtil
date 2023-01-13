@@ -23,7 +23,7 @@ const useCountDownFormatShallow = (format: string, time: number | string) => {
   for (const key in date) {
     const reg = new RegExp("({" + key + "})");
     if (reg.test(format)) {
-      const regRes = reg.exec(format) || [];
+      const regRes = reg.exec(format) || [""];
       const replaceValue = regRes[0].length === 3 ? date[key] : date[key].toString().padStart(2, "0");
       format = format.replace(regRes[0], String(replaceValue));
     }
