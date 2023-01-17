@@ -6,7 +6,14 @@ type StringEnumValue<E extends string | number> = `${E}`;
 export type EnumValue<E extends number | string> = E extends number ? NumberEnumValue<E> : StringEnumValue<E>;
 
 /**
+ * ts加法
+ */
+type GenerateArray<N extends number, Temp extends never[] = []> = Temp["length"] extends N ? Temp : GenerateArray<N, [never, ...Temp]>;
+export type Add<A extends number, B extends number> = [...GenerateArray<A>, ...GenerateArray<B>]["length"];
+
+/**
  * 对象类型
+ * 其实有内置工具类型Record
  */
 export type ObjectType<T = any> = {
   [key: keyof any]: T;
@@ -60,9 +67,3 @@ export type Length<L extends Params> = L["length"];
  * 剩余参数类型
  */
 export type Tail<L extends Params> = L extends readonly [] ? L : L extends readonly [any?, ...infer LTail] ? LTail : L;
-
-/**
- * ts加法
- */
-type GenerateArray<N extends number, Temp extends never[] = []> = Temp["length"] extends N ? Temp : GenerateArray<N, [never, ...Temp]>;
-export type Add<A extends number, B extends number> = [...GenerateArray<A>, ...GenerateArray<B>]["length"];
