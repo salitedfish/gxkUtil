@@ -3,7 +3,7 @@ type DeepCloneOptions = {
 };
 
 /**
- * 深拷贝
+ * 深拷贝(其实原生就有深拷贝方式，如JSON、structuredClone，但还有无法完全使用的地方)
  * @param target 目标数据
  * @param options 配置
  * @returns
