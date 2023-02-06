@@ -1,6 +1,6 @@
 {
   "name": "@ultra-man/noa",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "The first light of the universe",
   "module": "src/index.ts",
   "main": "src/index.ts",
