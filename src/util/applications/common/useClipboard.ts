@@ -7,7 +7,7 @@ import ClipboardJS from "clipboard";
 export const useClipboard = (text: string | number) => {
   const copyBtn = document.createElement("button");
   copyBtn.setAttribute("data-clipboard-text", text.toString());
-  document.appendChild(copyBtn);
+  document.body.appendChild(copyBtn);
 
   return new Promise((resolve, reject) => {
     const clipboard = new ClipboardJS(copyBtn);
