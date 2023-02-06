@@ -17,7 +17,7 @@ export const useClipboard = (text: string | number) => {
     clipboard.on("error", (e) => {
       reject(e);
     });
-    copyBtn.click;
-    copyBtn.remove;
+    copyBtn.click();
+    copyBtn.remove();
   });
 };
