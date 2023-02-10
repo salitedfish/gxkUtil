@@ -14,7 +14,7 @@
   "packageManager": "pnpm@7.12.1",
   "scripts": {
     "prepare": "husky install",
-    "test": "jest",
+    "test": "jest --detectOpenHandles --forceExit",
     "build": "rm -rf ./$npm_package_config_dest% && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./$npm_package_config_dest/rollup.config.d.ts ",
     "build_publish": "pnpm run build && cd ./$npm_package_config_dest && pnpm publish --access public",
     "publish_patch": "pnpm version patch && pnpm run build_publish",
