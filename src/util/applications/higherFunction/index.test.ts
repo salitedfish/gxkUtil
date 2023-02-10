@@ -68,42 +68,47 @@ test("test usePromiseQueue", async () => {
 
 /**test useDebounce */
 test("test useDebounce", async () => {
-  let time = 0;
-  const setTime = () => {
-    time++;
-  };
-  const debounceSetTime = useHigherFunc.useDebounce(setTime);
-  useRunTimes(
-    () => {
+  await new Promise((resolve) => {
+    let time = 0;
+    const setTime = () => {
+      time++;
+    };
+    const debounceSetTime = useHigherFunc.useDebounce(setTime);
+    useRunTimes(
+      () => {
+        debounceSetTime();
+      },
+      { times: 3 }
+    );
+    setTimeout(() => {
       debounceSetTime();
-    },
-    { times: 3 }
-  );
-  setTimeout(() => {
-    debounceSetTime();
-  }, 500);
-  setTimeout(() => {
-    expect(time).toBe(1);
-  }, 1600);
+    }, 500);
+    setTimeout(() => {
+      expect(time).toBe(1);
+      resolve(null);
+    }, 1600);
+  });
 });
 
 /**test useThrottle */
 test("test useThrottle", async () => {
-  let time = 0;
-  const setTime = () => {
-    time++;
-  };
-  const throttleSetTime = useHigherFunc.useThrottle(setTime);
-  useRunTimes(
-    () => {
-      throttleSetTime();
-    },
-    { times: 2 }
-  );
-  setTimeout(() => {
-    throttleSetTime();
-    expect(time).toBe(2);
-  }, 1100);
+  await new Promise((resolve) => {
+    let time = 0;
+    const setTime = () => {
+      time++;
+    };
+    const throttleSetTime = useHigherFunc.useThrottle(setTime);
+    useRunTimes(
+      () => {
+        throttleSetTime();
+      },
+      { times: 4 }
+    );
+    setTimeout(() => {
+      expect(time).toBe(1);
+      resolve(null);
+    }, 1100);
+  });
 });
 
 /**test useTimesClick */
