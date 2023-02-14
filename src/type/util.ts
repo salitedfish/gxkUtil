@@ -6,6 +6,13 @@ type StringEnumValue<E extends string | number> = `${E}`;
 export type EnumValue<E extends number | string> = E extends number ? NumberEnumValue<E> : StringEnumValue<E>;
 
 /**
+ * 集合两个接口的类型
+ */
+export type AssignObject<T, G> = {
+  [J in keyof T | keyof G]: J extends keyof T ? T[J] : J extends keyof G ? G[J] : never;
+};
+
+/**
  * ts加法
  */
 type GenerateArray<N extends number, Temp extends never[] = []> = Temp["length"] extends N ? Temp : GenerateArray<N, [never, ...Temp]>;
