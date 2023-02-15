@@ -1,5 +1,6 @@
 /**
  * 获取枚举值的联合类型
+ * 如 {a;b;} 变为 0 | 1
  */
 type NumberEnumValue<E extends number> = `${E}` extends `${infer T extends number}` ? T : never;
 type StringEnumValue<E extends string | number> = `${E}`;
@@ -7,8 +8,9 @@ export type EnumValue<E extends number | string> = E extends number ? NumberEnum
 
 /**
  * 集合两个接口的类型
+ * 如 {a: string} 和 {b: number} 变为 {a: string, b: number}
  */
-export type AssignObject<T, G> = {
+export type MergeObject<T, G> = {
   [J in keyof T | keyof G]: J extends keyof T ? T[J] : J extends keyof G ? G[J] : never;
 };
 
@@ -24,30 +26,6 @@ export type Add<A extends number, B extends number> = [...GenerateArray<A>, ...G
  */
 export type ObjectType<T = any> = {
   [key: keyof any]: T;
-};
-
-/**
- * 对象只读类型
- */
-export type ObjectReadonlyType<T = any> = {
-  readonly [key: string]: T;
-};
-
-/**
- * 返回Promise加void
- */
-export type PromiseWithVoid<T> = Promise<void | T>;
-
-/**
- * 响应类型
- */
-export type ResponseType<T = any> = {
-  readonly code: number;
-  readonly data: T;
-  readonly status?: number;
-  readonly message?: string;
-  readonly success?: any;
-  readonly error?: any;
 };
 
 /**
