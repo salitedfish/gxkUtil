@@ -15,6 +15,11 @@ export type MergeObject<T, G> = {
 };
 
 /**
+ * 将接口的属性变成深度可选
+ */
+export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
+
+/**
  * ts加法
  */
 type GenerateArray<N extends number, Temp extends never[] = []> = Temp["length"] extends N ? Temp : GenerateArray<N, [never, ...Temp]>;

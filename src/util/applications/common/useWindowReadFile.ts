@@ -1,5 +1,5 @@
 /**
- * window下面的读取文件内容，取消传入文件对象
+ * window下面的读取文件内容，传入文件对象
  * @param file
  * @returns
  */
