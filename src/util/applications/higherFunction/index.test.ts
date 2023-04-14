@@ -17,7 +17,7 @@ test("test usePromiseInsist", async () => {
   try {
     const genTarget = await useHigherFunc.usePromiseInsist(genAsync)((res) => {
       return res === 3;
-    })(100);
+    })[0](100);
     expect(genTarget).toBe(3);
   } catch (err) {
     expect(err !== 3).toBe(true);
