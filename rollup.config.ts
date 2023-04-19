@@ -45,7 +45,7 @@ const packageJsonPlugin = genPackageJson({
     name,
     version,
     bin: {
-      noa: "noaCli.js",
+      noa: "bin/noaCli.js",
     },
     license: "MIT",
     main: "index.cjs",
