@@ -11,6 +11,9 @@
     "typescript",
     "library"
   ],
+  "bin": {
+    "noa": "./script/noaCli.js"
+  },
   "packageManager": "pnpm@7.12.1",
   "scripts": {
     "prepare": "husky install",
