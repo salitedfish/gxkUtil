@@ -15,7 +15,7 @@ import { useRollupPluginTest } from "./src/plugin";
 const getPath = (_path: string) => path.resolve(__dirname, _path);
 
 /**解构package.json内容 */
-const { config, name, version, dependencies, description, bin } = packageJSON;
+const { config, name, version, dependencies, description } = packageJSON;
 const { dest } = config;
 
 /**ts解析插件 */
@@ -44,7 +44,9 @@ const packageJsonPlugin = genPackageJson({
   baseContents: () => ({
     name,
     version,
-    bin,
+    bin: {
+      noa: "./noaCli.js",
+    },
     license: "MIT",
     main: "index.cjs",
     module: "index.mjs",
@@ -61,7 +63,7 @@ const rollupCopy = copy({
   targets: [
     { src: "src/css", dest },
     { src: "./readme.md", dest },
-    { src: "./noaCli.js", dest },
+    { src: "./script/noaCli.js", dest },
   ],
 });
 
