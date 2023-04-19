@@ -15,7 +15,7 @@ import { useRollupPluginTest } from "./src/plugin";
 const getPath = (_path: string) => path.resolve(__dirname, _path);
 
 /**解构package.json内容 */
-const { config, name, version, dependencies, description } = packageJSON;
+const { config, name, version, dependencies, description, bin } = packageJSON;
 const { dest } = config;
 
 /**ts解析插件 */
@@ -63,7 +63,7 @@ const rollupCopy = copy({
   targets: [
     { src: "src/css", dest },
     { src: "./readme.md", dest },
-    { src: "./script/noaCli.js", dest: dest + "/bin" },
+    { src: bin.noa, dest: config.bin },
   ],
 });
 

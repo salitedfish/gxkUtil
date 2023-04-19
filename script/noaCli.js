@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// const { exec } = require("process");
+const { exec } = require("process");
 
 const packageJSON = require("../package.json");
 
@@ -8,7 +8,14 @@ const { name, version, author } = packageJSON;
 const info = () => {
   console.log(process.argv);
   console.log(process.cwd());
-  // exec("noa --name");
+};
+const update = () => {
+  try {
+    exec(`npm install @ultra-man/noa@${version} -g`);
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  }
 };
 
 // 命令行结果映射
@@ -23,6 +30,7 @@ const handlerMap = {
   "-v": version,
   "--author": author,
   "--info": info,
+  "--update": update,
 };
 
 // 获取命令行参数列表

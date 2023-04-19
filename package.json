@@ -5,7 +5,8 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "config": {
-    "dest": "noa"
+    "dest": "noa",
+    "bin": "noa/bin"
   },
   "keywords": [
     "typescript",
