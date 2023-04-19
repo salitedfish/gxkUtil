@@ -61,7 +61,7 @@ const rollupCopy = copy({
   targets: [
     { src: "src/css", dest },
     { src: "./readme.md", dest },
-    { src: "./script/noaCli.js", dest },
+    { src: "./noaCli.js", dest },
   ],
 });
 
