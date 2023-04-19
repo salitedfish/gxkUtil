@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { exec } = require("process");
+const { exec } = require("child_process");
 
 const packageJSON = require("../package.json");
 
