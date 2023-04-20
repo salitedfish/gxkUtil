@@ -8,9 +8,9 @@ type DeepCloneOptions = {
  * @param options 配置
  * @returns
  */
-export function useDeepClone<T extends any>(target: T, options: DeepCloneOptions): T;
-export function useDeepClone<T extends any>(target: T): (options: DeepCloneOptions) => T;
-export function useDeepClone<T extends any>(target: T, options?: DeepCloneOptions): T | ((options: DeepCloneOptions) => T) {
+export function useDeepClone<T>(target: T, options: DeepCloneOptions): T;
+export function useDeepClone<T>(target: T): (options: DeepCloneOptions) => T;
+export function useDeepClone<T>(target: T, options?: DeepCloneOptions): T | ((options: DeepCloneOptions) => T) {
   const handler = (options: DeepCloneOptions) => {
     /**解构配置项 */
     const { complete } = options;

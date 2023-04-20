@@ -4,22 +4,20 @@
 // 结果信息和处理函数
 const packageJSON = require("../package.json");
 const update = require("./update.cjs");
-const info = require("./info.cjs");
+const open = require("./open.cjs");
 const { name, version, author } = packageJSON;
 
 // 命令行结果映射
 const handlerMap = {
   "--name": name,
-  "--n": name,
   "-N": name,
-  "-n": name,
   "--version": version,
-  "--v": version,
   "-V": version,
-  "-v": version,
   "--author": author,
-  "--info": info,
   "--update": update,
+  "-U": update,
+  "--open": open,
+  "-O": open,
 };
 
 // 获取命令行指令和参数列表
