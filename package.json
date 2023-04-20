@@ -13,7 +13,7 @@
     "library"
   ],
   "bin": {
-    "noa": "./script/noaCli.cjs"
+    "noa": "./bin/noaCli.cjs"
   },
   "packageManager": "pnpm@7.12.1",
   "scripts": {
