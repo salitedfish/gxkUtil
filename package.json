@@ -5,15 +5,15 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "config": {
-    "dest": "noa",
-    "bin": "noa/bin"
+    "dest": "noa"
   },
   "keywords": [
     "typescript",
     "library"
   ],
   "bin": {
-    "noa": "./bin/noaCli.cjs"
+    "noa": "./bin/noaCli.cjs",
+    "gxk": "./bin/gxkCli.cjs"
   },
   "packageManager": "pnpm@7.12.1",
   "scripts": {
