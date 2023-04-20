@@ -21,17 +21,16 @@ const handlerMap = {
   "--update": update,
 };
 
-// 获取命令行参数列表
-const params = process.argv.slice(2);
+// 获取命令行指令和参数列表
+const option = process.argv[2];
+const argvs = process.argv.slice(3);
 
 // 根据命令行的参数进行打印
-for (const item of params) {
-  const handler = handlerMap[item];
-  if (handler) {
-    if (handler instanceof Function) {
-      handler();
-    } else {
-      console.log(handler);
-    }
+const handler = handlerMap[option];
+if (handler) {
+  if (handler instanceof Function) {
+    handler(argvs);
+  } else {
+    console.log(handler);
   }
 }
