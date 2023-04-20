@@ -3,7 +3,6 @@
 // 结果信息和处理函数
 const packageJSON = require("../package.json");
 const update = require("./update.cjs");
-const info = require("./info.cjs");
 const { name, version, author } = packageJSON;
 
 // 命令行结果映射
@@ -17,7 +16,6 @@ const handlerMap = {
   "-V": version,
   "-v": version,
   "--author": author,
-  "--info": info,
   "--update": update,
 };
 

@@ -7,15 +7,10 @@
   "config": {
     "dest": "noa"
   },
-  "keywords": [
-    "typescript",
-    "library"
-  ],
   "bin": {
     "noa": "./bin/noaCli.cjs",
     "gxk": "./bin/gxkCli.cjs"
   },
-  "packageManager": "pnpm@7.12.1",
   "scripts": {
     "prepare": "husky install",
     "test": "jest",
@@ -25,6 +20,11 @@
     "publish_minor": "pnpm version minor && pnpm run build_publish",
     "publish_major": "pnpm version major && pnpm run build_publish"
   },
+  "keywords": [
+    "typescript",
+    "library"
+  ],
+  "packageManager": "pnpm@7.12.1",
   "author": "gxk",
   "license": "ISC",
   "devDependencies": {

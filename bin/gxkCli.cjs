@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// gxk 指令是随便玩的
 
 // 结果信息和处理函数
 const packageJSON = require("../package.json");
