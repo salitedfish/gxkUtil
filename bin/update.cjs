@@ -1,9 +1,8 @@
 const { exec } = require("child_process");
-const packageJSON = require("../package.json");
 
 const update = () => {
   try {
-    exec(`npm install @ultra-man/noa@${packageJSON.version} -g`);
+    exec("npm install @ultra-man/noa -g");
   } catch (e) {
     console.error(e);
     process.exit(1);
