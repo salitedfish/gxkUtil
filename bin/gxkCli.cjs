@@ -11,13 +11,17 @@ const { name, version, author } = packageJSON;
 const handlerMap = {
   "--name": name,
   "-N": name,
+  "-n": name,
   "--version": version,
   "-V": version,
+  "-v": version,
   "--author": author,
   "--update": update,
   "-U": update,
+  "-u": update,
   "--open": open,
   "-O": open,
+  "-o": open,
 };
 
 // 获取命令行指令和参数列表
