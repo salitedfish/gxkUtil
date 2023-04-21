@@ -22,10 +22,10 @@ const open = (argvs) => {
     if (["snipaste", "snp"].includes(name)) {
       _name = "Snipaste.app";
     }
-    if (["NM", "nm", "wyymusic"].includes(name)) {
+    if (["NEM", "nem", "wyymusic"].includes(name)) {
       _name = "NeteaseMusic.app";
     }
-    if (["QM", "qm", "qqmusic"].includes(name)) {
+    if (["QQM", "qqm", "qqmusic"].includes(name)) {
       _name = "QQMusic.app";
     }
     if (["wps", "WPS"].includes(name)) {
@@ -34,8 +34,10 @@ const open = (argvs) => {
     if (["termius", "term"].includes(name)) {
       _name = "Termius.app";
     }
-    if (name) {
+    if (_name) {
       exec("cd /Applications && open " + _name);
+    } else {
+      console.log("gxk: app not find!!!");
     }
   } catch (e) {
     console.error(e);

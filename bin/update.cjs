@@ -8,6 +8,7 @@ const update = (argvs) => {
     } else {
       exec("npm install @ultra-man/noa -g");
     }
+    console.log("gxk: update success!!!");
   } catch (e) {
     console.error(e);
     process.exit(1);

@@ -8,15 +8,12 @@ const { name, version, author } = packageJSON;
 // 命令行结果映射
 const handlerMap = {
   "--name": name,
-  "--n": name,
   "-N": name,
-  "-n": name,
   "--version": version,
-  "--v": version,
   "-V": version,
-  "-v": version,
   "--author": author,
   "--update": update,
+  "-U": update,
 };
 
 // 获取命令行指令和参数列表
