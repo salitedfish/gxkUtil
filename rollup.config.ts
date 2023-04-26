@@ -15,7 +15,7 @@ import { useRollupPluginTest } from "./src/plugin";
 const getPath = (_path: string) => path.resolve(__dirname, _path);
 
 /**解构package.json内容 */
-const { config, name, version, dependencies, description, author, bin } = packageJSON;
+const { config, name, version, dependencies, description, author } = packageJSON;
 const { dest } = config;
 
 /**ts解析插件 */
@@ -44,7 +44,6 @@ const packageJsonPlugin = genPackageJson({
   baseContents: () => ({
     name,
     version,
-    bin,
     author,
     license: "MIT",
     main: "index.cjs",
@@ -62,7 +61,6 @@ const rollupCopy = copy({
   targets: [
     { src: "src/css", dest },
     { src: "./readme.md", dest },
-    { src: "./bin", dest },
   ],
 });
 

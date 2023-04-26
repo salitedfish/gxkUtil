@@ -7,10 +7,6 @@
   "config": {
     "dest": "noa"
   },
-  "bin": {
-    "noa": "./bin/noaCli.cjs",
-    "gxk": "./bin/gxkCli.cjs"
-  },
   "scripts": {
     "prepare": "husky install",
     "test": "jest",

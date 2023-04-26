@@ -19,7 +19,7 @@ const useCreateRoutes = <T extends { children?: T[] }>(virtualRoutes: T[]) => {
 };
 
 /**
- * 根据多极
+ * 根据多级路由处理成menu
  * @param virtualRoutes
  * @returns
  */

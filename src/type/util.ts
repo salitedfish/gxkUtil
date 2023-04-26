@@ -26,11 +26,10 @@ type GenerateArray<N extends number, Temp extends never[] = []> = Temp["length"]
 export type Add<A extends number, B extends number> = [...GenerateArray<A>, ...GenerateArray<B>]["length"];
 
 /**
- * 对象类型
- * 其实有内置工具类型Record
+ * 对象值类型扩展
  */
-export type ObjectType<T = any> = {
-  [key: keyof any]: T;
+export type ObjectValueExtend<T, V> = {
+  [key in keyof T]: T[key] | V;
 };
 
 /**
@@ -57,3 +56,11 @@ export type Length<L extends Params> = L["length"];
  * 剩余参数类型
  */
 export type Tail<L extends Params> = L extends readonly [] ? L : L extends readonly [any?, ...infer LTail] ? LTail : L;
+
+/**
+ * 对象类型
+ * 其实有内置工具类型Record
+ */
+export type ObjectType<T = any> = {
+  [key: keyof any]: T;
+};
