@@ -1,6 +1,6 @@
 # git repository
 
-https://github.com/salitedfish/gxk
+https://github.com/salitedfish/gxkUtil
 
 # scripts 变量
 

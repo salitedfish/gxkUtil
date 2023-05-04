@@ -5,7 +5,7 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "config": {
-    "dest": "noa"
+    "dest": "lib"
   },
   "scripts": {
     "prepare": "husky install",
