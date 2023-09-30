@@ -5,36 +5,42 @@ import { useConsoleWarn } from "../../../useInside";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /**基础请求参数的类型 */
-interface ComFetchConfig extends RequestInit {
+export interface ComFetchConfig extends RequestInit {
   baseURL?: string;
   method?: Method;
 }
 /**父请求配置 */
-type ComFetchOptions = {
+export type ComFetchOptions = {
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
-  resHandler?: (response: any, shallowResponse: Response) => any;
+  resHandler?: (response: any, shallowResponse: Response, requestNecessity: RequestNecessity) => Promise<any>;
   errHandler?: (err: any) => any;
   timeOut?: number;
 };
 /**单个请求参数的类型 */
-interface CusFetchConfig extends RequestInit {
+export interface CusFetchConfig extends RequestInit {
   URL?: string;
   method?: Method;
   params?: ObjectType<string | number>;
 }
-/**子请求配置 */
-/**pure为true时，会跳过父请求的相关拦截器 */
-type CusFetchOptions = {
+/**
+ * 子请求配置
+ * pure为true时，会跳过父请求的相关拦截器
+ */
+export type CusFetchOptions = {
   pureHeaders?: boolean;
   reqHandler?: (config: CusFetchConfig) => CusFetchConfig;
   pureReqHandler?: boolean;
-  resHandler?: (response: any, shallowResponse: Response) => any;
+  resHandler?: (response: any, shallowResponse: Response, requestNecessity: RequestNecessity) => Promise<any>;
   pureResHandler?: boolean;
   errHandler?: (ert: any, err: any) => any;
   pureErrHandler?: boolean;
   requestId?: keyof any;
   timeOut?: number;
 };
+/**
+ * 重新请求所需的参数
+ */
+export type RequestNecessity = { cusConfig: CusFetchConfig; cusOptions: CusFetchOptions };
 /**处理后返回值类型 */
 type ResponseTypeMethod = keyof Omit<Body, "body" | "bodyUsed">;
 type ResponseType = ObjectType | Blob | FormData | string | ArrayBuffer;
@@ -132,13 +138,13 @@ abstract class BaseFetch {
     return undefined;
   }
   /**处理响应拦截器 */
-  private responseInterceptor(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, reg: ResponseType | undefined, res: Response): any {
+  private async responseInterceptor(comOptions: ComFetchOptions, cusOptions: CusFetchOptions, reg: ResponseType | undefined, res: Response, requestNecessity: RequestNecessity): Promise<any> {
     /**
      * comOptions.resHandler会把默认处理后的response和原始的resposne都传入，用户自行选择使用哪个。
      * cusOptions.resHandler会把comOptions.resHandler返回的结果和原始的resposne都传入，用户自行选择使用哪个。
      */
-    const ret = cusOptions.pureResHandler ? reg : comOptions.resHandler ? comOptions.resHandler(reg, res) : reg;
-    const rex = cusOptions.resHandler ? cusOptions.resHandler(ret, res) : ret;
+    const ret = cusOptions.pureResHandler ? reg : comOptions.resHandler ? await comOptions.resHandler(reg, res, requestNecessity) : reg;
+    const rex = cusOptions.resHandler ? await cusOptions.resHandler(ret, res, requestNecessity) : ret;
     return rex;
   }
   /**处理错误拦截器 */
@@ -149,6 +155,9 @@ abstract class BaseFetch {
   }
   /**---发起请求---> */
   public async request<T = any>(cusConfig: CusFetchConfig = {}, cusOptions: CusFetchOptions = {}): Promise<T> {
+    /**单个请求的必须参数和配置，后面传给相应拦截器以便重新请求此请求 */
+    const requestNecessity = { cusConfig, cusOptions };
+    /**处理所有的参数和配置 */
     const URL = this.createURL(this.comConfig, cusConfig);
     const resConfig = this.createRequestConfig(this.comConfig, cusConfig, cusOptions);
     const { timeoutId, abortId } = this.createAbortController(this.comOptions, cusOptions, resConfig);
@@ -165,7 +174,7 @@ abstract class BaseFetch {
       const reg = await this.responseHandler(res.clone());
 
       /**如果有拦截器，则先处理拦截器，处理返回值 */
-      const rex = this.responseInterceptor(this.comOptions, cusOptions, reg, res);
+      const rex = await this.responseInterceptor(this.comOptions, cusOptions, reg, res, requestNecessity);
 
       return rex;
     } catch (err) {
@@ -197,19 +206,19 @@ export class UltraFetch extends BaseFetch {
   constructor(comConfig: ComFetchConfig = {}, comOptions: ComFetchOptions = {}) {
     super(comConfig, comOptions);
   }
-  public async get<T = any>(cusConfig: Omit<CusFetchConfig & { method?: "GET" }, "body"> = {}, cusOptions: CusFetchOptions = {}) {
+  public async get<T = unknown>(cusConfig: Omit<CusFetchConfig & { method?: "GET" }, "body"> = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "GET";
     return await this.request<T>(cusConfig, cusOptions);
   }
-  public async post<T = any>(cusConfig: CusFetchConfig & { method?: "POST" } = {}, cusOptions: CusFetchOptions = {}) {
+  public async post<T = unknown>(cusConfig: CusFetchConfig & { method?: "POST" } = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "POST";
     return await this.request<T>(cusConfig, cusOptions);
   }
-  public async delete<T = any>(cusConfig: CusFetchConfig & { method?: "DELETE" } = {}, cusOptions: CusFetchOptions = {}) {
+  public async delete<T = unknown>(cusConfig: CusFetchConfig & { method?: "DELETE" } = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "DELETE";
     return await this.request<T>(cusConfig, cusOptions);
   }
-  public async put<T = any>(cusConfig: CusFetchConfig & { method?: "PUT" } = {}, cusOptions: CusFetchOptions = {}) {
+  public async put<T = unknown>(cusConfig: CusFetchConfig & { method?: "PUT" } = {}, cusOptions: CusFetchOptions = {}) {
     cusConfig.method = "PUT";
     return await this.request<T>(cusConfig, cusOptions);
   }
