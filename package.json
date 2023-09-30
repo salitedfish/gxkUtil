@@ -10,7 +10,7 @@
   "scripts": {
     "prepare": "husky install",
     "test": "jest",
-    "build": "rm -rf ./$npm_package_config_dest% && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./$npm_package_config_dest/rollup.config.d.ts ",
+    "build": "rm -rf ./$npm_package_config_dest && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./$npm_package_config_dest/rollup.config.d.ts ",
     "build_publish": "pnpm run build && cd ./$npm_package_config_dest && pnpm publish --access public && rm -rf ./$npm_package_config_dest",
     "publish_patch": "pnpm version patch && pnpm run build_publish",
     "publish_minor": "pnpm version minor && pnpm run build_publish",
