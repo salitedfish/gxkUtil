@@ -1,3 +1,11 @@
+import { useGenParamsUrl } from "../../index";
+
+type SocketConfig = Partial<{
+  resHandler: (msg: MessageEvent<any>) => void;
+  errHandler: (e: Event) => void;
+  params: Record<string, any>;
+}>;
+
 class UseWebSocket {
   socket: WebSocket | undefined;
   socketUrl: string;
@@ -5,55 +13,69 @@ class UseWebSocket {
   socketPongInterval: any;
   pingPong: string;
   messages: any[];
-  constructor(socketUrl: string) {
+  config: SocketConfig;
+  constructor(socketUrl: string, config: SocketConfig) {
     this.socketPingInterval = 0;
     this.socketPongInterval = 0;
     this.pingPong = "ping";
     this.socketUrl = socketUrl;
     this.messages = [];
+    this.config = config;
     this.initSocket(this.socketUrl);
   }
   /**
    * 初始化socket
    */
-  initSocket(socketUrl: string) {
-    this.socket = new WebSocket(socketUrl);
-    this.onOpen();
-    this.onMessage();
-    this.onError();
-    this.onClose();
+  private initSocket(socketUrl: string) {
+    let url = socketUrl;
+    if (this.config.params) {
+      url = useGenParamsUrl(socketUrl)(this.config.params);
+    }
+    this.socket = new WebSocket(url);
+    this.onOpen(this.config);
+    this.onMessage(this.config);
+    this.onError(this.config);
+    this.onClose(this.config);
   }
-  onOpen() {
+  private onOpen(config: SocketConfig) {
+    config;
     if (!this.socket) return;
     this.socket.onopen = (msg) => {
       console.log("--开始连接--", msg);
       this.initHeartCheck(1000, 2000);
     };
   }
-  onMessage() {
+  private onMessage(config: SocketConfig) {
     if (!this.socket) return;
     this.socket.onmessage = (msg) => {
       /**如果消息有则连接正常，否则连接失败需要重连 */
       if (msg) {
         this.pingPong = "pong";
         this.messages.push(msg);
+        if (config.resHandler) {
+          config.resHandler(msg);
+        }
         console.log("--接收消息--", msg);
       }
     };
   }
-  onError() {
+  private onError(config: SocketConfig) {
     if (!this.socket) return;
     this.socket.onerror = (msg) => {
+      if (config.errHandler) {
+        config.errHandler(msg);
+      }
       console.log("--错误消息--", msg);
     };
   }
-  onClose() {
+  private onClose(config: SocketConfig) {
+    config;
     if (!this.socket) return;
     this.socket.onclose = (msg) => {
       console.log("--关闭连接--", msg);
     };
   }
-  initHeartCheck(pingInterval: number, pongInterval: number) {
+  private initHeartCheck(pingInterval: number, pongInterval: number) {
     if (!this.socket) return;
     /**心跳检测，定时给socket发送消息, 如果心跳没有改变说明socket没有正常连接，则重启socket */
     this.socketPingInterval = setInterval(() => {
@@ -95,6 +117,6 @@ class UseWebSocket {
   }
 }
 
-export const useWebSocket = (socketUrl: string) => {
-  return new UseWebSocket(socketUrl);
+export const useWebSocket = (socketUrl: string, config: SocketConfig) => {
+  return new UseWebSocket(socketUrl, config);
 };
