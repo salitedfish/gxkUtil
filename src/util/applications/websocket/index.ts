@@ -3,7 +3,10 @@ import { useGenParamsUrl } from "../../index";
 type SocketConfig = Partial<{
   resHandler: (msg: MessageEvent<any>) => void;
   errHandler: (e: Event) => void;
+  closeHandler: (e: CloseEvent) => void;
+  openHandler: (e: Event) => void;
   params: Record<string, any>;
+  dev: boolean;
 }>;
 
 class UseWebSocket {
@@ -38,10 +41,14 @@ class UseWebSocket {
     this.onClose(this.config);
   }
   private onOpen(config: SocketConfig) {
-    config;
     if (!this.socket) return;
     this.socket.onopen = (msg) => {
-      console.log("--开始连接--", msg);
+      if (config.dev) {
+        console.log("--开始连接--", msg);
+      }
+      if (config.openHandler) {
+        config.openHandler(msg);
+      }
       this.initHeartCheck(1000, 2000);
     };
   }
@@ -55,7 +62,9 @@ class UseWebSocket {
         if (config.resHandler) {
           config.resHandler(msg);
         }
-        console.log("--接收消息--", msg);
+        if (config.dev) {
+          console.log("--接收消息--", msg);
+        }
       }
     };
   }
@@ -65,14 +74,21 @@ class UseWebSocket {
       if (config.errHandler) {
         config.errHandler(msg);
       }
-      console.log("--错误消息--", msg);
+      if (config.dev) {
+        console.log("--错误消息--", msg);
+      }
     };
   }
   private onClose(config: SocketConfig) {
     config;
     if (!this.socket) return;
     this.socket.onclose = (msg) => {
-      console.log("--关闭连接--", msg);
+      if (config.closeHandler) {
+        config.closeHandler(msg);
+      }
+      if (config.dev) {
+        console.log("--关闭连接--", msg);
+      }
     };
   }
   private initHeartCheck(pingInterval: number, pongInterval: number) {
