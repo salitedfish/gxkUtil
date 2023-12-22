@@ -49,7 +49,7 @@ class UseWebSocket {
       if (config.openHandler) {
         config.openHandler(msg);
       }
-      if (config.heartCheck === false) {
+      if (config.heartCheck !== false) {
         this.initHeartCheck(1000, 2000);
       }
     };
