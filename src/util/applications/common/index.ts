@@ -9,3 +9,5 @@ export * from "./useStrSHA256Hash";
 export * from "./useRunTimes";
 export * from "./useGenUUID";
 export * from "./useFileSplitChunk";
+export * from "./useBinaryToBase64";
+export * from "./useWindowReadFile";
