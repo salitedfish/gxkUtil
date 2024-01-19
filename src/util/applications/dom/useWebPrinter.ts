@@ -27,5 +27,8 @@ export const useWebPrinter = (params: print.Configuration) => {
   if (typeof params === "object" && !params.style) {
     params.style = style;
   }
+  if (!params.type) {
+    params.type = "html";
+  }
   print(params);
 };
