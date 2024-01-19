@@ -9,3 +9,4 @@ export * from "./useSetDomScrollTop";
 export * from "./useSetDomStyle";
 export * from "./useSetHTMLTitle";
 export * from "./useFullScreen";
+export * from "./useWebPrinter";

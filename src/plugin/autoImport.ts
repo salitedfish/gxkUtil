@@ -26,6 +26,7 @@ const funArray: string[] = [
   "useSetDomStyle",
   "useSetHTMLTitle",
   "useFullScreen",
+  "useWebPrinter",
 
   "useIsInApp",
   "useIsMobile",
