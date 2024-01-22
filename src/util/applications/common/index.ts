@@ -11,3 +11,6 @@ export * from "./useGenUUID";
 export * from "./useFileSplitChunk";
 export * from "./useBinaryToBase64";
 export * from "./useWindowReadFile";
+export * from "./useBase64ToString";
+export * from "./useStringToBase64";
+export * from "./useCryptoJS";

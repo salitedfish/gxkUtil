@@ -14,6 +14,9 @@ const funArray: string[] = [
   "useFileSplitChunk",
   "useBinaryToBase64",
   "useWindowReadFile",
+  "useCryptoJS",
+  "useBase64ToString",
+  "useStringToBase64",
 
   "useAddDomClass",
   "useDomOnVisibleArea",

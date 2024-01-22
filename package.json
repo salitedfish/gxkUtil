@@ -1,6 +1,6 @@
 {
   "name": "@ultra-man/noa",
-  "version": "0.0.55",
+  "version": "0.0.57",
   "description": "The first light of the universe",
   "module": "src/index.ts",
   "main": "src/index.ts",
@@ -11,7 +11,7 @@
     "prepare": "husky install",
     "test": "jest",
     "build": "rm -rf ./$npm_package_config_dest && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./$npm_package_config_dest/rollup.config.d.ts ",
-    "build_publish": "pnpm run build && cd ./$npm_package_config_dest && pnpm publish --access public && rm -rf ./$npm_package_config_dest",
+    "build_publish": "pnpm run build && cd ./$npm_package_config_dest && npm config set registry https://registry.npmjs.org && pnpm publish --access public && rm -rf ./$npm_package_config_dest && npm config set registry https://registry.npm.taobao.org",
     "publish_patch": "pnpm version patch && pnpm run build_publish",
     "publish_minor": "pnpm version minor && pnpm run build_publish",
     "publish_major": "pnpm version major && pnpm run build_publish"
@@ -35,10 +35,12 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "9.0.1",
+    "@types/base-64": "^1.0.2",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^28.1.1",
     "@types/node": "^17.0.40",
     "@types/spark-md5": "^3.0.2",
+    "@types/utf8": "^3.0.3",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "babel-jest": "^28.1.1",
@@ -57,9 +59,11 @@
     "typescript": "^4.7.3"
   },
   "dependencies": {
+    "base-64": "^1.0.0",
     "clipboard": "^2.0.11",
     "crypto-js": "^4.1.1",
     "print-js": "^1.6.0",
-    "spark-md5": "^3.0.2"
+    "spark-md5": "^3.0.2",
+    "utf8": "^3.0.0"
   }
 }
