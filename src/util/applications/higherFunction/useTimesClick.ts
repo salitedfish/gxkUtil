@@ -7,11 +7,12 @@
 export const useTimesClick = <V extends any[], R>(callBack: (...params: V) => R, option?: { times?: number; countDown?: number; interval?: number }): ((...params: V) => R | void) => {
   let times = 0;
   let lock = false;
-  let timer: NodeJS.Timeout;
+  let timer: NodeJS.Timeout | undefined;
   /**重置状态 */
   const reset = () => {
     times = 0;
     clearTimeout(timer);
+    timer = undefined;
     lock = false;
   };
   let _option = {

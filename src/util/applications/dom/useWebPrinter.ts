@@ -27,8 +27,13 @@ export const useWebPrinter = (params: print.Configuration) => {
   if (typeof params === "object" && !params.style) {
     params.style = style;
   }
+  // 默认为html
   if (!params.type) {
     params.type = "html";
+  }
+  // 默认不扫描style
+  if (!params.scanStyles) {
+    params.scanStyles = false;
   }
   print(params);
 };
