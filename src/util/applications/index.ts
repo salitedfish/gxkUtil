@@ -4,6 +4,7 @@ export * from "./legitimacy";
 export * from "./environment";
 export * from "./higherFunction";
 export * from "./genFetch";
+export * from "./genSerial";
 export * from "./dom";
 export * from "./storage";
 export * from "./websocket";

@@ -2,7 +2,7 @@
 
 https://github.com/salitedfish/gxkUtil
 
-# scripts 变量
+# scripts var
 
 windows：%npm_package_config_dist%  
 mac：$npm_package_config_dist
@@ -11,9 +11,9 @@ mac：$npm_package_config_dist
 
 pnpm install @ultra-man/noa
 
-# 调试
+# dev
 
-- 链接到全局  
+- link to global  
   pnpm link --global
-- 使用全局包  
+- link the package
   pnpm link --global @ultra-man/noa

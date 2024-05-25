@@ -20,7 +20,7 @@
     "typescript",
     "library"
   ],
-  "packageManager": "pnpm@7.12.1",
+  "packageManager": "pnpm@9.1.2",
   "author": "gxk",
   "license": "ISC",
   "devDependencies": {
