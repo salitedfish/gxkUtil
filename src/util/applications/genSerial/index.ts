@@ -17,6 +17,10 @@ interface Config {
 
 /**
  * 串口类
+ * 1、只能在ip为localhost、127.0.0.1或https环境使用
+ * 2、如果在http环境使用，需要浏览器权限设置，设置网址如下：
+ *     chrome://flags/#unsafely-treat-insecure-origin-as-secure
+ *     edge://flags/#unsafely-treat-insecure-origin-as-secure
  */
 export class UltraSerial {
   private loopReadAble: boolean = true;
@@ -39,6 +43,10 @@ export class UltraSerial {
   // 初始化串口连接
   async run(obj: Config) {
     try {
+      if (this.port) {
+        console.log("串口已经连接");
+        return;
+      }
       await this.getPorts(obj.getPortConfig);
       await this.openPort(obj.openPortConfig);
       await this.genReader();
@@ -88,9 +96,9 @@ export class UltraSerial {
         this.textDecoderStream = new TextDecoderStream();
         this.readableStream = this.port.readable.pipeTo(this.textDecoderStream.writable);
         this.reader = this.textDecoderStream.readable.getReader();
-        console.log("获取输入流成功");
+        console.log("获取读取流成功");
       } else {
-        console.log("获取输入流失败");
+        console.log("获取读取流失败");
       }
     }
   }
@@ -119,16 +127,16 @@ export class UltraSerial {
         this.loopReadAble = false;
         // 2、取消读取器（取消会触发reader.read()）
         this.reader.cancel();
+        console.log("读取器取消成功");
         // 3、解锁读取器
         this.reader.releaseLock();
         // 4、等到读取器已解锁
         await this.readableStream.catch(() => {});
+        console.log("读取流解锁成功");
         // 5、关闭串口
         await this.port.close();
-        console.log("关闭串口成功");
-      } else {
-        console.log("关闭串口成功");
       }
+      console.log("关闭串口成功");
       // 重置对象
       this.reset();
     } catch (err) {
@@ -149,6 +157,6 @@ export class UltraSerial {
  *
  * @returns UltraSerial
  */
-export const genSerial = () => {
+export const createSerial = () => {
   return new UltraSerial();
 };

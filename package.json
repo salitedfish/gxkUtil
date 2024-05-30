@@ -20,7 +20,10 @@
     "typescript",
     "library"
   ],
-  "packageManager": "pnpm@9.1.2",
+  "engines": {
+    "node": "> 18.12.1"
+  },
+  "packageManager": "^npm@8.19.2",
   "author": "gxk",
   "license": "ISC",
   "devDependencies": {

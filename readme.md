@@ -15,5 +15,5 @@ pnpm install @ultra-man/noa
 
 - link to global  
   pnpm link --global
-- link the package
+- link the package  
   pnpm link --global @ultra-man/noa
