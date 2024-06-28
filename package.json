@@ -11,6 +11,7 @@
     "prepare": "husky install",
     "test": "jest",
     "build": "rm -rf ./$npm_package_config_dest && rollup -c rollup.config.ts --configPlugin typescript && rm -rf ./$npm_package_config_dest/rollup.config.d.ts ",
+    "re_publish": "cd ./$npm_package_config_dest && pnpm publish --access public",
     "build_publish": "pnpm run build && cd ./$npm_package_config_dest && pnpm publish --access public && rm -rf ./$npm_package_config_dest && npm config set registry https://registry.npmmirror.com/",
     "publish_patch": "npm config set registry https://registry.npmjs.org && pnpm version patch && pnpm run build_publish",
     "publish_minor": "npm config set registry https://registry.npmjs.org && pnpm version minor && pnpm run build_publish",

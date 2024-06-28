@@ -105,6 +105,7 @@ export class UltraSerial {
   //  开始读取串口输入流
   private async read(callBack: ReadCallBack) {
     if (this.reader) {
+      console.log("串口读取中...");
       // 初始数据
       let str = "";
       // 循环读取
@@ -113,8 +114,9 @@ export class UltraSerial {
         str = str + res.value;
         // 如果读取结束，或者有回车或换行符则视为结束，执行一次回调，但是数据还是在继续读取
         if (res.done || (res.value && (res.value.includes("\n") || res.value.includes("\r")))) {
-          callBack(str);
+          callBack(String(str));
           str = "";
+          console.log("串口读取中...");
         }
       }
     }
