@@ -1,3 +1,5 @@
+import { useHttpSafeTip } from "../../../useInside/useHttpSafeTip";
+
 interface RequestPortConfig {
   filters: { usbVendorId?: string; usbProductId?: string }[];
 }
@@ -38,6 +40,7 @@ export class UltraSerial {
       console.log("请求串口成功");
     } else {
       console.log("当前环境不支持串口");
+      useHttpSafeTip();
     }
   }
   // 初始化串口连接
@@ -119,6 +122,8 @@ export class UltraSerial {
           console.log("串口读取中...");
         }
       }
+    } else {
+      console.log("没找到读取器");
     }
   }
   // 关闭串口

@@ -15,3 +15,5 @@ export * from "./useWindowReadFile";
 export * from "./useBase64ToString";
 export * from "./useStringToBase64";
 export * from "./useCryptoJS";
+export * from "./useGetMax";
+export * from "./useGetMin";
