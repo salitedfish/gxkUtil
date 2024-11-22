@@ -83,6 +83,7 @@ export class UltraSerial {
       }
     } else {
       console.log("当前环境不支持串口");
+      useHttpSafeTip();
     }
   }
   // 打开串口
@@ -114,6 +115,7 @@ export class UltraSerial {
       // 循环读取
       while (this.loopReadAble) {
         const res = await this.reader.read();
+        console.log("串口读取流读取到：", res);
         str = str + res.value;
         // 如果读取结束，或者有回车或换行符则视为结束，执行一次回调，但是数据还是在继续读取
         if (res.done || (res.value && (res.value.includes("\n") || res.value.includes("\r")))) {
