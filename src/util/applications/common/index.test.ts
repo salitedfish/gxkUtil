@@ -52,6 +52,18 @@ test("test useRunTimes", () => {
   expect(time).toBe(10);
 });
 
+/**test useCamelToSnake */
+test("test useCamelToSnake", () => {
+  let res = useCommon.useCamelToSnake("testUseCamelToSnake");
+  expect(res).toBe("test_use_camel_to_snake");
+});
+
+/**test useSnakeToCamel */
+test("test useSnakeToCamel", () => {
+  let res = useCommon.useSnakeToCamel("test_use_snake_to_camel");
+  expect(res).toBe("testUseSnakeToCamel");
+});
+
 /**test useGenUUID */
 // test("test useGenUUID", () => {
 //   expect(useCommon.useGenUUID()).toBe(false);

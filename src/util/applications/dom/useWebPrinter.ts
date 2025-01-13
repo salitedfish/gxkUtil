@@ -20,11 +20,15 @@ const genStyStr = () => {
   return styleStr;
 };
 
-// 网页打印
+/**
+ * 前端打印
+ * @param params 如：{ type: 'html', printable: 'printDOMId', ignoreElements: ['notPrintDOMId'], showModal: true, onError: (err) => { console.log(err) } }
+ * @returns
+ */
 export const useWebPrinter = (params: print.Configuration) => {
-  const style = genStyStr();
   // 如果没有传style，则默认用网页全部style
   if (typeof params === "object" && !params.style) {
+    const style = genStyStr();
     params.style = style;
   }
   // 默认为html
